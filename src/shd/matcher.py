@@ -57,6 +57,8 @@ def match(blob_record: BlobRecord) -> list[RawFinding]:
                         secret_type=_SECRET_TYPE_MAP[secret.type],
                         detector_confidence=0.5 if secret.type in _ENTROPY_TYPES else 1.0,
                         detector_source="detect-secrets",
+                        commit_timestamp=blob_record.commit_timestamp,
+                        is_head=blob_record.is_head,
                     ),
                 )
 

@@ -1,5 +1,6 @@
 ﻿from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from typing import Literal
 
 
 class BlobRecord(BaseModel):
@@ -24,3 +25,19 @@ class RawFinding(BaseModel):
     secret_type: str
     detector_confidence: float
     detector_source: str
+    commit_timestamp: datetime | None = None
+    is_head: bool = False
+
+
+class DedupedFinding(BaseModel):
+    """One normalized secret aggregated across repository history."""
+
+    model_config = ConfigDict(frozen=True)
+
+    secret_id: str
+    secret_type: str
+    commit_hashes: list[str]
+    first_seen_commit: str
+    present_in_head: bool
+    label_ground_truth: bool
+    dataset_split: Literal["reference", "eval"]
