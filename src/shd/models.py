@@ -7,7 +7,7 @@ class BlobRecord(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     commit_hash: str
-    commit_timestamp: datetime
+    commit_timestamp: datetime | None
     file_path: str
     blob_content: str
     is_head: bool
@@ -27,6 +27,23 @@ class RawFinding(BaseModel):
     detector_source: str
     commit_timestamp: datetime | None = None
     is_head: bool = False
+
+
+class SourceFinding(BaseModel):
+    """Redacted finding produced from the current working tree."""
+
+    model_config = ConfigDict(frozen=True)
+
+    finding_id: str
+    repository_path: str
+    file_path: str
+    line_number: int
+    secret_type: str
+    detector: str
+    confidence: float
+    secret_hash: str
+    masked_preview: str
+    status: Literal["open", "resolved", "ignored"]
 
 
 class DedupedFinding(BaseModel):

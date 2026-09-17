@@ -11,6 +11,34 @@ from git import Blob, Tree
 from .models import BlobRecord
 
 
+def get_commit_details(repo_path: str, commit_hash: str) -> dict[str, object]:
+    """Return reproducible metadata for one local Git commit."""
+    repo = git.Repo(repo_path)
+    try:
+        commit = repo.commit(commit_hash)
+        parent = commit.parents[0] if commit.parents else None
+        changed_files = []
+        if parent is not None:
+            for path, stats in commit.stats.files.items():
+                changed_files.append(
+                    {
+                        "path": path,
+                        "insertions": stats["insertions"],
+                        "deletions": stats["deletions"],
+                    }
+                )
+        return {
+            "commit_hash": commit.hexsha,
+            "message": commit.message.strip(),
+            "author": str(commit.author),
+            "commit_timestamp": commit.authored_datetime,
+            "parent_hash": parent.hexsha if parent else None,
+            "changed_files": sorted(changed_files, key=lambda item: item["path"]),
+        }
+    finally:
+        repo.close()
+
+
 def _build_head_map(repo: git.Repo) -> dict[str, str]:
     try:
         head_commit = repo.head.commit
