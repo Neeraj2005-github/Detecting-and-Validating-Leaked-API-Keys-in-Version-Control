@@ -4,9 +4,10 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import git
+import pytest
 
 import src.shd.walker as walker
-from src.shd.walker import walk_repository
+from src.shd.walker import get_commit_details, validate_repository, walk_repository
 from tests.fixtures.make_fixture_repo import make_fixture_repo
 
 
@@ -17,6 +18,27 @@ def test_deleted_file_last_content_is_recorded(tmp_path: Path) -> None:
     assert any(record.blob_content.strip() == 'SECRET_KEY = "xyz789"' for record in config_records)
     assert any(record.blob_content.strip() == 'SECRET_KEY = "abc123"' for record in config_records)
     assert any(not record.is_head for record in config_records)
+    assert any(record.change_type == "deleted" for record in config_records)
+
+
+def test_commit_details_include_root_and_deleted_file_changes(tmp_path: Path) -> None:
+    repo_path = make_fixture_repo(str(tmp_path))
+    repo = git.Repo(repo_path)
+    root_hash = repo.commit("HEAD~2").hexsha
+    deleted_hash = repo.head.commit.hexsha
+    repo.close()
+
+    root_details = get_commit_details(repo_path, root_hash)
+    deleted_details = get_commit_details(repo_path, deleted_hash)
+
+    assert root_details["short_hash"] == root_hash[:8]
+    assert any(item["status"] == "added" for item in root_details["changed_files"])
+    assert any(item["path"] == "config.py" and item["status"] == "deleted" for item in deleted_details["changed_files"])
+
+
+def test_non_git_directory_is_rejected(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="^Not a Git repository:"):
+        validate_repository(str(tmp_path))
 
 
 def test_records_have_no_duplicate_commit_and_path_pairs(tmp_path: Path) -> None:

@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 os.environ["DATABASE_URL"] = f"sqlite:///{Path(tempfile.mktemp(prefix='shd_api_', suffix='.sqlite3'))}"
 
 from shd.walker_api import app  # noqa: E402
+from tests.fixtures.make_synthetic_secret_repo import make_synthetic_secret_repo
 
 
 def test_scan_api_persists_redacted_current_source_finding(tmp_path: Path) -> None:
@@ -45,3 +46,49 @@ def test_scan_api_persists_redacted_current_source_finding(tmp_path: Path) -> No
 
         scans = client.get("/scans")
         assert scans.json()[0]["files_scanned"] == 1
+
+
+def test_history_scan_registers_commits_deleted_files_and_findings(tmp_path: Path) -> None:
+    repo_path, _ = make_synthetic_secret_repo(str(tmp_path), repo_id="history-fixture")
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/scan",
+            json={"repo_path": repo_path, "repo_id": "history-fixture", "analysis_mode": "history"},
+        )
+
+        assert response.status_code == 200
+        assert response.json()["blobs_written"] > 0
+        assert response.json()["findings_count"] > 0
+
+        repositories = client.get("/repositories").json()
+        assert any(item["repository_id"] == "history-fixture" for item in repositories)
+
+        commits = client.get("/repos/history-fixture/commits").json()
+        assert len(commits) == 2
+        assert all(commit["short_hash"] == commit["commit_hash"][:8] for commit in commits)
+
+        deleted = client.get("/repos/history-fixture/deleted-blobs").json()
+        assert any(blob["file_path"] == "config.py" and blob["change_type"] == "deleted" for blob in deleted)
+
+        historical = client.get("/historical-findings", params={"repo_id": "history-fixture"})
+        assert historical.status_code == 200
+        assert historical.json()
+        assert all("AKIAIOSFODNN7EXAMPLE" not in item["masked_preview"] for item in historical.json())
+        assert all(item["commit_hash"] in {commit["commit_hash"] for commit in commits} for item in historical.json())
+
+        metrics = client.get("/metrics").json()
+        assert metrics["commits_analyzed"] >= 2
+        assert metrics["historical_findings"] > 0
+        assert isinstance(metrics["historical_secrets"], int)
+
+
+def test_scan_rejects_non_git_directory_with_actionable_error(tmp_path: Path) -> None:
+    with TestClient(app) as client:
+        response = client.post(
+            "/scan",
+            json={"repo_path": str(tmp_path), "repo_id": "not-a-repo", "analysis_mode": "history"},
+        )
+
+    assert response.status_code == 400
+    assert response.json()["detail"].startswith("Not a Git repository:")

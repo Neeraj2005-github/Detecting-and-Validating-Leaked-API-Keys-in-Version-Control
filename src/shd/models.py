@@ -11,6 +11,7 @@ class BlobRecord(BaseModel):
     file_path: str
     blob_content: str
     is_head: bool
+    change_type: Literal["added", "modified", "deleted", "renamed", "present"] = "present"
 
 
 class RawFinding(BaseModel):

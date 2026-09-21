@@ -45,7 +45,7 @@ This table describes the technical M1/M2-era pipeline only. Under the Weeks 6–
 
 ## Explicit gaps
 
-- No frozen `eval/dataset_manifest.json`, so precision, recall, F1, confusion matrix, and split counts cannot be truthfully reported yet.
+- No frozen `docs/eval/dataset_manifest.json`, so precision, recall, F1, confusion matrix, and split counts cannot be truthfully reported yet.
 - The detector is `detect-secrets`, not the required Gitleaks O2 baseline. Existing detector metrics must not be presented as Gitleaks results.
 - The current fingerprint is unsalted SHA-256; the specification requires a salted hash and last-four metadata before the storage contract is complete.
 - Detector coverage is narrower than the final target: provider validation, generic password/database-password classification, JWT lifecycle, and authorization semantics remain future work.
@@ -55,7 +55,7 @@ This table describes the technical M1/M2-era pipeline only. Under the Weeks 6–
 
 ## Review-2 demo
 
-1. Start API with `DATABASE_URL=sqlite:///./shd-o1.sqlite3` and `PYTHONPATH=src`.
+1. Start API with `DATABASE_URL=sqlite:///./runtime/shd-o1-check.sqlite3` and `PYTHONPATH=src`.
 2. Start Vite from `frontend/`.
 3. Open `http://localhost:5173/`.
 4. Scan a synthetic Git repository with a fake credential.

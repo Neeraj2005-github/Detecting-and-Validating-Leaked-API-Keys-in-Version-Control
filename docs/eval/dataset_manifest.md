@@ -11,4 +11,4 @@ rejects repository IDs shared by the `reference` and `eval` splits.
 
 SecretBench provenance and licensing details must be added when the team
 selects and vendors its agreed subset. The split should then be frozen in
-`eval/dataset_manifest.json` before evaluation metrics are reported.
+`docs/eval/dataset_manifest.json` before evaluation metrics are reported.

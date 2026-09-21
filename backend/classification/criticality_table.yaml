@@ -1,0 +1,9 @@
+aws_access_key: 100
+aws_secret_key: 100
+github_pat: 70
+stripe_key: 90
+slack_token: 50
+sendgrid_key: 50
+twilio_key: 50
+jwt: 40
+generic_high_entropy: 30

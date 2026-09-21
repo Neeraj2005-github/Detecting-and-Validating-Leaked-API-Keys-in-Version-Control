@@ -1,5 +1,6 @@
 ﻿# Python
 venv/
+.venv/
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -8,13 +9,35 @@ build/
 .pytest_cache/
 .coverage
 htmlcov/
+.vscode/
+.idea/
+*.tmp
+*.bak
+
+# Local databases and runtime output
+*.sqlite3
+*.sqlite
+*.db
+logs/
+*.log
 
 # Env
 .env
 
 # Node
-frontend/node_modules/
+node_modules/
 frontend/dist/
+
+# Generated local scanner artifacts
+gitleaks
+gitleaks.tar.gz
+gitleaks.zip
+gitleaks_bin/
+gitleaks_report.json
+
+# The seeded repository is intentionally independent test data. Keep its
+# working tree and .git history locally without tracking it in the outer repo.
+testdata/seeded_repo/
 
 # OS
 .DS_Store

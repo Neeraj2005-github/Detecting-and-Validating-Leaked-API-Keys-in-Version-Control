@@ -30,7 +30,7 @@ This record compares the pasted Weeks 6–8 Concept C specification with the rep
 - Current API: `src/shd/walker_api.py`
 - Current storage: `src/shd/walker_db.py`
 - Existing tests: `tests/`
-- Existing dataset workflow: `WORKFLOW_M3_TO_M4.md`, `src/shd/dataset.py`, `src/shd/metrics.py`
+- Existing dataset workflow: `docs/WORKFLOW_M3_TO_M4.md`, `src/shd/dataset.py`, `src/shd/metrics.py`
 
 ## Next implementation phase
 

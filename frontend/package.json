@@ -1,5 +1,5 @@
 {
-  "name": "secret-history-dashboard",
+  "name": "detecting-secrets-in-version-control-frontend",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -9,12 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "latest",
-    "axios": "latest",
-    "vite": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "lucide-react": "latest"
-  },
-  "devDependencies": {}
+    "@radix-ui/react-alert-dialog": "^1.1.23",
+    "@vitejs/plugin-react": "^4.3.2",
+    "axios": "^1.7.7",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
+    "lucide-react": "^0.462.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "recharts": "^2.13.3",
+    "vite": "^5.4.10"
+  }
 }
