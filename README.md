@@ -1,185 +1,307 @@
-# Detecting Secrets in Version Control
+# Detecting and Validating Leaked API Keys in Version Control
 
-Secret History Detector (SHD) is an academic capstone project for detecting and validating leaked API keys in current source files and Git history.
+Detecting Secrets Across Version Control is a local, research-oriented system
+for finding API keys and other credential-shaped values in current files and
+Git history. It combines deterministic Git traversal and pattern detection
+with entropy/context features, an offline ML filter, TreeSHAP explanations,
+risk prioritization, and a SQLite remediation sandbox.
 
-## Problem
+> **Scope:** This repository is a local demonstration and evaluation system.
+> It does not authenticate users, call real credential providers, or revoke
+> real cloud credentials. The included fixtures use synthetic values.
 
-Secrets can remain in old commits even after they are removed from the current working tree. SHD combines Gitleaks detection, Git-history extraction, criticality classification, and an ML filter to produce repository-scoped findings for review.
+## Why Git history matters
 
-## Features
+Deleting a file from the current checkout does not remove its earlier blobs
+from reachable commits, branches, tags, or other history surfaces. A scanner
+that checks only the working tree can therefore miss credentials that remain
+recoverable. This project records lifecycle context such as active-in-HEAD,
+deleted-history, branch/tag, and rewritten-history states.
 
-- Current-source scanning through the FastAPI API.
-- Git-history scanning for deleted or historical secret-bearing files.
-- Gitleaks integration for detector rules and raw findings.
-- Normalization and criticality classification for supported secret types.
-- Optional ML filtering with evaluation reports in `reports/`.
-- Repository-scoped findings and scan history stored in SQLite by default.
-- React/Vite dashboard for repositories, findings, metrics, and PDF report export.
-- Synthetic Git test repository preserved under `testdata/seeded_repo/`.
+## Objectives and capabilities
+
+- Walk added lines across Git history with GitPython and explicit Git commands.
+- Detect provider-shaped patterns and generic high-entropy candidates.
+- Normalize findings into masked previews and hashed identifiers.
+- Classify candidates with deterministic features and an offline tree model.
+- Explain model outputs with TreeSHAP feature contributions.
+- Rank findings using model confidence plus lifecycle and privilege context.
+- Exercise safe remediation transitions in an in-memory SQLite sandbox.
+- Produce reproducible synthetic fixtures, oracle labels, benchmarks, and reports.
+- Provide a React/Vite review workbench and FastAPI API for local demonstrations.
 
 ## Architecture
 
-```text
-src/shd/                 API, database models, walkers, metrics, and CLI
-backend/                 Gitleaks, normalization, classification, Git history, and ML pipeline
-frontend/                React/Vite review dashboard
-tests/unit/              Focused unit tests
-tests/integration/       API and pipeline integration tests
-tests/fixtures/          Reusable test repository builders
-testdata/                Ground truth and independent seeded Git repository
-reports/                 Evaluation and baseline reports used by the project
-docs/                    Capstone specifications, audits, and evaluation notes
-scripts/                 Project generation and fixture helper scripts
-runtime/                 Ignored local SQLite databases and runtime notes
+```mermaid
+flowchart LR
+    A[Git repository] --> B[History walker]
+    B --> C[Regex and entropy candidates]
+    C --> D[Normalization and masking]
+    D --> E[Feature extraction]
+    E --> F[XGBoost / fallback model]
+    F --> G[TreeSHAP explanation]
+    G --> H[Risk score and prioritization]
+    H --> I[SQLite rotation sandbox]
+    H --> J[FastAPI API]
+    J --> K[React/Vite workbench]
+    B --> L[Oracle and benchmark evaluation]
+    F --> L
+    I --> L
 ```
 
-The backend entry point is `src.shd.walker_api:app`. The scan pipeline is in `backend/pipeline.py`; it prepares local or remote repositories, runs Gitleaks, classifies findings, and applies the ML filter. The database layer in `src/shd/walker_db.py` persists repository, scan, current finding, historical finding, and blob records.
+The primary API application is
+[`src/shd/walker_api.py`](src/shd/walker_api.py), exposed through the
+compatibility entry point [`backend/main.py`](backend/main.py). The CP1/O2
+pipeline and ML services live under [`backend/`](backend/); the frontend is
+under [`frontend/`](frontend/).
 
-## Requirements
+## End-to-end workflow
+
+```mermaid
+sequenceDiagram
+    participant U as Reviewer
+    participant W as React workbench
+    participant A as FastAPI
+    participant G as Git walker
+    participant M as Detector and ML
+    participant S as SQLite sandbox
+
+    U->>W: Start scan
+    W->>A: POST /api/cp1/scan
+    A->>G: Walk added lines and lifecycle
+    G-->>A: HistoryLine records
+    A->>M: Detect, classify, explain, rank
+    M-->>A: Masked findings and SHAP factors
+    A-->>W: JSON response
+    W-->>U: Findings table and risk details
+    U->>W: Validate and rotate
+    W->>A: POST /api/cp1/rotate/{finding_id}
+    A->>S: Synthetic state transition and verification
+    S-->>A: VERIFIED_SAFE and MTTR
+    A-->>W: Rotation result
+```
+
+## Technology stack
+
+| Area | Technologies used |
+|---|---|
+| Languages | Python, TypeScript, JavaScript, YAML, JSON |
+| Backend | FastAPI, Uvicorn, Pydantic, SQLAlchemy |
+| Frontend | React 18, Vite, React Router, Axios |
+| Detection | GitPython, Git CLI, regex, Shannon entropy |
+| Machine learning | scikit-learn, XGBoost, NumPy, pandas, joblib |
+| Explainability | SHAP / TreeSHAP |
+| Storage | SQLite by default; SQLAlchemy supports configured MySQL URLs |
+| Reporting | jsPDF, jsPDF-AutoTable, Matplotlib-generated artifacts |
+| Testing | pytest, pytest-cov |
+| Automation | GitHub Actions, pre-commit, PowerShell helpers |
+
+Only Python dependencies are declared in the root
+[`requirements.txt`](requirements.txt). Frontend dependencies and scripts are
+declared in [`frontend/package.json`](frontend/package.json). The small root
+Node manifest is retained for compatibility with existing project history; run
+frontend commands from `frontend/`.
+
+## Repository map
+
+```text
+backend/      CP1/O2 services, detection, ML, evaluation, and rotation
+data/         Evaluation inputs and frozen split data
+docs/         Architecture, setup, evaluation, audit, and contract documents
+fixtures/     Ground-truth oracle specification
+frontend/     React/Vite review workbench
+reports/      Generated baseline metrics and split reports
+runtime/      Ignored local SQLite databases
+scripts/      Reproduction, evaluation, generation, and health-check tools
+src/shd/      FastAPI application, persistence, core walkers, and API models
+testdata/     Seeded repository generator and independent fixture
+tests/        Unit, integration, and evaluation-oriented tests
+artifacts/    Generated evidence, plots, models, benchmark results, and fixture
+```
+
+See [`docs/project-structure.md`](docs/project-structure.md) for the detailed
+responsibility of every root-level folder.
+
+## Installation
+
+### Prerequisites
 
 - Python 3.11 or newer
 - Node.js and npm
 - Git
-- Gitleaks 8.18 or newer installed on `PATH`
+- Optional: Gitleaks on `PATH` for native baseline comparison
 
-The project does not require the checked-in Gitleaks executable or archives. CI installs Gitleaks separately, and the local runner reports an actionable error when it is unavailable.
-
-## Run the backend
-
-From the repository root:
+### Backend environment
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-uvicorn src.shd.walker_api:app --reload --port 8000
+Copy-Item .env.example .env
 ```
 
-The same application is available through the compatibility entry point
-`uvicorn backend.main:app --reload --port 8000`. The CP1 workbench uses the
-REST namespace under `/api/cp1/` for overview, scan, reproduction, benchmark,
-and offline rotation actions.
-
-The API documentation is available at `http://127.0.0.1:8000/docs`.
-
-The default development database is `runtime/shd-local.sqlite3`. Set `DATABASE_URL` to use another supported SQLAlchemy database URL.
-
-## CP1 Gate 1 / O1 evidence
-
-Run the deterministic problem reproduction from the repository root:
-
-```powershell
-python scripts/reproduce_problem.py
-```
-
-This writes the redacted machine-readable evidence to
-`artifacts/o1_reproduction_log.json` and the review document to
-`docs/o1_reproduction_log.md`. The frozen contract is in
-`backend/data/o1_engineering_contract.json` with its readable companion at
-`docs/o1_engineering_contract.md`. When the API is running, the complete
-structured evidence bundle is available at `GET /o1/evidence` and is rendered
-on the frontend's **O1 Evidence** page for inline review and PDF export.
-
-## O2 fixture, history, and detector
-
-Build the versioned synthetic repository and safe grading oracle:
-
-```powershell
-python -c "from backend.services.fixture_generator import generate_fixture; generate_fixture()"
-```
-
-The added-line walker is available as
-`backend.scanner.history_walker.walk_history`; the staged detector is
-`backend.ml.detector.detect_lines`. The detector generates
-`backend/ml/detector_model.pkl` on first use. It uses `XGBClassifier` when
-XGBoost is installed and a deterministic scikit-learn fallback otherwise.
-The fixture and oracle are written to `artifacts/synthetic_repo_v1` and
-`artifacts/ground_truth_oracle.json`.
-
-## CP1 Extra evidence
-
-`GET /cp1/extras` runs and returns the privacy-safe κ benchmark, frozen-split
-XGBoost ablations, TreeSHAP/NDCG risk report, offline rotation MTTR, and
-public-repository aggregate counts. Results are persisted in the
-`cp1_artifacts` SQLAlchemy table and in `artifacts/` JSON files. The same
-bundle is viewable at the frontend's **CP1 Extras** route.
-
-The local pre-commit hook is configured in `.pre-commit-config.yaml` and
-blocks staged additions that the detector classifies as likely active
+The default database is `runtime/shd-local.sqlite3`. Set `DATABASE_URL` for
+another SQLAlchemy-compatible database URL. Never commit `.env` or real
 credentials.
 
-## Run the frontend
+### Frontend environment
+
+```powershell
+Set-Location frontend
+npm install
+```
+
+Use `VITE_API_URL` when the backend is not at `http://localhost:8000`.
+
+## Running the application
+
+Start the backend from the repository root:
+
+```powershell
+uvicorn backend.main:app --reload --port 8000
+```
+
+The API is available at `http://127.0.0.1:8000`; interactive OpenAPI docs are
+at `/docs`. The compatibility entry point
+`uvicorn src.shd.walker_api:app --reload --port 8000` is also supported.
 
 In a second terminal:
 
 ```powershell
 Set-Location frontend
-npm install
 npm run dev
 ```
 
-The Vite development server normally runs at `http://localhost:5173`. The frontend uses the local API client configuration and supports `VITE_API_URL` when a different backend URL is required.
+Open `http://localhost:5173/vaultguard/home`.
 
-## Test data and scans
+Useful API routes include:
 
-`testdata/seed_repo.py` creates the synthetic dataset and regenerates the independent Git repository at `testdata/seeded_repo/`. That directory intentionally contains its own `.git` directory and commit history. It is ignored by the outer repository so it is not accidentally staged as an embedded repository.
+- `GET /health`
+- `POST /api/cp1/scan`
+- `POST /api/cp1/rotate/{finding_id}`
+- `GET /api/cp1/overview`
+- `POST /api/cp1/benchmark/run`
+- `GET /docs`
 
-Run the generator only when you intend to recreate the fixture:
+Compatibility JSON routes `/api/scan` and `/api/rotate` are also available.
+See [`docs/api-documentation.md`](docs/api-documentation.md).
 
-```powershell
-python testdata/seed_repo.py
-```
+## Testing and health checks
 
-The application can scan local paths or remote Git URLs. Repository scans write findings with the repository key and `GET /findings?repo_id=...` filters them to the selected repository. A request to `GET /findings` returns the aggregate findings list.
-
-## Tests and evaluation
-
-Run the complete test suite from the repository root:
+Run the Python suite:
 
 ```powershell
 python -m pytest
 ```
 
-The ML training and evaluation commands are:
+Build the frontend:
+
+```powershell
+Set-Location frontend
+npm run build
+```
+
+With the backend running, execute the one-click readiness check:
+
+```powershell
+python scripts/verify_system_health.py
+```
+
+It verifies API/database health, the persisted detector model, and the SQLite
+rotation sandbox.
+
+## Evaluation and benchmarking
+
+Generate the synthetic history fixture and oracle:
+
+```powershell
+python -c "from backend.services.fixture_generator import generate_fixture; generate_fixture()"
+```
+
+Run the O2 benchmark and focused CP1 test:
+
+```powershell
+python scripts/reproduce_o2.py
+```
+
+Run the earlier evaluation pipeline:
 
 ```powershell
 python -m backend.ml_filter.train
 python -m backend.ml_filter.evaluate
 ```
 
-The deterministic O2 evaluation corpus is `data/o2_evaluation.json` with 20
-labeled examples: 8 training, 4 validation, and 8 test examples. Baseline A
-uses Gitleaks only; Baseline B applies the ML filter to the same test examples.
+The benchmark implementation is
+[`backend/services/benchmark_engine.py`](backend/services/benchmark_engine.py).
+The oracle specification is
+[`fixtures/oracle_spec.yaml`](fixtures/oracle_spec.yaml). Results are written
+to `artifacts/` and `reports/`; they are not automatically proof of
+real-world provider validity.
 
-Run the reproducible evaluation and coverage checks with:
+## Dataset, model, and explainability
 
-```powershell
-& ".\.venv\Scripts\python.exe" -c "from backend.evaluation_metrics import evaluate; import json; print(json.dumps(evaluate(), indent=2))"
-& ".\.venv\Scripts\python.exe" -m pytest --cov=backend --cov=src --cov-report=term-missing
-```
+The repository uses synthetic planted values and high-entropy decoys for
+repeatable tests. `data/o2_evaluation.json` contains the earlier labeled
+evaluation corpus, `data/real_repo_20_labels.csv` supports the frozen
+repository-group ML experiment, and `fixtures/oracle_spec.yaml` defines
+lifecycle ground truth. See
+[`docs/dataset-documentation.md`](docs/dataset-documentation.md).
 
-Evaluation outputs are written to `reports/`. Baseline B is intentionally marked invalid when the test set contains a leakage feature that perfectly separates labels; see `reports/baseline_metrics.json` and `backend/ml_filter/evaluate.py` for the validation warning.
+`backend/ml/detector.py` defines provider patterns, `shannon_entropy()`,
+`extract_14_features()`, model loading, and candidate detection.
+`backend/ml/xgboost_rigour.py` runs frozen-split XGBoost ablations.
+`backend/ml/shap_risk_scorer.py` computes TreeSHAP contributions and ranking
+metrics. If the persisted model is missing, the detector builds a deterministic
+lightweight model; a corrupt model is logged and rebuilt.
+
+## Evaluation results and definitions
+
+The checked-in O2 benchmark artifact
+[`artifacts/o2_benchmark_kpis.json`](artifacts/o2_benchmark_kpis.json) reports
+for the recorded **Our O2 Engine** run: precision `1.0`, recall `1.0`, F1
+`1.0`, six true positives, zero false positives, and zero false negatives.
+These are synthetic-fixture results. The separate held-out 14-feature
+XGBoost artifact reports precision `0.75`, recall `1.0`, and F1
+`0.8571428571428571`. Do not conflate these evaluation scopes.
+
+- **Precision:** `TP / (TP + FP)`.
+- **Recall:** `TP / (TP + FN)`.
+- **F1:** harmonic mean of precision and recall.
+- **NDCG@10:** top-ten ranking quality weighted toward higher positions.
+- **MTTR:** measured local state-machine time from detection acceptance to
+  verified safe SQLite state; it is not real provider revocation latency.
+
+Detailed methodology is in
+[`docs/evaluation-methodology.md`](docs/evaluation-methodology.md).
 
 ## Documentation
 
-Supporting specifications and review material are in `docs/`, including the problem charter, traceability matrix, workflow notes, dataset manifest, and evaluation report.
+- [Project overview](docs/project-overview.md)
+- [Architecture](docs/architecture.md)
+- [Installation guide](docs/installation-guide.md)
+- [Usage guide](docs/usage-guide.md)
+- [API documentation](docs/api-documentation.md)
+- [Dataset documentation](docs/dataset-documentation.md)
+- [Evaluation methodology](docs/evaluation-methodology.md)
+- [Project structure](docs/project-structure.md)
+- [Existing O1 contract](docs/o1_engineering_contract.md)
+- [Existing review/audit records](docs/review_summary.md)
 
-## Limitations and future work
+## Security and limitations
 
-- The current frontend is designed for a trusted, single-user local deployment and has no authentication or RBAC.
-- Gitleaks must be installed separately and available on `PATH`.
-- The ML evaluation dataset is synthetic and requires a leakage-free test split before its results can be used as a valid contribution claim.
-- Risk scoring, rotation scheduling, and verification adapters remain stubs for future work.
-### O2.4-O2.6 one-command reproduction
+- Use synthetic fixtures only; never place real credentials in tests, docs,
+  reports, or examples.
+- The frontend is a trusted, single-user local deployment with no auth/RBAC.
+- Provider validation and real credential revocation are not implemented.
+- Gitleaks is optional for the local emulator-backed benchmark but required for
+  workflows that explicitly invoke the native binary.
+- The evaluation corpus is synthetic/small and must not be presented as a
+  production prevalence estimate.
+- Generated artifacts may contain masked previews and benchmark metadata; audit
+  them before publishing externally.
 
-Run the complete benchmark and evidence suite from the repository root:
+## Contributing and acknowledgements
 
-```powershell
-.\.venv\Scripts\python.exe scripts\reproduce_o2.py
-```
-
-This regenerates `artifacts\synthetic_repo_v1`, writes
-`artifacts\ground_truth_oracle.json` and `artifacts\o2_benchmark_kpis.json`,
-and runs `tests\test_cp1_complete.py`. Native Gitleaks is used when available;
-otherwise the report records the deterministic rule-set emulator. Test
-failures are appended to `artifacts\failure_log.json`.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development checklist.
+The project uses GitPython, FastAPI, SQLAlchemy, React, scikit-learn, XGBoost,
+SHAP, pytest, and related open-source packages listed in the manifests.

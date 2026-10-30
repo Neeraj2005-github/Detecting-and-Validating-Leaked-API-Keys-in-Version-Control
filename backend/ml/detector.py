@@ -6,6 +6,7 @@ import base64
 import binascii
 import hashlib
 import json
+import logging
 import math
 import os
 import re
@@ -15,6 +16,8 @@ from pathlib import Path
 from typing import Iterable, Mapping
 
 import joblib
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[2]
 MODEL_PATH = ROOT / "backend" / "ml" / "detector_model.pkl"
@@ -177,17 +180,15 @@ def ensure_model() -> object:
         try:
             metadata = json.loads(MODEL_META_PATH.read_text(encoding="utf-8"))
             model_name = str(metadata.get("model", ""))
-        except (OSError, json.JSONDecodeError):
+        except (OSError, json.JSONDecodeError, TypeError):
             model_name = ""
-        xgboost_available = False
         try:
-            import xgboost  # noqa: F401
-
-            xgboost_available = True
-        except ImportError:
-            pass
-        if not (xgboost_available and model_name != "XGBClassifier"):
-            return joblib.load(MODEL_PATH)
+            model = joblib.load(MODEL_PATH)
+            if not hasattr(model, "predict_proba"):
+                raise TypeError(f"persisted model {model_name or MODEL_PATH.name} has no predict_proba")
+            return model
+        except (OSError, EOFError, ValueError, TypeError, AttributeError, ImportError, ModuleNotFoundError) as exc:
+            logger.warning("Persisted detector model is unusable; rebuilding fallback: %s", type(exc).__name__)
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     try:
         from xgboost import XGBClassifier

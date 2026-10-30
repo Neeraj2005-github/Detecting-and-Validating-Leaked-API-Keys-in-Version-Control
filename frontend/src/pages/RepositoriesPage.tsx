@@ -41,6 +41,10 @@ export default function RepositoriesPage() {
       const nextRepos = Array.isArray(data) ? data : [];
       setRepos(nextRepos);
       return nextRepos;
+    } catch (error) {
+      setRepos([]);
+      setStatusMessage(`Unable to load repositories - ${getScanErrorMessage(error)}`);
+      return [];
     } finally {
       setLoading(false);
     }

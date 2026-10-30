@@ -1,28 +1,28 @@
 {
-  "credential_id": "oracle-rewritten",
-  "mttr_ms": 0.4163,
+  "credential_id": "test-failure",
+  "mttr_ms": 0.7258,
   "sandbox": "sqlite-in-memory-offline",
-  "state": "VERIFIED_SAFE",
+  "state": "FAILED_ROLLBACK",
   "transitions": [
     {
       "detail": "synthetic finding accepted",
       "state": "DETECTED",
-      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+      "timestamp": "2026-10-30T10:48:03.677054+00:00"
     },
     {
       "detail": "SQLite in-memory sandbox selected",
       "state": "SANDBOX_VALIDATING",
-      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+      "timestamp": "2026-10-30T10:48:03.677054+00:00"
     },
     {
       "detail": "synthetic credential replaced",
       "state": "ROTATING_CREDENTIAL",
-      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+      "timestamp": "2026-10-30T10:48:03.678071+00:00"
     },
     {
-      "detail": "post-rotation verification",
-      "state": "VERIFIED_SAFE",
-      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+      "detail": "RuntimeError",
+      "state": "FAILED_ROLLBACK",
+      "timestamp": "2026-10-30T10:48:03.678071+00:00"
     }
   ]
 }

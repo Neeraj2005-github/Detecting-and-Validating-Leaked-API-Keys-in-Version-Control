@@ -1,118 +1,37 @@
 {
-  "findings": [],
-  "fixture": false,
-  "ndcg": {
-    "at_10": 0.9999999999999999,
-    "at_5": 0.9999999999999998
-  },
-  "repository": "C:\\Users\\sakal\\AppData\\Local\\Temp\\cp1-scan-pcu7da9x",
-  "resolved_findings": [
+  "findings": [
     {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
       "features": {
         "assignment_operator_present": 1.0,
-        "digit_ratio": 0.09722222222222222,
-        "entropy": 4.354506466992801,
+        "digit_ratio": 0.1875,
+        "entropy": 4.491729296672175,
         "file_path_risk_score": 1.0,
         "is_base64_encoded": 0.0,
-        "line_length": 98.0,
-        "lowercase_ratio": 0.7916666666666666,
+        "line_length": 47.0,
+        "lowercase_ratio": 0.34375,
         "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9264040660253167,
-        "positive_keyword_proximity": 0.0,
-        "symbol_ratio": 0.1111111111111111,
-        "token_length": 72.0,
-        "transition_frequency": 0.9859154929577465,
-        "uppercase_ratio": 0.0
-      },
-      "file_path": "backend/app/core/config.py",
-      "fingerprint": "47198321190d1aea4fe735c5840a6322f1c09416ca052a00691abd400b492bac",
-      "git_lifecycle_state": "ACTIVE_HEAD",
-      "is_base64_encoded": false,
-      "is_false_positive": false,
-      "lifecycle_badge": "Rotated & Safe",
-      "line_number": 7,
-      "masked_match": "post****************************************************************d_db",
-      "ml_probability": 0.5,
-      "risk_score": 0.0,
-      "secret_type": "mysql_uri",
-      "shap": [],
-      "status": "ROTATED_SAFE",
-      "still_in_head": false
-    },
-    {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
-      "features": {
-        "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.60845859334435,
-        "file_path_risk_score": 0.5,
-        "is_base64_encoded": 0.0,
-        "line_length": 82.0,
-        "lowercase_ratio": 0.875,
-        "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9236139341604249,
-        "positive_keyword_proximity": 2.0,
-        "symbol_ratio": 0.125,
+        "normalized_entropy": 0.9672412566440975,
+        "positive_keyword_proximity": 1.0,
+        "symbol_ratio": 0.03125,
         "token_length": 32.0,
-        "transition_frequency": 0.9354838709677419,
-        "uppercase_ratio": 0.0
+        "transition_frequency": 1.0,
+        "uppercase_ratio": 0.4375
       },
-      "file_path": "backend/app/routers/auth.py",
-      "fingerprint": "1397f082128599839d2c61a20a575106b5d57d26416bb514165604bca5b32886",
+      "file_path": "config/application.env",
+      "fingerprint": "e03106d8eeec1fd079d427c57a42d9cd5c50a69b939e2e3fef1e9142c96b20b7",
       "git_lifecycle_state": "ACTIVE_HEAD",
       "is_base64_encoded": false,
       "is_false_positive": false,
-      "lifecycle_badge": "Rotated & Safe",
-      "line_number": 241,
-      "masked_match": "auth************************oken",
+      "lifecycle_badge": "Active in HEAD",
+      "line_number": 3,
+      "masked_match": "c2df************************ZXk=",
       "ml_probability": 0.5,
-      "risk_score": 0.0,
+      "risk_score": 71.5,
       "secret_type": "generic_assignment",
-      "shap": [],
-      "status": "ROTATED_SAFE",
-      "still_in_head": false
-    }
-  ],
-  "summary": {
-    "active_head": 0,
-    "filtered": 9,
-    "historical": 0,
-    "total": 0
-  },
-  "suppressed_findings": [
-    {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
-      "features": {
-        "assignment_operator_present": 1.0,
-        "digit_ratio": 0.13793103448275862,
-        "entropy": 4.394293874617553,
-        "file_path_risk_score": 1.0,
-        "is_base64_encoded": 0.0,
-        "line_length": 71.0,
-        "lowercase_ratio": 0.7068965517241379,
-        "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.946259680541641,
-        "positive_keyword_proximity": 0.0,
-        "symbol_ratio": 0.13793103448275862,
-        "token_length": 58.0,
-        "transition_frequency": 0.9473684210526315,
-        "uppercase_ratio": 0.017241379310344827
-      },
-      "file_path": "backend/.env.example",
-      "fingerprint": "0eb9f4c12299eddedb23dba8c68e7032990a49e2b462bbec7d309502e2b860c2",
-      "git_lifecycle_state": "ACTIVE_HEAD",
-      "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 7,
-      "masked_match": "post**************************************************ield",
-      "ml_probability": 0.5,
-      "risk_score": 0.0,
-      "secret_type": "mysql_uri",
       "shap": [
         {
-          "feature": "High Shannon Entropy (4.39)",
+          "feature": "High Shannon Entropy (3.73)",
           "impact": 0.0
         },
         {
@@ -120,53 +39,211 @@
           "impact": 0.0
         },
         {
-          "feature": "token_length (58.00)",
+          "feature": "token_length (23.00)",
           "impact": 0.0
         },
         {
-          "feature": "digit_ratio (0.14)",
+          "feature": "digit_ratio (0.09)",
           "impact": 0.0
         },
         {
-          "feature": "uppercase_ratio (0.02)",
+          "feature": "uppercase_ratio (0.00)",
           "impact": 0.0
         }
       ],
-      "status": "SUPPRESSED_DECOY",
       "still_in_head": true
     },
     {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
       "features": {
         "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.6368421881310113,
+        "digit_ratio": 0.08695652173913043,
+        "entropy": 3.729446194905256,
         "file_path_risk_score": 1.0,
-        "is_base64_encoded": 0.0,
+        "is_base64_encoded": 1.0,
         "line_length": 47.0,
-        "lowercase_ratio": 0.875,
+        "lowercase_ratio": 0.782608695652174,
         "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9552149097162597,
+        "normalized_entropy": 0.9545816816824315,
         "positive_keyword_proximity": 1.0,
-        "symbol_ratio": 0.125,
-        "token_length": 24.0,
+        "symbol_ratio": 0.13043478260869565,
+        "token_length": 23.0,
         "transition_frequency": 1.0,
         "uppercase_ratio": 0.0
       },
-      "file_path": "backend/.env.example",
-      "fingerprint": "f9040ad0e15572e3ed84cf1fead50b1aceeb78adbba61ad47a7ac736d2b67f3d",
+      "file_path": "config/application.env",
+      "fingerprint": "211dbbf6abe7057ebbd00882d1003ffb629f273b457e6312dae5a71bc1321334",
       "git_lifecycle_state": "ACTIVE_HEAD",
-      "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 19,
-      "masked_match": "your****************_key",
+      "is_base64_encoded": true,
+      "is_false_positive": false,
+      "lifecycle_badge": "Active in HEAD",
+      "line_number": 3,
+      "masked_match": "sg_b***************_key",
       "ml_probability": 0.5,
-      "risk_score": 0.0,
+      "risk_score": 71.5,
+      "secret_type": "base64_encoded",
+      "shap": [
+        {
+          "feature": "High Shannon Entropy (3.73)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.95)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (23.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.09)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "still_in_head": true
+    },
+    {
+      "commit_sha": "684d7c7055041a5bd5270e8292916e4141279d6a",
+      "features": {
+        "assignment_operator_present": 1.0,
+        "digit_ratio": 0.08163265306122448,
+        "entropy": 4.476456017363834,
+        "file_path_risk_score": 1.0,
+        "is_base64_encoded": 0.0,
+        "line_length": 62.0,
+        "lowercase_ratio": 0.7346938775510204,
+        "negative_keyword_proximity": 1.0,
+        "normalized_entropy": 0.952348351599361,
+        "positive_keyword_proximity": 1.0,
+        "symbol_ratio": 0.1836734693877551,
+        "token_length": 49.0,
+        "transition_frequency": 0.9166666666666666,
+        "uppercase_ratio": 0.0
+      },
+      "file_path": "config/legacy.env",
+      "fingerprint": "5d962004ce482205cddb3972a24f1a1692cc61665d017113d7684f8c28bd551f",
+      "git_lifecycle_state": "DELETED_HISTORY",
+      "is_base64_encoded": false,
+      "is_false_positive": false,
+      "lifecycle_badge": "Deleted in History",
+      "line_number": 1,
+      "masked_match": "mysq*****************************************/app",
+      "ml_probability": 0.5,
+      "risk_score": 43.5,
+      "secret_type": "mysql_uri",
+      "shap": [
+        {
+          "feature": "High Shannon Entropy (4.48)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.95)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (49.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.08)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "still_in_head": false
+    },
+    {
+      "commit_sha": "18c62b15c2ae40ebcd1e9f261a2f07060ecc9dfa",
+      "features": {
+        "assignment_operator_present": 1.0,
+        "digit_ratio": 0.1111111111111111,
+        "entropy": 3.6158175946759323,
+        "file_path_risk_score": 1.0,
+        "is_base64_encoded": 0.0,
+        "line_length": 40.0,
+        "lowercase_ratio": 0.7407407407407407,
+        "negative_keyword_proximity": 0.0,
+        "normalized_entropy": 0.9496928100209372,
+        "positive_keyword_proximity": 1.0,
+        "symbol_ratio": 0.14814814814814814,
+        "token_length": 27.0,
+        "transition_frequency": 1.0,
+        "uppercase_ratio": 0.0
+      },
+      "file_path": "config/tagged.env",
+      "fingerprint": "eb7bb149631fe05ca21bb5d82dbfd4055b92f4bc154cb30957d392a61ce86a8a",
+      "git_lifecycle_state": "BRANCH_TAG",
+      "is_base64_encoded": false,
+      "is_false_positive": false,
+      "lifecycle_badge": "Branch/Tag",
+      "line_number": 1,
+      "masked_match": "sg_g*******************c91e",
+      "ml_probability": 0.5,
+      "risk_score": 42.0,
       "secret_type": "generic_assignment",
       "shap": [
         {
-          "feature": "High Shannon Entropy (3.64)",
+          "feature": "High Shannon Entropy (3.62)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.95)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (27.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.11)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "still_in_head": false
+    },
+    {
+      "commit_sha": "a1db1c0da29b70a3d8ab0b7345b4424c029e11a1",
+      "features": {
+        "assignment_operator_present": 1.0,
+        "digit_ratio": 0.12121212121212122,
+        "entropy": 4.150158513166728,
+        "file_path_risk_score": 1.0,
+        "is_base64_encoded": 0.0,
+        "line_length": 51.0,
+        "lowercase_ratio": 0.7575757575757576,
+        "negative_keyword_proximity": 0.0,
+        "normalized_entropy": 0.9602562611062804,
+        "positive_keyword_proximity": 2.0,
+        "symbol_ratio": 0.12121212121212122,
+        "token_length": 33.0,
+        "transition_frequency": 1.0,
+        "uppercase_ratio": 0.0
+      },
+      "file_path": "config/legacy_auth.env",
+      "fingerprint": "3b5644039df32b3ec606d51e4e18b697d3910a8b161cb26bbcd21bed61f8d466",
+      "git_lifecycle_state": "BRANCH_TAG",
+      "is_base64_encoded": false,
+      "is_false_positive": false,
+      "lifecycle_badge": "Branch/Tag",
+      "line_number": 1,
+      "masked_match": "sg_o*************************71b2",
+      "ml_probability": 0.5,
+      "risk_score": 42.0,
+      "secret_type": "generic_assignment",
+      "shap": [
+        {
+          "feature": "High Shannon Entropy (4.15)",
           "impact": 0.0
         },
         {
@@ -174,11 +251,11 @@
           "impact": 0.0
         },
         {
-          "feature": "token_length (24.00)",
+          "feature": "token_length (33.00)",
           "impact": 0.0
         },
         {
-          "feature": "digit_ratio (0.00)",
+          "feature": "digit_ratio (0.12)",
           "impact": 0.0
         },
         {
@@ -186,53 +263,52 @@
           "impact": 0.0
         }
       ],
-      "status": "SUPPRESSED_DECOY",
-      "still_in_head": true
+      "still_in_head": false
     },
     {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "commit_sha": "2fdc5ede13ce2fadffa63df37808a303e1fb10c5",
       "features": {
         "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.572469458770135,
+        "digit_ratio": 0.10810810810810811,
+        "entropy": 3.8951509201400127,
         "file_path_risk_score": 1.0,
         "is_base64_encoded": 0.0,
-        "line_length": 30.0,
-        "lowercase_ratio": 0.8235294117647058,
+        "line_length": 53.0,
+        "lowercase_ratio": 0.7837837837837838,
         "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9654175532860071,
+        "normalized_entropy": 0.9529507842445611,
         "positive_keyword_proximity": 1.0,
-        "symbol_ratio": 0.17647058823529413,
-        "token_length": 17.0,
-        "transition_frequency": 1.0,
+        "symbol_ratio": 0.10810810810810811,
+        "token_length": 37.0,
+        "transition_frequency": 0.9444444444444444,
         "uppercase_ratio": 0.0
       },
-      "file_path": "backend/.env.example",
-      "fingerprint": "5ba0a9ba3ac56e356835277ff03e38d2f676c5159a5544fc6c8927905919dc19",
-      "git_lifecycle_state": "ACTIVE_HEAD",
+      "file_path": "config/rewritten.env",
+      "fingerprint": "875ec4007b9fbd864b7b7646ed6ab061e16256d4b58f1fe7d9418d4f36ef53e0",
+      "git_lifecycle_state": "REWRITTEN",
       "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 24,
-      "masked_match": "your*********_key",
+      "is_false_positive": false,
+      "lifecycle_badge": "Rewritten History",
+      "line_number": 1,
+      "masked_match": "sg_r*****************************0c77",
       "ml_probability": 0.5,
-      "risk_score": 0.0,
+      "risk_score": 37.5,
       "secret_type": "generic_assignment",
       "shap": [
         {
-          "feature": "High Shannon Entropy (3.57)",
+          "feature": "High Shannon Entropy (3.90)",
           "impact": 0.0
         },
         {
-          "feature": "Normalized Entropy (0.97)",
+          "feature": "Normalized Entropy (0.95)",
           "impact": 0.0
         },
         {
-          "feature": "token_length (17.00)",
+          "feature": "token_length (37.00)",
           "impact": 0.0
         },
         {
-          "feature": "digit_ratio (0.00)",
+          "feature": "digit_ratio (0.11)",
           "impact": 0.0
         },
         {
@@ -240,41 +316,89 @@
           "impact": 0.0
         }
       ],
-      "status": "SUPPRESSED_DECOY",
-      "still_in_head": true
-    },
+      "still_in_head": false
+    }
+  ],
+  "fixture": true,
+  "ndcg": {
+    "at_10": 0.9945498058479257,
+    "at_5": 0.954264741448103
+  },
+  "repository": "D:\\Detecting secret across version control\\artifacts\\synthetic_repo_v1",
+  "resolved_findings": [
     {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
       "features": {
         "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.4906015629507223,
+        "digit_ratio": 0.05,
+        "entropy": 3.684183719779189,
         "file_path_risk_score": 1.0,
         "is_base64_encoded": 0.0,
-        "line_length": 44.0,
-        "lowercase_ratio": 0.875,
-        "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9432937242129209,
-        "positive_keyword_proximity": 2.0,
-        "symbol_ratio": 0.125,
-        "token_length": 24.0,
-        "transition_frequency": 1.0,
-        "uppercase_ratio": 0.0
+        "line_length": 38.0,
+        "lowercase_ratio": 0.0,
+        "negative_keyword_proximity": 1.0,
+        "normalized_entropy": 0.9676491409916022,
+        "positive_keyword_proximity": 1.0,
+        "symbol_ratio": 0.0,
+        "token_length": 20.0,
+        "transition_frequency": 0.9473684210526315,
+        "uppercase_ratio": 0.95
       },
-      "file_path": "backend/.env.example",
-      "fingerprint": "96a2481be62c780b042050bbe65622844948ea2f758c007bfc9bd2a0a1dd15e0",
+      "file_path": "config/application.env",
+      "fingerprint": "f659d73e9f19862b16302ab4a54bbd6d71c0a987002ff74cb88c185ebc128d34",
+      "git_lifecycle_state": "ACTIVE_HEAD",
+      "is_base64_encoded": false,
+      "is_false_positive": false,
+      "lifecycle_badge": "Rotated & Safe",
+      "line_number": 1,
+      "masked_match": "AKIA************MPLE",
+      "ml_probability": 0.5,
+      "risk_score": 0.0,
+      "secret_type": "aws_access_key",
+      "shap": [],
+      "status": "ROTATED_SAFE",
+      "still_in_head": false
+    }
+  ],
+  "summary": {
+    "active_head": 2,
+    "filtered": 1,
+    "historical": 1,
+    "total": 6
+  },
+  "suppressed_findings": [
+    {
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "features": {
+        "assignment_operator_present": 1.0,
+        "digit_ratio": 0.1,
+        "entropy": 3.484183719779189,
+        "file_path_risk_score": 1.0,
+        "is_base64_encoded": 0.0,
+        "line_length": 29.0,
+        "lowercase_ratio": 0.0,
+        "negative_keyword_proximity": 2.0,
+        "normalized_entropy": 0.9415593781188418,
+        "positive_keyword_proximity": 1.0,
+        "symbol_ratio": 0.0,
+        "token_length": 20.0,
+        "transition_frequency": 0.9473684210526315,
+        "uppercase_ratio": 0.9
+      },
+      "file_path": "config/application.env",
+      "fingerprint": "567e84877c9761e8c59107482ecf180efd8711611abc6facb2ca14b1d7732c57",
       "git_lifecycle_state": "ACTIVE_HEAD",
       "is_base64_encoded": false,
       "is_false_positive": true,
       "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 31,
-      "masked_match": "your****************cret",
+      "line_number": 6,
+      "masked_match": "AKIA************AL00",
       "ml_probability": 0.5,
       "risk_score": 0.0,
-      "secret_type": "generic_assignment",
+      "secret_type": "aws_access_key",
       "shap": [
         {
-          "feature": "High Shannon Entropy (3.49)",
+          "feature": "High Shannon Entropy (3.48)",
           "impact": 0.0
         },
         {
@@ -282,285 +406,15 @@
           "impact": 0.0
         },
         {
-          "feature": "token_length (24.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "digit_ratio (0.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "uppercase_ratio (0.00)",
-          "impact": 0.0
-        }
-      ],
-      "status": "SUPPRESSED_DECOY",
-      "still_in_head": true
-    },
-    {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
-      "features": {
-        "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.4235332098491886,
-        "file_path_risk_score": 1.0,
-        "is_base64_encoded": 0.0,
-        "line_length": 48.0,
-        "lowercase_ratio": 0.875,
-        "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9251692962502827,
-        "positive_keyword_proximity": 1.0,
-        "symbol_ratio": 0.125,
-        "token_length": 24.0,
-        "transition_frequency": 0.9565217391304348,
-        "uppercase_ratio": 0.0
-      },
-      "file_path": "backend/.env.example",
-      "fingerprint": "ff585d4faa301330c43b4525b124fcae4899b18ad7efe73a9193a8d8b3640947",
-      "git_lifecycle_state": "ACTIVE_HEAD",
-      "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 33,
-      "masked_match": "your****************here",
-      "ml_probability": 0.5,
-      "risk_score": 0.0,
-      "secret_type": "generic_assignment",
-      "shap": [
-        {
-          "feature": "High Shannon Entropy (3.42)",
-          "impact": 0.0
-        },
-        {
-          "feature": "Normalized Entropy (0.93)",
-          "impact": 0.0
-        },
-        {
-          "feature": "token_length (24.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "digit_ratio (0.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "uppercase_ratio (0.00)",
-          "impact": 0.0
-        }
-      ],
-      "status": "SUPPRESSED_DECOY",
-      "still_in_head": true
-    },
-    {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
-      "features": {
-        "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.2195282822995472,
-        "file_path_risk_score": 1.0,
-        "is_base64_encoded": 0.0,
-        "line_length": 31.0,
-        "lowercase_ratio": 0.8823529411764706,
-        "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9691745848606976,
-        "positive_keyword_proximity": 1.0,
-        "symbol_ratio": 0.11764705882352941,
-        "token_length": 17.0,
-        "transition_frequency": 0.875,
-        "uppercase_ratio": 0.0
-      },
-      "file_path": "backend/.env.example",
-      "fingerprint": "373458183234ddd329ac6d803f933970eda57e67587ff57a180c295ac46abbb3",
-      "git_lifecycle_state": "DELETED_HISTORY",
-      "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 43,
-      "masked_match": "your*********word",
-      "ml_probability": 0.5,
-      "risk_score": 0.0,
-      "secret_type": "generic_assignment",
-      "shap": [
-        {
-          "feature": "High Shannon Entropy (3.22)",
-          "impact": 0.0
-        },
-        {
-          "feature": "Normalized Entropy (0.97)",
-          "impact": 0.0
-        },
-        {
-          "feature": "token_length (17.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "digit_ratio (0.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "uppercase_ratio (0.00)",
-          "impact": 0.0
-        }
-      ],
-      "status": "SUPPRESSED_DECOY",
-      "still_in_head": false
-    },
-    {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
-      "features": {
-        "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.4548223999466057,
-        "file_path_risk_score": 0.5,
-        "is_base64_encoded": 0.0,
-        "line_length": 61.0,
-        "lowercase_ratio": 0.8823529411764706,
-        "negative_keyword_proximity": 1.0,
-        "normalized_entropy": 0.963698336942612,
-        "positive_keyword_proximity": 1.0,
-        "symbol_ratio": 0.11764705882352941,
-        "token_length": 17.0,
-        "transition_frequency": 0.9375,
-        "uppercase_ratio": 0.0
-      },
-      "file_path": "backend/app/routers/admin.py",
-      "fingerprint": "3a311fe76d1ace19046b05a0c41033e181281c1d0d74ff37232c6f99c988c684",
-      "git_lifecycle_state": "ACTIVE_HEAD",
-      "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 406,
-      "masked_match": "get_*********hash",
-      "ml_probability": 0.5,
-      "risk_score": 0.0,
-      "secret_type": "generic_assignment",
-      "shap": [
-        {
-          "feature": "High Shannon Entropy (3.45)",
-          "impact": 0.0
-        },
-        {
-          "feature": "Normalized Entropy (0.96)",
-          "impact": 0.0
-        },
-        {
-          "feature": "token_length (17.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "digit_ratio (0.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "uppercase_ratio (0.00)",
-          "impact": 0.0
-        }
-      ],
-      "status": "SUPPRESSED_DECOY",
-      "still_in_head": true
-    },
-    {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
-      "features": {
-        "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.327819531114783,
-        "file_path_risk_score": 0.5,
-        "is_base64_encoded": 0.0,
-        "line_length": 45.0,
-        "lowercase_ratio": 0.9375,
-        "negative_keyword_proximity": 2.0,
-        "normalized_entropy": 0.9619555747789698,
-        "positive_keyword_proximity": 1.0,
-        "symbol_ratio": 0.0625,
-        "token_length": 16.0,
-        "transition_frequency": 1.0,
-        "uppercase_ratio": 0.0
-      },
-      "file_path": "backend/app/routers/auth.py",
-      "fingerprint": "00a5af5608027ee19ad3b34c126bc39a6f544cbf2d0d059755f8bc80dd316c85",
-      "git_lifecycle_state": "ACTIVE_HEAD",
-      "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 140,
-      "masked_match": "plac********hash",
-      "ml_probability": 0.5,
-      "risk_score": 0.0,
-      "secret_type": "generic_assignment",
-      "shap": [
-        {
-          "feature": "High Shannon Entropy (3.33)",
-          "impact": 0.0
-        },
-        {
-          "feature": "Normalized Entropy (0.96)",
-          "impact": 0.0
-        },
-        {
-          "feature": "token_length (16.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "digit_ratio (0.00)",
-          "impact": 0.0
-        },
-        {
-          "feature": "uppercase_ratio (0.00)",
-          "impact": 0.0
-        }
-      ],
-      "status": "SUPPRESSED_DECOY",
-      "still_in_head": true
-    },
-    {
-      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
-      "features": {
-        "assignment_operator_present": 1.0,
-        "digit_ratio": 0.0,
-        "entropy": 3.4464393446710155,
-        "file_path_risk_score": 0.5,
-        "is_base64_encoded": 0.0,
-        "line_length": 45.0,
-        "lowercase_ratio": 0.85,
-        "negative_keyword_proximity": 0.0,
-        "normalized_entropy": 0.9613599428104826,
-        "positive_keyword_proximity": 1.0,
-        "symbol_ratio": 0.05,
-        "token_length": 20.0,
-        "transition_frequency": 1.0,
-        "uppercase_ratio": 0.1
-      },
-      "file_path": "frontend/src/api/axios.js",
-      "fingerprint": "2628c9081373c74abfa274a55911a2c08be6b032c7b296549261f11004419fde",
-      "git_lifecycle_state": "ACTIVE_HEAD",
-      "is_base64_encoded": false,
-      "is_false_positive": true,
-      "lifecycle_badge": "Suppressed Decoy",
-      "line_number": 18,
-      "masked_match": "loca************Item",
-      "ml_probability": 0.5,
-      "risk_score": 0.0,
-      "secret_type": "generic_assignment",
-      "shap": [
-        {
-          "feature": "High Shannon Entropy (3.45)",
-          "impact": 0.0
-        },
-        {
-          "feature": "Normalized Entropy (0.96)",
-          "impact": 0.0
-        },
-        {
           "feature": "token_length (20.00)",
           "impact": 0.0
         },
         {
-          "feature": "digit_ratio (0.00)",
+          "feature": "digit_ratio (0.10)",
           "impact": 0.0
         },
         {
-          "feature": "uppercase_ratio (0.10)",
+          "feature": "uppercase_ratio (0.90)",
           "impact": 0.0
         }
       ],

@@ -112,6 +112,11 @@ class CP1RotateRequest(BaseModel):
     force_failure: bool = False
 
 
+class APIRotateRequest(BaseModel):
+    finding_id: str
+    force_failure: bool = False
+
+
 def _cp1_fixture_path() -> Path:
     return PROJECT_ROOT / "artifacts" / "synthetic_repo_v1"
 
@@ -527,6 +532,12 @@ def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
             temporary.cleanup()
 
 
+@app.post("/api/scan")
+def api_scan(request: CP1ScanRequest) -> dict[str, object]:
+    """Compatibility alias for the primary frontend scan workflow."""
+    return cp1_scan(request)
+
+
 @app.post("/api/cp1/reproduce-o1")
 def cp1_reproduce_o1() -> dict[str, object]:
     """Run O1.1 and return the redacted commit timeline and verification."""
@@ -562,6 +573,12 @@ def cp1_rotate(finding_id: str, request: CP1RotateRequest | None = None) -> dict
         result["finding_id"] = finding_id
         result["status"] = "ROTATED_SAFE"
     return result
+
+
+@app.post("/api/rotate")
+def api_rotate(request: APIRotateRequest) -> dict[str, object]:
+    """Compatibility endpoint for clients that send the finding ID in JSON."""
+    return cp1_rotate(request.finding_id, CP1RotateRequest(force_failure=request.force_failure))
 
 
 @app.post("/scan", response_model=ScanResponse)
