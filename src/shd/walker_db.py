@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, create_engine, delete, func, inspect, select, text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, Text, create_engine, delete, func, inspect, select, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 from .models import BlobRecord, SourceFinding
@@ -79,6 +79,14 @@ class FindingRow(Base):
     masked_preview: Mapped[str] = mapped_column(String(512), nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    commit_sha: Mapped[str] = mapped_column(String(64), nullable=False, default="working-tree")
+    classification: Mapped[str] = mapped_column(String(32), nullable=False, default="UNKNOWN")
+    validation_status: Mapped[str] = mapped_column(String(32), nullable=False, default="NOT_CHECKED")
+    criticality: Mapped[str] = mapped_column(String(16), nullable=False, default="UNKNOWN")
+    features: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    ml_verdict: Mapped[str] = mapped_column(String(32), nullable=False, default="NOT_AVAILABLE")
+    is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    is_historical: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
 
 class BlobRecordRow(Base):
@@ -110,6 +118,22 @@ class HistoricalFindingRow(Base):
     secret_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     masked_preview: Mapped[str] = mapped_column(String(512), nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
+    classification: Mapped[str] = mapped_column(String(32), nullable=False, default="UNKNOWN")
+    validation_status: Mapped[str] = mapped_column(String(32), nullable=False, default="NOT_CHECKED")
+    criticality: Mapped[str] = mapped_column(String(16), nullable=False, default="UNKNOWN")
+    features: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    ml_verdict: Mapped[str] = mapped_column(String(32), nullable=False, default="NOT_AVAILABLE")
+    is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_historical: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class CP1ArtifactRow(Base):
+    __tablename__ = "cp1_artifacts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
+    payload: Mapped[dict] = mapped_column(JSON, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
 
 def init_db() -> None:
@@ -125,6 +149,35 @@ def init_db() -> None:
     if "repository_id" not in finding_columns:
         with engine.begin() as connection:
             connection.execute(text("ALTER TABLE findings ADD COLUMN repository_id VARCHAR(255)"))
+    finding_migrations = {
+        "commit_sha": "VARCHAR(64) NOT NULL DEFAULT 'working-tree'",
+        "classification": "VARCHAR(32) NOT NULL DEFAULT 'UNKNOWN'",
+        "validation_status": "VARCHAR(32) NOT NULL DEFAULT 'NOT_CHECKED'",
+        "criticality": "VARCHAR(16) NOT NULL DEFAULT 'UNKNOWN'",
+        "features": "JSON NOT NULL DEFAULT '{}'",
+        "ml_verdict": "VARCHAR(32) NOT NULL DEFAULT 'NOT_AVAILABLE'",
+        "is_current": "BOOLEAN NOT NULL DEFAULT 1",
+        "is_historical": "BOOLEAN NOT NULL DEFAULT 0",
+    }
+    with engine.begin() as connection:
+        for name, definition in finding_migrations.items():
+            if name not in finding_columns:
+                connection.execute(text(f"ALTER TABLE findings ADD COLUMN {name} {definition}"))
+
+    historical_columns = {column["name"] for column in inspect(engine).get_columns("historical_findings")}
+    historical_migrations = {
+        "classification": "VARCHAR(32) NOT NULL DEFAULT 'UNKNOWN'",
+        "validation_status": "VARCHAR(32) NOT NULL DEFAULT 'NOT_CHECKED'",
+        "criticality": "VARCHAR(16) NOT NULL DEFAULT 'UNKNOWN'",
+        "features": "JSON NOT NULL DEFAULT '{}'",
+        "ml_verdict": "VARCHAR(32) NOT NULL DEFAULT 'NOT_AVAILABLE'",
+        "is_current": "BOOLEAN NOT NULL DEFAULT 0",
+        "is_historical": "BOOLEAN NOT NULL DEFAULT 1",
+    }
+    with engine.begin() as connection:
+        for name, definition in historical_migrations.items():
+            if name not in historical_columns:
+                connection.execute(text(f"ALTER TABLE historical_findings ADD COLUMN {name} {definition}"))
 
     with engine.begin() as connection:
         connection.execute(
@@ -210,6 +263,14 @@ def persist_source_scan(repo_path: str, repo_id: str, session: Session) -> tuple
                 masked_preview=finding.masked_preview,
                 status=finding.status,
                 created_at=scan.completed_at,
+                classification=finding.classification,
+                commit_sha=finding.commit_sha,
+                validation_status=finding.validation_status,
+                criticality=finding.criticality,
+                features=finding.features,
+                ml_verdict=finding.ml_verdict,
+                is_current=finding.is_current,
+                is_historical=finding.is_historical,
             )
             for finding in result.findings
         ]
@@ -283,6 +344,11 @@ def get_historical_findings(repo_id: str | None, session: Session) -> list[Histo
 
 def _historical_finding_rows(record: BlobRecord, repo_id: str) -> list[HistoricalFindingRow]:
     from .source_scanner import _fingerprint, _mask
+    from backend.evaluation import ValidationStatus, classify_path, criticality_level
+    from backend.ml_filter.features import extract_features
+
+    if record.change_type == "deleted":
+        return []
 
     rows = []
     for finding in match(record):
@@ -306,6 +372,23 @@ def _historical_finding_rows(record: BlobRecord, repo_id: str) -> list[Historica
                 secret_hash=secret_hash,
                 masked_preview=_mask(finding.matched_string),
                 status="historical",
+                classification=classify_path(record.file_path).value,
+                validation_status=ValidationStatus.NOT_CHECKED.value,
+                criticality=criticality_level(
+                    secret_type=finding.secret_type,
+                    confidence=finding.detector_confidence,
+                    classification=classify_path(record.file_path),
+                    is_current=False,
+                    is_historical=True,
+                ),
+                features=extract_features(
+                    finding.matched_string,
+                    record.file_path,
+                    record.blob_content.splitlines()[finding.line_number - 1],
+                ),
+                ml_verdict="NOT_AVAILABLE",
+                is_current=False,
+                is_historical=True,
             )
         )
     return rows

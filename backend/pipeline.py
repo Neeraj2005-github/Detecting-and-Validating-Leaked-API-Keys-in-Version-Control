@@ -13,7 +13,8 @@ from sklearn.ensemble import RandomForestClassifier
 from backend.classification.classifier import classify
 from backend.detection.gitleaks_runner import run_gitleaks
 from backend.detection.normalizer import normalize
-from backend.ml_filter.features import FEATURE_COLUMNS, extract_features
+from backend.evaluation import ValidationStatus, classify_path, criticality_level
+from backend.ml_filter.features import FEATURE_COLUMNS
 
 MODEL_PATH = Path(__file__).resolve().parent / "ml_filter" / "model.pkl"
 GROUND_TRUTH = Path(__file__).resolve().parent.parent / "testdata" / "ground_truth.yaml"
@@ -57,19 +58,6 @@ def _prepare_repo_for_scan(repo_path: str) -> tuple[str, str | None]:
     return str(local_path.resolve()), None
 
 
-def _lookup_raw_value(repo_path: str, file_path: str, line_number: int) -> str:
-    candidate = Path(repo_path) / file_path
-    if not candidate.exists():
-        return ""
-    try:
-        lines = candidate.read_text(encoding="utf-8", errors="ignore").splitlines()
-        if 1 <= line_number <= len(lines):
-            return lines[line_number - 1]
-    except Exception:
-        pass
-    return ""
-
-
 def run_pipeline(repo_path: str) -> list[dict]:
     """M1 -> M2 -> M3 -> M3b in sequence. Returns final list of findings that
     survived the ML filter, each with: commit_sha, file, line, secret_type,
@@ -79,33 +67,56 @@ def run_pipeline(repo_path: str) -> list[dict]:
     worktree, temp_dir = _prepare_repo_for_scan(repo_path)
     repo = _normalize_repo_path(worktree)
     try:
-        _ensure_model()
         raw_findings = run_gitleaks(repo)
         findings = normalize(raw_findings)
 
-        model = joblib.load(MODEL_PATH)
+        try:
+            model = joblib.load(MODEL_PATH) if MODEL_PATH.exists() else None
+        except Exception:
+            model = None
         kept: list[dict] = []
         for finding in findings:
             classified = classify(finding)
-            raw_value = _lookup_raw_value(repo, finding.file, int(finding.line))
-            surrounding = ""
-            if raw_value:
-                surrounding = raw_value
-            features = extract_features(raw_value, finding.file, surrounding)
-            vector = [features[col] for col in FEATURE_COLUMNS]
-            proba = model.predict_proba([vector])[0]
-            confidence = float(proba[1]) if len(proba) > 1 else float(proba[0])
-            if confidence >= 0.5:
-                kept.append({
-                    "commit_sha": classified.commit_sha,
-                    "file": classified.file,
-                    "line": classified.line,
-                    "rule_id": finding.rule_id,
-                    "secret_hash": classified.matched_string_hash,
-                    "secret_type": classified.secret_type,
-                    "criticality": classified.criticality,
-                    "ml_confidence": confidence,
-                })
+            features = finding.features
+            confidence = None
+            verdict = "NOT_AVAILABLE"
+            if model is not None:
+                try:
+                    vector = [features[col] for col in FEATURE_COLUMNS]
+                    proba = model.predict_proba([vector])[0]
+                    confidence = float(proba[1]) if len(proba) > 1 else float(proba[0])
+                    verdict = "Likely real secret" if confidence >= 0.5 else "Likely false positive"
+                except (AttributeError, KeyError, ValueError):
+                    confidence = None
+                    verdict = "NOT_AVAILABLE"
+            classification = classify_path(finding.file)
+            is_current = True
+            is_historical = False
+            kept.append({
+                "commit_sha": classified.commit_sha,
+                "file": classified.file,
+                "line": classified.line,
+                "rule_id": finding.rule_id,
+                "secret_hash": classified.matched_string_hash,
+                "masked_preview": finding.masked_preview,
+                "secret_type": classified.secret_type,
+                "criticality": classified.criticality,
+                "ml_confidence": confidence,
+                "classification": classification.value,
+                "validation_status": ValidationStatus.NOT_CHECKED.value,
+                "criticality_level": criticality_level(
+                    secret_type=classified.secret_type,
+                    confidence=confidence,
+                    classification=classification,
+                    is_current=is_current,
+                    is_historical=is_historical,
+                ),
+                "ml_verdict": verdict,
+                "detected": True,
+                "is_current": is_current,
+                "is_historical": is_historical,
+                "features": features,
+            })
         return kept
     finally:
         if temp_dir:

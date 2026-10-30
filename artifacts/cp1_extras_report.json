@@ -1,0 +1,597 @@
+{
+  "schema_version": "1.0.0",
+  "extra_1_dataset_kappa": {
+    "dataset": "D:\\Detecting secret across version control\\data\\real_repo_20_labels.csv",
+    "dataset_sha256": "f188bb95bd49c18af62e481a07de10ccd59d0989275bf09ca165a886d81e1108",
+    "frozen_split": {
+      "test_groups": [
+        "group-03",
+        "group-06"
+      ],
+      "test_count": 8,
+      "train_count": 16
+    },
+    "agreement": {
+      "sample_count": 24,
+      "labels": [
+        "DECOY",
+        "SECRET"
+      ],
+      "observed_agreement": 0.9166666666666666,
+      "expected_agreement": 0.5,
+      "cohen_kappa": 0.8333333333333334,
+      "formula": "kappa = (p_o - p_e) / (1 - p_e)"
+    }
+  },
+  "extra_2_xgboost_ablation": {
+    "dataset_rows": 24,
+    "train_rows": 16,
+    "test_rows": 8,
+    "method": "5-fold StratifiedKFold; scale_pos_weight=n_neg/n_pos",
+    "ablation": {
+      "config_A": {
+        "feature_names": [
+          "entropy"
+        ],
+        "metrics": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "roc_auc": 0.5,
+          "false_positive_rate": 1.0
+        },
+        "cross_validation": {
+          "method": "static_entropy_threshold",
+          "folds": [],
+          "mean": {}
+        },
+        "frozen_test_groups": [
+          "group-03",
+          "group-06"
+        ]
+      },
+      "config_B": {
+        "feature_names": [
+          "entropy",
+          "normalized_entropy",
+          "token_length",
+          "digit_ratio",
+          "uppercase_ratio",
+          "lowercase_ratio",
+          "symbol_ratio",
+          "transition_frequency"
+        ],
+        "metrics": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "roc_auc": 1.0,
+          "false_positive_rate": 0.0
+        },
+        "cross_validation": {
+          "folds": [
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            }
+          ],
+          "mean": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "roc_auc": 1.0,
+            "false_positive_rate": 0.0
+          }
+        },
+        "frozen_test_groups": [
+          "group-03",
+          "group-06"
+        ]
+      },
+      "config_C": {
+        "feature_names": [
+          "entropy",
+          "normalized_entropy",
+          "token_length",
+          "digit_ratio",
+          "uppercase_ratio",
+          "lowercase_ratio",
+          "symbol_ratio",
+          "transition_frequency",
+          "positive_keyword_proximity",
+          "negative_keyword_proximity",
+          "file_path_risk_score"
+        ],
+        "metrics": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "roc_auc": 1.0,
+          "false_positive_rate": 0.0
+        },
+        "cross_validation": {
+          "folds": [
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            }
+          ],
+          "mean": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "roc_auc": 1.0,
+            "false_positive_rate": 0.0
+          }
+        },
+        "frozen_test_groups": [
+          "group-03",
+          "group-06"
+        ]
+      },
+      "config_D": {
+        "feature_names": [
+          "entropy",
+          "normalized_entropy",
+          "token_length",
+          "digit_ratio",
+          "uppercase_ratio",
+          "lowercase_ratio",
+          "symbol_ratio",
+          "transition_frequency",
+          "positive_keyword_proximity",
+          "negative_keyword_proximity",
+          "file_path_risk_score",
+          "is_base64_encoded",
+          "assignment_operator_present",
+          "line_length"
+        ],
+        "metrics": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "roc_auc": 1.0,
+          "false_positive_rate": 0.0
+        },
+        "cross_validation": {
+          "folds": [
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            },
+            {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "roc_auc": 1.0,
+              "false_positive_rate": 0.0
+            }
+          ],
+          "mean": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "roc_auc": 1.0,
+            "false_positive_rate": 0.0
+          }
+        },
+        "frozen_test_groups": [
+          "group-03",
+          "group-06"
+        ]
+      }
+    }
+  },
+  "extra_3_shap_risk": {
+    "finding_count": 8,
+    "ranking": {
+      "ndcg_at_5": 1.0,
+      "ndcg_at_10": 1.0
+    },
+    "findings": [
+      {
+        "commit_sha": "18c62b15c2ae40ebcd1e9f261a2f07060ecc9dfa",
+        "file_path": "config/tagged.env",
+        "line_number": 1,
+        "secret_type": "generic_assignment",
+        "git_lifecycle_state": "BRANCH_TAG",
+        "composite_risk_score": 44.99999999999999,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (3.62)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.95)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (27.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 2
+      },
+      {
+        "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+        "file_path": "config/application.env",
+        "line_number": 1,
+        "secret_type": "aws_access_key",
+        "git_lifecycle_state": "ACTIVE_HEAD",
+        "composite_risk_score": 76.75,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (3.68)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.97)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (20.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 3
+      },
+      {
+        "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+        "file_path": "config/application.env",
+        "line_number": 3,
+        "secret_type": "generic_assignment",
+        "git_lifecycle_state": "ACTIVE_HEAD",
+        "composite_risk_score": 70.0,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (4.49)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.97)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (32.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 3
+      },
+      {
+        "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+        "file_path": "config/application.env",
+        "line_number": 3,
+        "secret_type": "base64_encoded",
+        "git_lifecycle_state": "ACTIVE_HEAD",
+        "composite_risk_score": 70.0,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (3.73)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.95)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (23.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 3
+      },
+      {
+        "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+        "file_path": "config/application.env",
+        "line_number": 6,
+        "secret_type": "aws_access_key",
+        "git_lifecycle_state": "ACTIVE_HEAD",
+        "composite_risk_score": 76.75,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (3.48)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.94)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (20.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 3
+      },
+      {
+        "commit_sha": "684d7c7055041a5bd5270e8292916e4141279d6a",
+        "file_path": "config/legacy.env",
+        "line_number": 1,
+        "secret_type": "mysql_uri",
+        "git_lifecycle_state": "DELETED_HISTORY",
+        "composite_risk_score": 42.0,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (4.48)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.95)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (49.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 1
+      },
+      {
+        "commit_sha": "a1db1c0da29b70a3d8ab0b7345b4424c029e11a1",
+        "file_path": "config/legacy_auth.env",
+        "line_number": 1,
+        "secret_type": "generic_assignment",
+        "git_lifecycle_state": "BRANCH_TAG",
+        "composite_risk_score": 44.99999999999999,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (4.15)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.96)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (33.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 2
+      },
+      {
+        "commit_sha": "2fdc5ede13ce2fadffa63df37808a303e1fb10c5",
+        "file_path": "config/rewritten.env",
+        "line_number": 1,
+        "secret_type": "generic_assignment",
+        "git_lifecycle_state": "REWRITTEN",
+        "composite_risk_score": 37.5,
+        "ml_probability": 0.5,
+        "top_positive_factors": [
+          {
+            "feature": "High Shannon Entropy (3.90)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Normalized Entropy (0.95)",
+            "impact": 0.0,
+            "direction": "positive"
+          },
+          {
+            "feature": "Long Credential Token (37.00)",
+            "impact": 0.0,
+            "direction": "positive"
+          }
+        ],
+        "top_negative_factors": [],
+        "ideal_severity": 0
+      }
+    ]
+  },
+  "extra_4_rotation": {
+    "status": "VERIFIED_SAFE",
+    "sandbox": "sqlite_in_memory",
+    "fingerprint": "64078e541bcc010c30c1069a201bf7a08a23f5b71a18c326537e652b5a560667",
+    "started_at_ns": 1793250643361438500,
+    "completed_at_ns": 1793250643361438500,
+    "mttr_ms": 0.0,
+    "transitions": [
+      {
+        "state": "DETECTED",
+        "timestamp_ns": 1793250643361438500
+      },
+      {
+        "state": "SANDBOX_VALIDATING",
+        "timestamp_ns": 1793250643361438500
+      },
+      {
+        "state": "ROTATING_CREDENTIAL",
+        "timestamp_ns": 1793250643361438500
+      },
+      {
+        "state": "VERIFIED_SAFE",
+        "timestamp_ns": 1793250643361438500
+      }
+    ]
+  },
+  "extra_5_public_aggregate": {
+    "schema_version": "1.0.0",
+    "source": "privacy_safe_aggregate_only",
+    "repository_count": 5,
+    "repositories": [
+      {
+        "repository": "django/django",
+        "scanned": false,
+        "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+        "commit_count": 0,
+        "raw_match_count": 0,
+        "xgboost_filtered_count": 0,
+        "final_tp_count": 0
+      },
+      {
+        "repository": "pallets/flask",
+        "scanned": false,
+        "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+        "commit_count": 0,
+        "raw_match_count": 0,
+        "xgboost_filtered_count": 0,
+        "final_tp_count": 0
+      },
+      {
+        "repository": "psf/requests",
+        "scanned": false,
+        "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+        "commit_count": 0,
+        "raw_match_count": 0,
+        "xgboost_filtered_count": 0,
+        "final_tp_count": 0
+      },
+      {
+        "repository": "fastapi/fastapi",
+        "scanned": false,
+        "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+        "commit_count": 0,
+        "raw_match_count": 0,
+        "xgboost_filtered_count": 0,
+        "final_tp_count": 0
+      },
+      {
+        "repository": "encode/starlette",
+        "scanned": false,
+        "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+        "commit_count": 0,
+        "raw_match_count": 0,
+        "xgboost_filtered_count": 0,
+        "final_tp_count": 0
+      }
+    ],
+    "totals": {
+      "commit_count": 0,
+      "raw_match_count": 0,
+      "xgboost_filtered_count": 0,
+      "final_tp_count": 0
+    },
+    "plaintext_persisted": false
+  },
+  "fixture": {
+    "repository": "D:\\Detecting secret across version control\\artifacts\\synthetic_repo_v1",
+    "entry_count": 10,
+    "expected_labels": {
+      "TP": 6,
+      "FP_DECOY": 4
+    }
+  }
+}

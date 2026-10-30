@@ -1,0 +1,1 @@
+"""History scanning primitives."""

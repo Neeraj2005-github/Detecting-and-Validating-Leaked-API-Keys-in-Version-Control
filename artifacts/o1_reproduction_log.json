@@ -1,0 +1,45 @@
+{
+  "repo_path": "C:\\Users\\sakal\\AppData\\Local\\Temp\\secretguard_o1_a6_f1s8f",
+  "timeline": [
+    {
+      "sha": "37d67416f0f76e0d3c1d4fb746dcfda251b9047a",
+      "message": "Add production configuration",
+      "timestamp": "2026-10-29T04:50:47+00:00",
+      "files_changed": [
+        "config/prod.env"
+      ]
+    },
+    {
+      "sha": "8245aaf4a3b0161eb2c510d53ab1cba92ef9d002",
+      "message": "Removed sensitive file",
+      "timestamp": "2026-10-29T04:50:48+00:00",
+      "files_changed": [
+        "config/prod.env"
+      ]
+    },
+    {
+      "sha": "b579aa0e374b844f7dd172c9bf3d1c2b3dd31838",
+      "message": "Add application entrypoint",
+      "timestamp": "2026-10-29T04:50:48+00:00",
+      "files_changed": [
+        "app/main.py"
+      ]
+    }
+  ],
+  "diff_output": "commit b579aa0e374b844f7dd172c9bf3d1c2b3dd31838\nAuthor: SecretGuard Bot <secretguard-bot@example.com>\nDate:   Thu Oct 29 10:20:48 2026 +0530\n\n    Add application entrypoint\n\ndiff --git a/app/main.py b/app/main.py\nnew file mode 100644\nindex 0000000..96e9c6e\n--- /dev/null\n+++ b/app/main.py\n@@ -0,0 +1,11 @@\n+\"\"\"Minimal FastAPI application \u00e2\u20ac\u201c normal, non-secret code.\"\"\"\n+\n+from fastapi import FastAPI\n+\n+app = FastAPI(title=\"MyApp\", version=\"0.1.0\")\n+\n+\n+@app.get(\"/\")\n+async def root() -> dict[str, str]:\n+    \"\"\"Health-check / hello-world endpoint.\"\"\"\n+    return {\"message\": \"Hello, World!\"}\n\ncommit 8245aaf4a3b0161eb2c510d53ab1cba92ef9d002\nAuthor: SecretGuard Bot <secretguard-bot@example.com>\nDate:   Thu Oct 29 10:20:48 2026 +0530\n\n    Removed sensitive file\n\ndiff --git a/config/prod.env b/config/prod.env\ndeleted file mode 100644\nindex 68a1522..0000000\n--- a/config/prod.env\n+++ /dev/null\n@@ -1,4 +0,0 @@\n-# Production Configuration - DO NOT COMMIT\n-AWS_ACCESS_KEY_ID=[REDACTED_AWS_ACCESS_KEY]\n-AWS_SECRET_ACCESS_KEY=[REDACTED_AWS_SECRET]\n-DATABASE_URL=[REDACTED_DATABASE_URI]\n\ncommit 37d67416f0f76e0d3c1d4fb746dcfda251b9047a\nAuthor: SecretGuard Bot <secretguard-bot@example.com>\nDate:   Thu Oct 29 10:20:47 2026 +0530\n\n    Add production configuration\n\ndiff --git a/config/prod.env b/config/prod.env\nnew file mode 100644\nindex 0000000..68a1522\n--- /dev/null\n+++ b/config/prod.env\n@@ -0,0 +1,4 @@\n+# Production Configuration - DO NOT COMMIT\n+AWS_ACCESS_KEY_ID=[REDACTED_AWS_ACCESS_KEY]\n+AWS_SECRET_ACCESS_KEY=[REDACTED_AWS_SECRET]\n+DATABASE_URL=[REDACTED_DATABASE_URI]\n",
+  "rev_list": [
+    "b579aa0e374b844f7dd172c9bf3d1c2b3dd31838",
+    "8245aaf4a3b0161eb2c510d53ab1cba92ef9d002",
+    "37d67416f0f76e0d3c1d4fb746dcfda251b9047a"
+  ],
+  "verification": {
+    "secret_in_history": true,
+    "secret_in_working_tree": false,
+    "secret_recoverable": true,
+    "secret_marker_found_in_git_log": true,
+    "persisted_diff_is_redacted": true,
+    "commit_adding_secret": "37d67416f0f76e0d3c1d4fb746dcfda251b9047a",
+    "commit_removing_secret": "8245aaf4a3b0161eb2c510d53ab1cba92ef9d002"
+  },
+  "status": "PASS"
+}

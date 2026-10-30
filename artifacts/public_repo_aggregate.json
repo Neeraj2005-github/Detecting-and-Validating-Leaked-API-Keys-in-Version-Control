@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0.0",
+  "source": "privacy_safe_aggregate_only",
+  "repository_count": 5,
+  "repositories": [
+    {
+      "repository": "django/django",
+      "scanned": false,
+      "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+      "commit_count": 0,
+      "raw_match_count": 0,
+      "xgboost_filtered_count": 0,
+      "final_tp_count": 0
+    },
+    {
+      "repository": "pallets/flask",
+      "scanned": false,
+      "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+      "commit_count": 0,
+      "raw_match_count": 0,
+      "xgboost_filtered_count": 0,
+      "final_tp_count": 0
+    },
+    {
+      "repository": "psf/requests",
+      "scanned": false,
+      "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+      "commit_count": 0,
+      "raw_match_count": 0,
+      "xgboost_filtered_count": 0,
+      "final_tp_count": 0
+    },
+    {
+      "repository": "fastapi/fastapi",
+      "scanned": false,
+      "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+      "commit_count": 0,
+      "raw_match_count": 0,
+      "xgboost_filtered_count": 0,
+      "final_tp_count": 0
+    },
+    {
+      "repository": "encode/starlette",
+      "scanned": false,
+      "measurement_status": "MANIFEST_ONLY_NO_CONTENT_PERSISTED",
+      "commit_count": 0,
+      "raw_match_count": 0,
+      "xgboost_filtered_count": 0,
+      "final_tp_count": 0
+    }
+  ],
+  "totals": {
+    "commit_count": 0,
+    "raw_match_count": 0,
+    "xgboost_filtered_count": 0,
+    "final_tp_count": 0
+  },
+  "plaintext_persisted": false
+}

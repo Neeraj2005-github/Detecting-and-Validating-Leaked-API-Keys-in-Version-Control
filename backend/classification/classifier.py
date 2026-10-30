@@ -15,6 +15,7 @@ class ClassifiedFinding(BaseModel):
     secret_type: str
     criticality: int
     matched_string_hash: str
+    features: dict[str, int | float]
 
 
 RULE_MAP = {
@@ -32,6 +33,8 @@ RULE_MAP = {
     "jwt": "jwt",
     "generic-high-entropy": "generic_high_entropy",
     "generic-api-key": "generic_high_entropy",
+    "generic-secret": "generic_high_entropy",
+    "private-key": "generic_high_entropy",
 }
 
 
@@ -46,7 +49,7 @@ def classify(finding: RawFinding) -> ClassifiedFinding:
     """Map finding.rule_id (Gitleaks rule name) to a canonical secret_type using
     a fixed dict, then look up criticality from criticality_table.yaml.
     Unknown rule_id -> secret_type='generic_high_entropy', criticality=30."""
-    rule_id = str(finding.rule_id).lower()
+    rule_id = str(finding.rule_id).strip().lower().replace("_", "-")
     secret_type = RULE_MAP.get(rule_id, "generic_high_entropy")
     criticality = _load_table().get(secret_type, 30)
     return ClassifiedFinding(
@@ -56,4 +59,5 @@ def classify(finding: RawFinding) -> ClassifiedFinding:
         secret_type=secret_type,
         criticality=criticality,
         matched_string_hash=finding.matched_string_hash,
+        features=finding.features,
     )

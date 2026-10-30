@@ -12,14 +12,14 @@
     }
   },
   "baseline_B_gitleaks_plus_ml_filter": {
-    "precision": 0.4,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1": 0.5714285714285714,
-    "false_positive_rate": 1.0,
+    "f1": 1.0,
+    "false_positive_rate": 0.0,
     "confusion_counts": {
       "tp": 2,
-      "fp": 3,
-      "tn": 0,
+      "fp": 0,
+      "tn": 3,
       "fn": 0
     }
   },
@@ -33,9 +33,11 @@
     4,
     18
   ],
-  "leakage_features": [],
-  "evaluation_valid": true,
-  "validation_warning": null,
+  "leakage_features": [
+    "is_test_path"
+  ],
+  "evaluation_valid": false,
+  "validation_warning": "Test labels are perfectly separable by a single feature threshold; Baseline B is not a valid result.",
   "correct_classification_features": [
     {
       "test_index": 11,
@@ -49,6 +51,30 @@
       }
     },
     {
+      "test_index": 19,
+      "label": 0,
+      "features": {
+        "entropy": 4.084183719779189,
+        "length": 20,
+        "char_class_count": 2,
+        "digit_ratio": 0.5,
+        "is_test_path": 1,
+        "repeated_char_ratio": 0.15
+      }
+    },
+    {
+      "test_index": 27,
+      "label": 0,
+      "features": {
+        "entropy": 4.084183719779189,
+        "length": 20,
+        "char_class_count": 2,
+        "digit_ratio": 0.5,
+        "is_test_path": 1,
+        "repeated_char_ratio": 0.15
+      }
+    },
+    {
       "test_index": 4,
       "label": 1,
       "features": {
@@ -56,6 +82,18 @@
         "length": 20,
         "char_class_count": 2,
         "digit_ratio": 0.5,
+        "repeated_char_ratio": 0.15
+      }
+    },
+    {
+      "test_index": 18,
+      "label": 0,
+      "features": {
+        "entropy": 4.084183719779189,
+        "length": 20,
+        "char_class_count": 2,
+        "digit_ratio": 0.5,
+        "is_test_path": 1,
         "repeated_char_ratio": 0.15
       }
     }

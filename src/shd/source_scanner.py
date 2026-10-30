@@ -10,6 +10,8 @@ import git
 
 from .matcher import match
 from .models import BlobRecord, SourceFinding
+from backend.evaluation import ValidationStatus, classify_path, criticality_level
+from backend.ml_filter.features import extract_features
 
 SUPPORTED_EXTENSIONS = {
     ".c", ".conf", ".config", ".cpp", ".go", ".ini", ".java", ".js",
@@ -106,6 +108,17 @@ def _scan_local_source(repo_path: str) -> SourceScanResult:
                         secret_hash=_fingerprint(raw.matched_string),
                         masked_preview=_mask(raw.matched_string),
                         status="open",
+                        commit_sha="working-tree",
+                        classification=classify_path(relative_path).value,
+                        validation_status=ValidationStatus.NOT_CHECKED.value,
+                        criticality=criticality_level(
+                            secret_type=raw.secret_type,
+                            confidence=raw.detector_confidence,
+                            classification=classify_path(relative_path),
+                            is_current=True,
+                            is_historical=False,
+                        ),
+                        features=extract_features(raw.matched_string, relative_path, content.splitlines()[raw.line_number - 1]),
                     )
                 )
 

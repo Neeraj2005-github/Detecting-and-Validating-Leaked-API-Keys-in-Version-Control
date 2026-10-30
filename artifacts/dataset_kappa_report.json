@@ -1,0 +1,32 @@
+{
+  "cohen_kappa": 0.8333333333333334,
+  "dataset": "real_repo_20_dual_annotator_benchmark",
+  "formula": "kappa = (p_o - p_e) / (1 - p_e)",
+  "frozen_split": {
+    "frozen": true,
+    "selection_rule": "repository_group",
+    "source": "data\\real_repo_20_labels.csv",
+    "test_groups": [
+      "group-03",
+      "group-06"
+    ],
+    "train_groups": [
+      "group-01",
+      "group-02",
+      "group-04",
+      "group-05"
+    ],
+    "version": "1.0.0"
+  },
+  "observed_agreement": 0.9166666666666666,
+  "repository_groups": [
+    "group-01",
+    "group-02",
+    "group-03",
+    "group-04",
+    "group-05",
+    "group-06"
+  ],
+  "sample_count": 24,
+  "tuning_guard": "Hyperparameters must be selected without reading frozen test groups."
+}

@@ -6,6 +6,8 @@ import autoTable from 'jspdf-autotable';
 import SummaryCard from '../components/SummaryCard';
 import { BaselineMetrics, fetchBaselineMetrics } from '../api/baselineMetrics';
 import { fetchFindings } from '../api/findings';
+import { fetchSummaryMetrics } from '../api/findings';
+import { maskCommit, maskSecret } from '../utils/displaySafety';
 
 type Finding = {
   id: string;
@@ -14,10 +16,14 @@ type Finding = {
   line_number: number;
   commit_sha: string;
   criticality: string;
+  classification: string;
   ml_verdict: string;
-  confidence: number;
+  confidence: number | null;
   detected: string;
   matched_line: string;
+  validation_status: string;
+  is_current: boolean;
+  is_historical: boolean;
   rule_id: string;
   features: {
     entropy: number;
@@ -31,20 +37,24 @@ type Finding = {
 };
 
 function mapFinding(finding: any): Finding {
-  const confidence = Number(finding.confidence);
+  const confidence = finding.confidence === null || finding.confidence === undefined ? null : Number(finding.confidence);
   return {
     id: String(finding.id),
     secret_type: finding.secret_type,
     file_path: finding.file_path,
     line_number: finding.line_number,
     commit_sha: finding.commit_sha ?? '',
-    criticality: finding.criticality ?? 'Unknown',
-    ml_verdict: confidence >= 0.5 ? 'True secret' : 'False positive',
-    confidence: Math.round(confidence * 100),
-    detected: finding.detector,
-    matched_line: finding.masked_preview,
-    rule_id: finding.detector,
-    features: { entropy: 0, length: 0, char_class_count: 0, digit_ratio: 0, is_test_path: 0, has_example_keyword: 0, repeated_char_ratio: 0 },
+    criticality: finding.criticality ?? 'UNKNOWN',
+    classification: finding.classification ?? 'UNKNOWN',
+    ml_verdict: finding.ml_verdict ?? 'NOT_AVAILABLE',
+    confidence: confidence === null ? null : Math.round(confidence * 100),
+    detected: finding.detector_name ?? 'gitleaks',
+    matched_line: maskSecret(finding.masked_match ?? finding.masked_preview),
+    rule_id: finding.rule_id ?? finding.detector,
+    validation_status: finding.validation_status ?? 'NOT_CHECKED',
+    is_current: Boolean(finding.is_current),
+    is_historical: Boolean(finding.is_historical),
+    features: finding.features ?? {},
   };
 }
 
@@ -53,14 +63,11 @@ function formatMetric(value: number) {
   return value.toFixed(value >= 1 ? 0 : 3).replace(/\.0+$/, '');
 }
 
-function maskCommit(commitSha: string) {
-  return `****${commitSha.slice(-4)}`;
-}
-
 export default function DashboardPage() {
   const [searchParams] = useSearchParams();
   const [baselineMetrics, setBaselineMetrics] = useState<BaselineMetrics | null>(null);
   const [repositoryFindings, setRepositoryFindings] = useState<Finding[]>([]);
+  const [summaryMetrics, setSummaryMetrics] = useState<any>(null);
   const [findingsLoading, setFindingsLoading] = useState(true);
   const [expandedFindingId, setExpandedFindingId] = useState<string | null>(null);
 
@@ -71,8 +78,11 @@ export default function DashboardPage() {
   const baselineA = baselineMetrics?.baseline_A_gitleaks_only;
   const baselineB = baselineMetrics?.baseline_B_gitleaks_plus_ml_filter;
   const testSetLabel = baselineMetrics ? `n=${baselineMetrics.test_set_size} test examples` : 'report unavailable';
-  const baselineBValid = Boolean(baselineMetrics?.evaluation_valid ?? true);
+  const baselineBValid = Boolean(baselineMetrics?.evaluation_valid);
   const repoFilter = searchParams.get('repo');
+  useEffect(() => {
+    fetchSummaryMetrics(repoFilter ?? undefined).then(setSummaryMetrics).catch(() => setSummaryMetrics(null));
+  }, [repoFilter]);
   useEffect(() => {
     setFindingsLoading(true);
     fetchFindings(repoFilter ?? undefined)
@@ -82,12 +92,14 @@ export default function DashboardPage() {
   }, [repoFilter]);
 
   const visibleFindings = repositoryFindings;
-  const confirmedFindings = visibleFindings.filter((finding) => finding.confidence >= 50);
   const secretTypes = [...new Set(visibleFindings.map((finding) => finding.secret_type))];
   const metrics = {
-    total_findings: visibleFindings.length,
-    true_secrets_confirmed: confirmedFindings.length,
-    false_positives_filtered: visibleFindings.length - confirmedFindings.length,
+    total_findings: summaryMetrics?.total_findings ?? visibleFindings.length,
+    current_findings: summaryMetrics?.current_findings ?? visibleFindings.filter((finding) => finding.is_current).length,
+    historical_findings: summaryMetrics?.historical_findings ?? 0,
+    high_findings: summaryMetrics?.high_findings ?? 0,
+    medium_findings: summaryMetrics?.medium_findings ?? 0,
+    low_findings: summaryMetrics?.low_findings ?? 0,
     detector_types_covered: secretTypes.length,
   };
 
@@ -104,8 +116,11 @@ export default function DashboardPage() {
       head: [['Summary metric', 'Value']],
       body: [
         ['Total Findings', String(metrics.total_findings)],
-        ['True Secrets Confirmed', String(metrics.true_secrets_confirmed)],
-        ['False Positives Filtered', String(metrics.false_positives_filtered)],
+        ['Current Findings', String(metrics.current_findings)],
+        ['Historical Findings', String(metrics.historical_findings)],
+        ['High', String(metrics.high_findings)],
+        ['Medium', String(metrics.medium_findings)],
+        ['Low', String(metrics.low_findings)],
         ['Detector Types Covered', String(metrics.detector_types_covered)],
       ],
     });
@@ -116,20 +131,21 @@ export default function DashboardPage() {
       head: [['Metric', 'Baseline A - Gitleaks only', 'Baseline B - Gitleaks + ML filter']],
       body: ['Precision', 'Recall', 'F1 score', 'False-Positive Rate'].map((label) => {
         const key = label === 'F1 score' ? 'f1' : label === 'False-Positive Rate' ? 'false_positive_rate' : label.toLowerCase();
-        return [label, formatMetric(baselineA?.[key as keyof typeof baselineA] as number ?? Number.NaN), baselineBValid ? formatMetric(baselineB?.[key as keyof typeof baselineB] as number ?? Number.NaN) : 'Evaluation blocked'];
+        return [label, formatMetric(baselineA?.[key as keyof typeof baselineA] as number ?? Number.NaN), baselineBValid ? formatMetric(baselineB?.[key as keyof typeof baselineB] as number ?? Number.NaN) : 'NOT_AVAILABLE'];
       }),
     });
 
     const findingsStart = (document as jsPDF & { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? comparisonStart + 50;
     autoTable(document, {
       startY: findingsStart + 8,
-      head: [['Secret Type', 'File & Line', 'Criticality', 'ML Verdict', 'Detected']],
+      head: [['Secret Type', 'File & Line', 'Classification', 'Criticality', 'ML Verdict', 'Validation']],
       body: visibleFindings.map((finding) => [
         finding.secret_type,
         `${finding.file_path}:${finding.line_number} (${maskCommit(finding.commit_sha)})`,
+        finding.classification,
         finding.criticality,
-        `${finding.ml_verdict} (${finding.confidence}%)`,
-        finding.detected,
+        `${finding.ml_verdict} (${finding.confidence === null ? 'NOT_AVAILABLE' : `${finding.confidence}%`})`,
+        finding.validation_status,
       ]),
     });
 
@@ -146,15 +162,16 @@ export default function DashboardPage() {
       </div>
       <div className="summary-grid">
         <SummaryCard label="Total Findings" value={metrics.total_findings} secondary={`Across ${repoFilter ? 'this repository' : 'all repositories'}`} />
-        <SummaryCard label="True Secrets Confirmed" value={metrics.true_secrets_confirmed} secondary="After ML filtering" tone="success" />
-        <SummaryCard label="False Positives Filtered" value={metrics.false_positives_filtered} secondary="Removed from final result" tone="default" />
+        <SummaryCard label="Current Findings" value={metrics.current_findings} secondary="Present in current source" tone="default" />
+        <SummaryCard label="Historical Findings" value={metrics.historical_findings} secondary="Found in Git history" tone="default" />
+        <SummaryCard label="High / Medium / Low" value={`${metrics.high_findings} / ${metrics.medium_findings} / ${metrics.low_findings}`} secondary="Risk classification" tone="default" />
         <SummaryCard label="Detector Types Covered" value={metrics.detector_types_covered} secondary={secretTypes.join(', ') || 'None'} />
       </div>
 
       <section className="panel-card comparison-panel">
         <div className="panel-head">
           <h2>Baseline Metrics Comparison</h2>
-          <span>O2 proof of contribution</span>
+          <span>Evaluation dataset: n={baselineMetrics?.dataset_size ?? 'NOT_AVAILABLE'} labeled examples</span>
         </div>
 
         <div className="baseline-grid">
@@ -173,10 +190,10 @@ export default function DashboardPage() {
             <h3>Baseline B</h3>
             <p>Gitleaks + ML filter</p>
             <dl className="metric-list">
-              <div><dt>Precision</dt><dd>{baselineBValid ? formatMetric(baselineB?.precision ?? Number.NaN) : 'Evaluation blocked'}</dd></div>
-              <div><dt>Recall</dt><dd>{baselineBValid ? formatMetric(baselineB?.recall ?? Number.NaN) : 'Evaluation blocked'}</dd></div>
-              <div><dt>F1 score <small>— {testSetLabel}</small></dt><dd>{baselineBValid ? formatMetric(baselineB?.f1 ?? Number.NaN) : 'Evaluation blocked'}</dd></div>
-              <div><dt>False-Positive Rate</dt><dd>{baselineBValid ? formatMetric(baselineB?.false_positive_rate ?? Number.NaN) : 'Evaluation blocked'}</dd></div>
+              <div><dt>Precision</dt><dd>{baselineBValid ? formatMetric(baselineB?.precision ?? Number.NaN) : 'NOT_AVAILABLE'}</dd></div>
+              <div><dt>Recall</dt><dd>{baselineBValid ? formatMetric(baselineB?.recall ?? Number.NaN) : 'NOT_AVAILABLE'}</dd></div>
+              <div><dt>F1 score <small>— {testSetLabel}</small></dt><dd>{baselineBValid ? formatMetric(baselineB?.f1 ?? Number.NaN) : 'NOT_AVAILABLE'}</dd></div>
+              <div><dt>False-Positive Rate</dt><dd>{baselineBValid ? formatMetric(baselineB?.false_positive_rate ?? Number.NaN) : 'NOT_AVAILABLE'}</dd></div>
             </dl>
           </div>
         </div>
@@ -185,7 +202,7 @@ export default function DashboardPage() {
       <section className="panel-card worklist-panel">
         <div className="panel-head">
           <h2>Findings</h2>
-          <span>O2 detection output</span>
+          <span>AI detection output</span>
         </div>
 
         {findingsLoading ? (
@@ -206,9 +223,10 @@ export default function DashboardPage() {
                 <th>Secret Type</th>
                 <th>File &amp; Line</th>
                 <th>Commit</th>
+                <th>Classification</th>
                 <th>Criticality</th>
                 <th>ML Verdict</th>
-                <th>Detected</th>
+                <th>Validation</th>
               </tr>
             </thead>
             <tbody>
@@ -231,33 +249,38 @@ export default function DashboardPage() {
                     >
                       <td>{finding.secret_type}</td>
                       <td>{`${finding.file_path}:${finding.line_number}`}</td>
-                      <td className="mono-cell">{finding.commit_sha}</td>
+                      <td className="mono-cell">{maskCommit(finding.commit_sha)}</td>
+                      <td>{finding.classification}</td>
                       <td><span className={`criticality-pill ${finding.criticality.toLowerCase()}`}>{finding.criticality}</span></td>
                       <td>
                         <div className="ml-verdict">
-                          <span className={finding.ml_verdict === 'True secret' ? 'ml-verdict--positive' : 'ml-verdict--negative'}>{finding.ml_verdict}</span>
-                          <small>{finding.confidence}%</small>
+                          <span className={finding.ml_verdict === 'Likely real secret' ? 'ml-verdict--positive' : 'ml-verdict--negative'}>{finding.ml_verdict}</span>
+                          <small>{finding.confidence === null ? 'NOT_AVAILABLE' : `${finding.confidence}%`}</small>
                         </div>
                       </td>
-                      <td>{finding.detected}</td>
+                      <td>{finding.validation_status}</td>
                     </tr>
                     {isExpanded && (
                       <tr className="finding-detail-row">
-                        <td colSpan={6}>
+                        <td colSpan={7}>
                           <div className="finding-detail">
                             <div className="finding-detail__evidence">
                               <div className="finding-detail__field">
                                 <span className="finding-detail__label">Matched line</span>
-                                <code>{finding.matched_line}</code>
+                                <code>{maskSecret(finding.matched_line)}</code>
                               </div>
                               <div className="finding-detail__field">
                                 <span className="finding-detail__label">Gitleaks rule ID</span>
                                 <code>{finding.rule_id}</code>
                               </div>
+                              <div className="finding-detail__field">
+                                <span className="finding-detail__label">Detection / validation</span>
+                                <code>{finding.detected} / {finding.validation_status}</code>
+                              </div>
                             </div>
                             <div className="finding-detail__heading">
                               <span>ML feature evidence</span>
-                              <strong>Confidence {finding.confidence}%</strong>
+                              <strong>Confidence {finding.confidence === null ? 'NOT_AVAILABLE' : `${finding.confidence}%`}</strong>
                             </div>
                             <table className="finding-features-table">
                               <tbody>

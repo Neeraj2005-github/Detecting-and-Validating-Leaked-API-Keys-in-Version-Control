@@ -1,0 +1,44 @@
+version: "1.0.0"
+name: "SecretGuard O1 ground-truth oracle"
+description: "Synthetic-only planted secrets and high-entropy decoys for lifecycle tests."
+entries:
+  - id: "oracle-aws-head"
+    secret_type: "aws_access_key"
+    value: "AKIAIOSFODNN7EXAMPLE"
+    is_secret: true
+    expected_lifecycle: "STILL_IN_HEAD"
+  - id: "oracle-db-deleted"
+    secret_type: "mysql_uri"
+    value: "mysql://user:example-password@db.invalid:3306/app"
+    is_secret: true
+    expected_lifecycle: "DELETED_IN_HISTORY"
+  - id: "oracle-branch-token"
+    secret_type: "generic_token"
+    value: "sg_orphan_branch_synthetic_8f71b2"
+    is_secret: true
+    expected_lifecycle: "ORPHAN_BRANCH"
+  - id: "oracle-tagged-token"
+    secret_type: "generic_token"
+    value: "sg_git_tag_synthetic_4ac91e"
+    is_secret: true
+    expected_lifecycle: "GIT_TAG"
+  - id: "oracle-base64"
+    secret_type: "encoded_secret"
+    value: "c2dfYmFzZTY0X3N5bnRoZXRpY19rZXk="
+    is_secret: true
+    expected_lifecycle: "BASE64_ENCODED"
+  - id: "oracle-rewritten"
+    secret_type: "generic_token"
+    value: "sg_rewritten_history_synthetic_2d0c77"
+    is_secret: true
+    expected_lifecycle: "REWRITTEN_HISTORY"
+  - id: "oracle-entropy-decoy-1"
+    secret_type: "high_entropy_decoy"
+    value: "q7V!m2Z#p9L@x4R$k8N%t3Q"
+    is_secret: false
+    expected_lifecycle: "STILL_IN_HEAD"
+  - id: "oracle-entropy-decoy-2"
+    secret_type: "high_entropy_decoy"
+    value: "b3f0e2d1c4a59687786950413210fedc"
+    is_secret: false
+    expected_lifecycle: "DELETED_IN_HISTORY"

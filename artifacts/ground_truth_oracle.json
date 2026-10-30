@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "repository": "D:\\Detecting secret across version control\\artifacts\\synthetic_repo_v1",
+  "source_oracle": "fixtures/oracle_spec.yaml",
+  "base64_plaintext_sha256": "4f01c74fea7a844263e457f776fd9da32e547181061a0e16e5f0353bfb68ea2e",
+  "entries": [
+    {
+      "entry_id": "oracle-aws-head",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "file_path": "config/application.env",
+      "line_number": 1,
+      "secret_type": "aws_access_key",
+      "expected_label": "TP"
+    },
+    {
+      "entry_id": "oracle-base64",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "file_path": "config/application.env",
+      "line_number": 3,
+      "secret_type": "encoded_secret",
+      "expected_label": "TP"
+    },
+    {
+      "entry_id": "uuid-decoy",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "file_path": "config/application.env",
+      "line_number": 4,
+      "secret_type": "uuid",
+      "expected_label": "FP_DECOY"
+    },
+    {
+      "entry_id": "sha256-decoy",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "file_path": "config/application.env",
+      "line_number": 5,
+      "secret_type": "sha256",
+      "expected_label": "FP_DECOY"
+    },
+    {
+      "entry_id": "mock-key-decoy",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "file_path": "config/application.env",
+      "line_number": 6,
+      "secret_type": "mock_key",
+      "expected_label": "FP_DECOY"
+    },
+    {
+      "entry_id": "webpack-decoy",
+      "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "file_path": "static/app.3f2a9c1d.js",
+      "line_number": 1,
+      "secret_type": "webpack_hash",
+      "expected_label": "FP_DECOY"
+    },
+    {
+      "entry_id": "oracle-db-deleted",
+      "commit_sha": "684d7c7055041a5bd5270e8292916e4141279d6a",
+      "file_path": "config/legacy.env",
+      "line_number": 1,
+      "secret_type": "mysql_uri",
+      "expected_label": "TP"
+    },
+    {
+      "entry_id": "oracle-branch-token",
+      "commit_sha": "a1db1c0da29b70a3d8ab0b7345b4424c029e11a1",
+      "file_path": "config/legacy_auth.env",
+      "line_number": 1,
+      "secret_type": "generic_token",
+      "expected_label": "TP"
+    },
+    {
+      "entry_id": "oracle-tagged-token",
+      "commit_sha": "18c62b15c2ae40ebcd1e9f261a2f07060ecc9dfa",
+      "file_path": "config/tagged.env",
+      "line_number": 1,
+      "secret_type": "generic_token",
+      "expected_label": "TP"
+    },
+    {
+      "entry_id": "oracle-rewritten",
+      "commit_sha": "2fdc5ede13ce2fadffa63df37808a303e1fb10c5",
+      "file_path": "config/rewritten.env",
+      "line_number": 1,
+      "secret_type": "generic_token",
+      "expected_label": "TP"
+    }
+  ],
+  "expected_labels": {
+    "TP": 6,
+    "FP_DECOY": 4
+  }
+}

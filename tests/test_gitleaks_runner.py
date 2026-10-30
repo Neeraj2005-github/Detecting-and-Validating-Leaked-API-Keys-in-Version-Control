@@ -43,3 +43,21 @@ def test_normalizer_hashes_secrets_and_strips_plaintext():
     assert findings[0].matched_string_hash == hashlib.sha256(secret.encode()).hexdigest()
     assert not any(secret in str(f).lower() for f in findings)
     assert findings[0].rule_id == "aws-access-key"
+    assert findings[0].features["length"] == len(secret)
+    assert findings[0].features["entropy"] > 0
+
+
+def test_normalizer_marks_fixture_paths_from_raw_match():
+    raw = [{
+        "Commit": "abc123",
+        "File": "testdata/example.env",
+        "StartLine": 2,
+        "RuleID": "aws-access-token",
+        "Secret": "AKIA1234567890ABCDEF",
+        "Match": "SECRET=AKIA1234567890ABCDEF",
+    }]
+
+    finding = normalize(raw)[0]
+
+    assert finding.features["is_test_path"] == 1
+    assert finding.features["has_example_keyword"] == 0

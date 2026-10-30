@@ -1,0 +1,20 @@
+{
+  "model": "XGBClassifier",
+  "features": [
+    "entropy",
+    "normalized_entropy",
+    "token_length",
+    "digit_ratio",
+    "uppercase_ratio",
+    "lowercase_ratio",
+    "symbol_ratio",
+    "transition_frequency",
+    "positive_keyword_proximity",
+    "negative_keyword_proximity",
+    "file_path_risk_score",
+    "is_base64_encoded",
+    "assignment_operator_present",
+    "line_length"
+  ],
+  "random_state": 42
+}

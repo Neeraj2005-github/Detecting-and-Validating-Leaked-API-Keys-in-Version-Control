@@ -1,0 +1,275 @@
+{
+  "figure_4_ablation": {
+    "ablations": [
+      {
+        "config": "A_regex_entropy",
+        "features": [
+          "entropy",
+          "normalized_entropy"
+        ],
+        "metrics": {
+          "f1": 1.0,
+          "false_positive_rate": 0.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": 1.0
+        }
+      },
+      {
+        "config": "B_regex_entropy_lexical",
+        "features": [
+          "entropy",
+          "normalized_entropy",
+          "token_length",
+          "digit_ratio",
+          "uppercase_ratio",
+          "lowercase_ratio",
+          "symbol_ratio",
+          "transition_frequency"
+        ],
+        "metrics": {
+          "f1": 1.0,
+          "false_positive_rate": 0.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": 1.0
+        }
+      },
+      {
+        "config": "C_regex_entropy_lexical_context",
+        "features": [
+          "entropy",
+          "normalized_entropy",
+          "token_length",
+          "digit_ratio",
+          "uppercase_ratio",
+          "lowercase_ratio",
+          "symbol_ratio",
+          "transition_frequency",
+          "positive_keyword_proximity",
+          "negative_keyword_proximity",
+          "file_path_risk_score"
+        ],
+        "metrics": {
+          "f1": 1.0,
+          "false_positive_rate": 0.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": 1.0
+        }
+      },
+      {
+        "config": "D_full_xgboost",
+        "features": [
+          "entropy",
+          "normalized_entropy",
+          "token_length",
+          "digit_ratio",
+          "uppercase_ratio",
+          "lowercase_ratio",
+          "symbol_ratio",
+          "transition_frequency",
+          "positive_keyword_proximity",
+          "negative_keyword_proximity",
+          "file_path_risk_score",
+          "is_base64_encoded",
+          "assignment_operator_present",
+          "line_length"
+        ],
+        "metrics": {
+          "f1": 1.0,
+          "false_positive_rate": 0.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "roc_auc": 1.0
+        }
+      }
+    ],
+    "source": "backend.ml.xgboost_rigour.run_rigour",
+    "task": "Figure 4 Feature-group Ablation"
+  },
+  "figure_5_shap": {
+    "explainer": "shap.TreeExplainer",
+    "feature_names": [
+      "entropy",
+      "normalized_entropy",
+      "token_length",
+      "digit_ratio",
+      "uppercase_ratio",
+      "lowercase_ratio",
+      "symbol_ratio",
+      "transition_frequency",
+      "positive_keyword_proximity",
+      "negative_keyword_proximity",
+      "file_path_risk_score",
+      "is_base64_encoded",
+      "assignment_operator_present",
+      "line_length"
+    ],
+    "model": "backend\\ml\\detector_model.pkl",
+    "sample_count": 8,
+    "task": "Figure 5 SHAP Explanation"
+  },
+  "generated_by": "scripts/generate_poster_evaluation.py",
+  "oracle": "fixtures\\oracle_spec.yaml",
+  "rq1": {
+    "held_out_entries": 8,
+    "measurement_note": "Wall-clock measurement covers prediction/rule evaluation over the eight oracle entries; the normalized speed is seconds per 1,000 entries labeled as commits.",
+    "methods": [
+      {
+        "metrics": {
+          "f1_score": 1.0,
+          "false_negatives": 0,
+          "false_positives": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "scan_seconds_per_1000_commits": 0.020124999991821824,
+          "true_negatives": 2,
+          "true_positives": 6
+        },
+        "name": "Regex only"
+      },
+      {
+        "metrics": {
+          "f1_score": 1.0,
+          "false_negatives": 0,
+          "false_positives": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "scan_seconds_per_1000_commits": 3.193725000073755,
+          "true_negatives": 2,
+          "true_positives": 6
+        },
+        "name": "Gitleaks (emulator:backend.ml.detector.PATTERNS)"
+      },
+      {
+        "metrics": {
+          "f1_score": 0.8571428571428571,
+          "false_negatives": 0,
+          "false_positives": 2,
+          "precision": 0.75,
+          "recall": 1.0,
+          "scan_seconds_per_1000_commits": 0.40063749975161045,
+          "true_negatives": 0,
+          "true_positives": 6
+        },
+        "name": "Proposed 14-feature XGBoost"
+      }
+    ],
+    "model": "backend\\ml\\detector_model.pkl",
+    "oracle": "fixtures\\oracle_spec.yaml",
+    "positive_entries": 6,
+    "task": "RQ1 Detection on Held-Out Split"
+  },
+  "rq2": {
+    "composite_risk_score": {
+      "ndcg_at_10": 0.959548213570596,
+      "precision_at_5": 0.8
+    },
+    "entries": [
+      {
+        "composite_risk_score": 77.5,
+        "id": "oracle-aws-head",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 3
+      },
+      {
+        "composite_risk_score": 43.5,
+        "id": "oracle-db-deleted",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 2
+      },
+      {
+        "composite_risk_score": 42.0,
+        "id": "oracle-branch-token",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 2
+      },
+      {
+        "composite_risk_score": 42.0,
+        "id": "oracle-tagged-token",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 2
+      },
+      {
+        "composite_risk_score": 71.5,
+        "id": "oracle-base64",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 3
+      },
+      {
+        "composite_risk_score": 37.5,
+        "id": "oracle-rewritten",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 2
+      },
+      {
+        "composite_risk_score": 71.5,
+        "id": "oracle-entropy-decoy-1",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 0
+      },
+      {
+        "composite_risk_score": 37.5,
+        "id": "oracle-entropy-decoy-2",
+        "normalized_abs_shap": 0.5,
+        "raw_confidence": 0.5,
+        "relevance": 0
+      }
+    ],
+    "formula": "100 * (0.45*normalized_abs_SHAP + 0.25*HEAD + 0.15*privilege_tier + 0.15*recency)",
+    "ranking_count": 8,
+    "raw_confidence": {
+      "ndcg_at_10": 1.0,
+      "precision_at_5": 1.0
+    },
+    "task": "RQ2 Prioritization Quality"
+  },
+  "rq3": {
+    "deleted_but_valid": 1,
+    "mean_mttr_ms": 1.2566499999999998,
+    "runs": [
+      {
+        "credential_id": "oracle-aws-head",
+        "mttr_ms": 2.05,
+        "state": "VERIFIED_SAFE"
+      },
+      {
+        "credential_id": "oracle-db-deleted",
+        "mttr_ms": 1.2515,
+        "state": "VERIFIED_SAFE"
+      },
+      {
+        "credential_id": "oracle-branch-token",
+        "mttr_ms": 1.1219,
+        "state": "VERIFIED_SAFE"
+      },
+      {
+        "credential_id": "oracle-tagged-token",
+        "mttr_ms": 2.0204,
+        "state": "VERIFIED_SAFE"
+      },
+      {
+        "credential_id": "oracle-base64",
+        "mttr_ms": 0.6798,
+        "state": "VERIFIED_SAFE"
+      },
+      {
+        "credential_id": "oracle-rewritten",
+        "mttr_ms": 0.4163,
+        "state": "VERIFIED_SAFE"
+      }
+    ],
+    "sandbox": "sqlite-in-memory-offline",
+    "successfully_rotated_and_verified": 6,
+    "task": "RQ3 Rotation Tracking",
+    "total_findings": 6
+  }
+}

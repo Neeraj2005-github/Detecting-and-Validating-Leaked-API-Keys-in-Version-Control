@@ -1,0 +1,28 @@
+{
+  "credential_id": "oracle-rewritten",
+  "mttr_ms": 0.4163,
+  "sandbox": "sqlite-in-memory-offline",
+  "state": "VERIFIED_SAFE",
+  "transitions": [
+    {
+      "detail": "synthetic finding accepted",
+      "state": "DETECTED",
+      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+    },
+    {
+      "detail": "SQLite in-memory sandbox selected",
+      "state": "SANDBOX_VALIDATING",
+      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+    },
+    {
+      "detail": "synthetic credential replaced",
+      "state": "ROTATING_CREDENTIAL",
+      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+    },
+    {
+      "detail": "post-rotation verification",
+      "state": "VERIFIED_SAFE",
+      "timestamp": "2026-10-29T18:15:42.621376+00:00"
+    }
+  ]
+}

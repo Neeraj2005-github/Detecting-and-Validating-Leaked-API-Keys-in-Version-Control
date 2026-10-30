@@ -1,0 +1,511 @@
+{
+  "findings": [
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (4.39)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.95)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (58.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.14)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.02)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/.env.example",
+      "line_number": 7,
+      "risk_score": 77.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.64)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (24.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/.env.example",
+      "line_number": 19,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.57)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.97)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (17.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/.env.example",
+      "line_number": 24,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.49)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.94)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (24.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/.env.example",
+      "line_number": 31,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.42)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.93)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (24.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/.env.example",
+      "line_number": 33,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.22)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.97)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (17.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/.env.example",
+      "line_number": 43,
+      "risk_score": 37.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (4.35)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.93)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (72.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.10)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/app/core/config.py",
+      "line_number": 7,
+      "risk_score": 77.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.45)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (17.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/app/routers/admin.py",
+      "line_number": 406,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.33)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (16.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/app/routers/auth.py",
+      "line_number": 140,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.61)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.92)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (32.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/app/routers/auth.py",
+      "line_number": 241,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.33)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (16.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/app/routers/auth.py",
+      "line_number": 276,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.61)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.92)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (32.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/app/routers/auth.py",
+      "line_number": 339,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.61)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.92)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (32.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.00)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "backend/app/routers/auth.py",
+      "line_number": 370,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.45)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (20.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.10)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "frontend/src/api/axios.js",
+      "line_number": 18,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.45)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (20.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.10)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "frontend/src/components/ProtectedRoute.jsx",
+      "line_number": 4,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.45)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (20.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.10)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "frontend/src/context/AuthContext.jsx",
+      "line_number": 11,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.45)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (20.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.10)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "frontend/src/context/AuthContext.jsx",
+      "line_number": 16,
+      "risk_score": 71.5
+    },
+    {
+      "commit_sha": "1dc50f9a30e8c0067b435fb1357bfb222fc658fb",
+      "contributors": [
+        {
+          "feature": "High Shannon Entropy (3.45)",
+          "impact": 0.0
+        },
+        {
+          "feature": "Normalized Entropy (0.96)",
+          "impact": 0.0
+        },
+        {
+          "feature": "token_length (20.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "digit_ratio (0.00)",
+          "impact": 0.0
+        },
+        {
+          "feature": "uppercase_ratio (0.10)",
+          "impact": 0.0
+        }
+      ],
+      "file_path": "frontend/src/services/api.js",
+      "line_number": 17,
+      "risk_score": 71.5
+    }
+  ],
+  "formula": "risk = 100 * (0.45*ml_probability + 0.25*still_in_head + 0.15*privilege_tier + 0.15*commit_recency)",
+  "ndcg_at_10": 0.9999999999999999,
+  "ndcg_at_5": 0.9999999999999998
+}

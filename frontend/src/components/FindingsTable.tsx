@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Finding } from '../types';
+import { maskSecret } from '../utils/displaySafety';
 
 export default function FindingsTable({
   findings,
@@ -9,7 +10,7 @@ export default function FindingsTable({
   const rows = findings.slice(0, 8);
 
   return (
-    <div className="worklist-table-wrap">
+    <div className="worklist-table-wrap overflow-x-auto">
       <table className="worklist-table">
         <thead>
           <tr>
@@ -24,7 +25,7 @@ export default function FindingsTable({
               <td className="secret-cell">
                 <Link to={`/findings/${finding.id}`} className="secret-link">
                   <span className="secret-name">{finding.secret_type}</span>
-                  <span className="secret-meta">{finding.masked_hash || '****a91f'} · {finding.file_path}</span>
+                  <span className="secret-meta">{maskSecret(finding.masked_hash || finding.masked_preview)} · {finding.file_path}</span>
                 </Link>
               </td>
               <td className="repo-cell">{finding.repository}</td>

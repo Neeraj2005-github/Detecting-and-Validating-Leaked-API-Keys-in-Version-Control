@@ -1,0 +1,83 @@
+{
+  "contract_version": "1.0.0",
+  "objective": "CP1 Gate 1 - Validate the problem and freeze the engineering contract",
+  "status": "FROZEN",
+  "source_to_claim_map": [
+    {"claim_id": "C1", "claim": "Deleting a secret-bearing file does not delete reachable history", "source": "OWASP Secret Management / Git history guidance", "empirical_verification": "O1.1 git log -p --all contains the planted AWS marker while HEAD does not", "status": "VERIFIED"},
+    {"claim_id": "C2", "claim": "Credentials must be revoked or rotated, not merely removed from source", "source": "OWASP Secret Management guidance", "empirical_verification": "O1.1 labels the finding recoverable/history-only and never labels it revoked", "status": "VERIFIED"},
+    {"claim_id": "C3", "claim": "History, branches, tags, and encoded content are distinct detection surfaces", "source": "OWASP Secret Management / Git history guidance", "empirical_verification": "O1.6 oracle labels STILL_IN_HEAD, DELETED_IN_HISTORY, ORPHAN_BRANCH, GIT_TAG, BASE64_ENCODED, and REWRITTEN_HISTORY", "status": "CONTRACT"},
+    {"claim_id": "C4", "claim": "Detection evidence should be minimized and protected", "source": "OWASP Secret Management guidance", "empirical_verification": "O1.1 persisted diff is redacted; API/UI contracts expose metadata, fingerprints, and masked previews only", "status": "VERIFIED"},
+    {"claim_id": "C5", "claim": "Automated secret detection requires validation and false-positive controls", "source": "OWASP Secret Management guidance", "empirical_verification": "O2 dataset contains TRUE_SECRET, TEST_FIXTURE, EXAMPLE_DOCUMENTATION, and FALSE_POSITIVE labels for baseline/ML comparison", "status": "VERIFIED"}
+  ],
+  "functional_requirements": [
+    {"id": "FR-1", "name": "History traversal", "specification": "Traverse reachable commits, branches, tags, and deleted blobs without changing the target repository; record commit, path, line, and lifecycle label."},
+    {"id": "FR-2", "name": "Regex + entropy detection", "specification": "Apply bounded provider-aware regexes and Shannon-entropy thresholds to text blobs; reject binary data and cap input/resource sizes."},
+    {"id": "FR-3", "name": "XGBoost FP suppression", "specification": "Use a versioned, offline XGBoost classifier after deterministic detection to suppress likely fixtures/examples; retain raw detector evidence and model version."},
+    {"id": "FR-4", "name": "Still-in-HEAD tracking", "specification": "Compare each finding fingerprint/path against HEAD and emit STILL_IN_HEAD or historical-only state without inferring revocation."},
+    {"id": "FR-5", "name": "SHAP explainability", "specification": "For an ML decision, return bounded TreeSHAP feature contributions and the model/version used; never return the matched plaintext."},
+    {"id": "FR-6", "name": "Sandbox rotation", "specification": "Run authorized synthetic rotation workflows in an isolated offline sandbox, record status and MTTR, and fail closed when isolation is unavailable."},
+    {"id": "FR-7", "name": "Benchmark comparison", "specification": "Evaluate the same frozen corpus against Gitleaks-only and Gitleaks-plus-ML baselines with deterministic splits and confusion metrics."}
+  ],
+  "non_functional_requirements": [
+    {"id": "NFR-1", "name": "Secret masking", "specification": "Mask plaintext in UI, API responses, logs, persisted artifacts, and reports; use salted fingerprints and safe previews."},
+    {"id": "NFR-2", "name": "Throughput", "specification": "Scan 100 commits in less than 5 seconds on the reference development machine, excluding clone time."},
+    {"id": "NFR-3", "name": "Peak RAM", "specification": "Stay below 512 MB peak resident memory for the 100-commit benchmark corpus."},
+    {"id": "NFR-4", "name": "Determinism", "specification": "Same fixture, configuration, and dependency lock produces stable labels, metrics, and artifact schema."},
+    {"id": "NFR-5", "name": "Zero plaintext persistence", "specification": "No plaintext credential is written to the application database, logs, API/UI state, or generated reports."},
+    {"id": "NFR-6", "name": "Offline sandbox safety", "specification": "Rotation tests use synthetic credentials, no provider network access, bounded execution, and an explicit fail-closed readiness check."}
+  ],
+  "architecture": {
+    "pipeline_mermaid": "graph LR\n  A[Target Git Repository] --> B[1. History Extractor]\n  B --> C[2. Regex + Entropy Detector]\n  C --> D[3. XGBoost FP Suppression]\n  D --> E[4. TreeSHAP Explanation]\n  E --> F[5. Safe Metadata Store]\n  F --> G[6. FastAPI + React Evidence UI]\n  D --> H[Offline Rotation Sandbox]\n  H --> F",
+    "adrs": [
+      {"id": "ADR-001", "decision": "GitPython for repository traversal", "why": "Uses the existing Python pipeline and exposes commits, trees, refs, and blobs without shell interpolation; subprocess Git remains the explicit evidence path for git log/rev-list."},
+      {"id": "ADR-002", "decision": "Regex plus Shannon entropy", "why": "Combines high-precision provider patterns with generic high-entropy coverage; bounded expressions are safer and more explainable than unconstrained heuristics."},
+      {"id": "ADR-003", "decision": "XGBoost for false-positive suppression", "why": "Handles mixed numeric/context features efficiently, supports deterministic offline inference, and is more suitable than a deep model for the small tabular corpus."},
+      {"id": "ADR-004", "decision": "TreeSHAP for explainability", "why": "Provides exact tree-model contributions with feature-level explanations instead of opaque confidence scores."},
+      {"id": "ADR-005", "decision": "FastAPI + SQLAlchemy + MySQL/SQLite", "why": "Matches the existing service and ORM, supports typed JSON APIs, and preserves SQLite local development with a MySQL deployment path."},
+      {"id": "ADR-006", "decision": "React for the evidence UI", "why": "Matches the existing dashboard, supports inline JSON evidence and the existing jsPDF export path, and avoids a second frontend stack."}
+    ]
+  },
+  "stride_threat_model": {
+    "trust_boundaries": ["Untrusted Target Repo <-> Scanner Worker", "Scanner Worker <-> ML Engine", "ML Engine <-> MySQL DB", "MySQL DB <-> Rotation Sandbox", "FastAPI <-> React UI"],
+    "assets": ["Repository history and metadata", "Safe finding fingerprints and masked previews", "Ground-truth labels and evaluation artifacts", "Model explanations and rotation results"],
+    "misuse_cases": ["ReDoS regex bomb", "Malicious Git hooks during clone or checkout", "Plaintext secret exfiltration through UI/API/logs", "Binary or decompression bomb", "Resource exhaustion through enormous history"],
+    "categories": [
+      {"threat": "Spoofing", "case": "Untrusted repo impersonates an approved target", "control": "Validate repository identity/path and require explicit scan input"},
+      {"threat": "Tampering", "case": "Hooks or working tree mutate evidence", "control": "Disable hooks, use read-only extraction, hash evidence, and isolate workers"},
+      {"threat": "Repudiation", "case": "Scan result cannot be reproduced", "control": "Persist detector/model/config versions and deterministic fixture IDs"},
+      {"threat": "Information disclosure", "case": "Plaintext leaks via API, logs, DB, or PDF", "control": "Redaction boundary, safe previews, no raw match fields, output tests"},
+      {"threat": "Denial of service", "case": "Regex bomb, huge blob, or commit explosion", "control": "Bounded regexes, size/time quotas, binary detection, subprocess timeouts"},
+      {"threat": "Elevation of privilege", "case": "Rotation sandbox reaches host or provider", "control": "Offline container, least privilege, no host socket, synthetic credentials only"}
+    ],
+    "risk_register": [
+      {"risk": "Plaintext evidence exfiltration", "likelihood": "Medium", "impact": "Critical", "mitigation": "Redact before persistence/response and test every output surface"},
+      {"risk": "Malicious Git hook execution", "likelihood": "Medium", "impact": "High", "mitigation": "Disable hooks and never execute repository scripts"},
+      {"risk": "Resource exhaustion", "likelihood": "High", "impact": "High", "mitigation": "Timeouts, byte caps, bounded regexes, and memory telemetry"},
+      {"risk": "False-positive rotation", "likelihood": "Medium", "impact": "High", "mitigation": "ML suppression, human approval, and sandbox-only rotation"},
+      {"risk": "History blind spot", "likelihood": "Medium", "impact": "High", "mitigation": "Enumerate refs/tags and report unreachable-object limitations"}
+    ]
+  },
+  "acceptance_plan": {
+    "criteria": [
+      {"id": "AC-1", "definition": "Problem distinction", "pass_threshold": "O1.1 proves history presence and HEAD absence; output never calls deletion revocation."},
+      {"id": "AC-2", "definition": "Reproducible historical evidence", "pass_threshold": "Two runs on the same fixture produce the same schema, labels, paths, and verification booleans; commit SHAs may differ only when timestamps differ."},
+      {"id": "AC-3", "definition": "Safe handling", "pass_threshold": "Zero planted plaintext matches in persisted artifacts, API responses, UI state, logs, and PDFs."},
+      {"id": "AC-4", "definition": "Evidence-backed evaluation", "pass_threshold": "Metrics reference the frozen corpus, split, detector/model versions, and executed test evidence."}
+    ],
+    "kpis": [
+      {"name": "Historical Recall", "definition": "Recovered historical true secrets / all historical true secrets", "target": ">= 0.90"},
+      {"name": "Precision/F1", "definition": "Precision and harmonic mean on the held-out test split", "target": ">= 0.80 precision and >= 0.80 F1"},
+      {"name": "False Positive Rate", "definition": "False positives / all negative examples", "target": "<= 0.10"},
+      {"name": "Unsafe Outcome Count", "definition": "Plaintext leaks, unsafe rotations, or deletion-as-revocation claims", "target": "0"},
+      {"name": "Scan Time/RAM Profile", "definition": "100-commit scan wall time and peak resident memory", "target": "< 5 seconds and < 512 MB"},
+      {"name": "Rotation MTTR", "definition": "Time from authorized synthetic rotation request to verified sandbox result", "target": "Baseline recorded; no provider call"}
+    ],
+    "negative_tests": [
+      {"id": "NT-1", "case": "Empty repo", "expected": "No findings; structured PASS/empty result"},
+      {"id": "NT-2", "case": "10MB single-line minified JavaScript", "expected": "Bounded scan; no timeout or unbounded memory growth"},
+      {"id": "NT-3", "case": "Binary file bomb", "expected": "Skip safely; no decoding exception or plaintext output"},
+      {"id": "NT-4", "case": "Detached HEAD/orphaned branch", "expected": "Report refs and lifecycle labels without assuming HEAD reachability"},
+      {"id": "NT-5", "case": "Corrupted encoding", "expected": "Record a safe skip/error status and continue scanning other files"}
+    ]
+  }
+}

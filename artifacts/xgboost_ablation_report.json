@@ -1,0 +1,135 @@
+{
+  "ablations": [
+    {
+      "config": "A_regex_entropy",
+      "features": [
+        "entropy",
+        "normalized_entropy"
+      ],
+      "metrics": {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    {
+      "config": "B_regex_entropy_lexical",
+      "features": [
+        "entropy",
+        "normalized_entropy",
+        "token_length",
+        "digit_ratio",
+        "uppercase_ratio",
+        "lowercase_ratio",
+        "symbol_ratio",
+        "transition_frequency"
+      ],
+      "metrics": {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    {
+      "config": "C_regex_entropy_lexical_context",
+      "features": [
+        "entropy",
+        "normalized_entropy",
+        "token_length",
+        "digit_ratio",
+        "uppercase_ratio",
+        "lowercase_ratio",
+        "symbol_ratio",
+        "transition_frequency",
+        "positive_keyword_proximity",
+        "negative_keyword_proximity",
+        "file_path_risk_score"
+      ],
+      "metrics": {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    {
+      "config": "D_full_xgboost",
+      "features": [
+        "entropy",
+        "normalized_entropy",
+        "token_length",
+        "digit_ratio",
+        "uppercase_ratio",
+        "lowercase_ratio",
+        "symbol_ratio",
+        "transition_frequency",
+        "positive_keyword_proximity",
+        "negative_keyword_proximity",
+        "file_path_risk_score",
+        "is_base64_encoded",
+        "assignment_operator_present",
+        "line_length"
+      ],
+      "metrics": {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    }
+  ],
+  "cv": {
+    "folds": 5,
+    "metrics": [
+      {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      {
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    ],
+    "scale_pos_weight": 1.0,
+    "stratified": true
+  },
+  "dataset": "real_repo_20_dual_annotator_benchmark",
+  "frozen_test_groups": [
+    "group-03",
+    "group-06"
+  ],
+  "tuning_guard": "Frozen test groups were not used for model selection."
+}

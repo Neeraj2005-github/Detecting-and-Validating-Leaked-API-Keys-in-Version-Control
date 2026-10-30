@@ -1,0 +1,174 @@
+
+{
+  "dataset": "SHD O2 deterministic evaluation",
+  "split": {
+    "training": [
+      "sample-001",
+      "sample-002",
+      "sample-003",
+      "sample-004",
+      "sample-005",
+      "sample-006",
+      "sample-007",
+      "sample-008"
+    ],
+    "validation": [
+      "sample-011",
+      "sample-012",
+      "sample-019",
+      "sample-020"
+    ],
+    "test": [
+      "sample-009",
+      "sample-010",
+      "sample-013",
+      "sample-014",
+      "sample-015",
+      "sample-016",
+      "sample-017",
+      "sample-018"
+    ]
+  },
+  "examples": [
+    {
+      "id": "sample-001",
+      "secret_type": "aws_access_key",
+      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "file_path": "src/config.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-002",
+      "secret_type": "github_pat",
+      "text": "TOKEN=ghp_123456789012345678901234567890123456",
+      "file_path": "src/settings.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-003",
+      "secret_type": "stripe_key",
+      "text": "STRIPE_KEY=STRIPE_TEST_SECRET_PLACEHOLDER_001",
+      "file_path": "src/billing.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-004",
+      "secret_type": "aws_access_key",
+      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "file_path": "app/config.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-005",
+      "secret_type": "github_pat",
+      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "file_path": "deploy/settings.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-006",
+      "secret_type": "stripe_key",
+      "text": "STRIPE_KEY=STRIPE_TEST_SECRET_PLACEHOLDER_002",
+      "file_path": "service/payments.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-007",
+      "secret_type": "aws_access_key",
+      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "file_path": "src/worker.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-008",
+      "secret_type": "github_pat",
+      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "file_path": "src/auth.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-009",
+      "secret_type": "aws_access_key",
+      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "file_path": "src/loader.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-010",
+      "secret_type": "stripe_key",
+      "text": "STRIPE_KEY=STRIPE_TEST_SECRET_PLACEHOLDER_003",
+      "file_path": "src/checkout.py",
+      "expected_label": "TRUE_SECRET"
+    },
+    {
+      "id": "sample-011",
+      "secret_type": "aws_access_key",
+      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "file_path": "tests/test_config.py",
+      "expected_label": "TEST_FIXTURE"
+    },
+    {
+      "id": "sample-012",
+      "secret_type": "github_pat",
+      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "file_path": "tests/test_auth.py",
+      "expected_label": "TEST_FIXTURE"
+    },
+    {
+      "id": "sample-013",
+      "secret_type": "aws_access_key",
+      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "file_path": "testdata/fixture.py",
+      "expected_label": "TEST_FIXTURE"
+    },
+    {
+      "id": "sample-014",
+      "secret_type": "stripe_key",
+      "text": "STRIPE_KEY=STRIPE_TEST_SECRET_PLACEHOLDER_004",
+      "file_path": "testdata/example.env",
+      "expected_label": "TEST_FIXTURE"
+    },
+    {
+      "id": "sample-015",
+      "secret_type": "github_pat",
+      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "file_path": "docs/example.md",
+      "expected_label": "EXAMPLE_DOCUMENTATION"
+    },
+    {
+      "id": "sample-016",
+      "secret_type": "generic",
+      "text": "not-a-secret-example-1234567890",
+      "file_path": "docs/usage.md",
+      "expected_label": "FALSE_POSITIVE"
+    },
+    {
+      "id": "sample-017",
+      "secret_type": "generic",
+      "text": "hello world",
+      "file_path": "src/readme.txt",
+      "expected_label": "FALSE_POSITIVE"
+    },
+    {
+      "id": "sample-018",
+      "secret_type": "generic",
+      "text": "placeholder-value",
+      "file_path": "tests/test_values.py",
+      "expected_label": "FALSE_POSITIVE"
+    },
+    {
+      "id": "sample-019",
+      "secret_type": "generic",
+      "text": "example-token-00000000000000000000",
+      "file_path": "docs/example.txt",
+      "expected_label": "FALSE_POSITIVE"
+    },
+    {
+      "id": "sample-020",
+      "secret_type": "generic",
+      "text": "configuration enabled",
+      "file_path": "src/config.py",
+      "expected_label": "FALSE_POSITIVE"
+    }
+  ]
+}

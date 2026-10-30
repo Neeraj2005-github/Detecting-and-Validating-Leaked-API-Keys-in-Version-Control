@@ -9,7 +9,7 @@ const objectives = [
     tone: 'done',
   },
   {
-    objective: 'O2',
+    objective: 'AI',
     delivers: 'Detection baseline (Gitleaks) + ML false-positive filter',
     status: 'Complete',
     tone: 'done',
@@ -82,7 +82,7 @@ export default function ProjectOverviewPage() {
           </table>
         </div>
         <Link to="/dashboard" className="primary-button primary-button--inline overview-objectives-cta">
-          View live O2 results <ArrowRight size={16} />
+          View live scanner results <ArrowRight size={16} />
         </Link>
       </section>
 
@@ -99,7 +99,7 @@ export default function ProjectOverviewPage() {
         <ul className="overview-bullets">
           <li>Testing runs only against a seeded synthetic repository with planted, non-real secrets.</li>
           <li>No live provider verification occurs yet; that remains in O3.</li>
-          <li>Evidence and evaluation are limited to the O1/O2 scope: charter, baseline detection, and ML false-positive filtering.</li>
+          <li>Evidence and evaluation cover history traversal, baseline detection, and ML false-positive filtering.</li>
         </ul>
       </section>
 
@@ -109,11 +109,11 @@ export default function ProjectOverviewPage() {
             <TriangleAlert size={16} />
           </div>
           <div>
-            <strong>Current scope:</strong> O1 problem charter and O2 detection baseline with ML filtering.
+            <strong>Current scope:</strong> Git history detection with explainable ML filtering.
           </div>
         </div>
         <a href="/dashboard" className="primary-button primary-button--inline">
-          Open O2 dashboard
+          Open scanner dashboard
           <ArrowRight size={16} />
         </a>
       </section>

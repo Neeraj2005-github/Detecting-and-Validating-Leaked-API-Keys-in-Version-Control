@@ -1,0 +1,52 @@
+{
+  "privacy": "Counts only; raw third-party secrets are never persisted.",
+  "repositories": [
+    {
+      "commit_count": 0,
+      "final_tp_count": 0,
+      "raw_match_count": 0,
+      "repository": "psf/requests",
+      "status": "aggregate_not_fetched",
+      "xgboost_filtered_count": 0
+    },
+    {
+      "commit_count": 0,
+      "final_tp_count": 0,
+      "raw_match_count": 0,
+      "repository": "tiangolo/fastapi",
+      "status": "aggregate_not_fetched",
+      "xgboost_filtered_count": 0
+    },
+    {
+      "commit_count": 0,
+      "final_tp_count": 0,
+      "raw_match_count": 0,
+      "repository": "pallets/flask",
+      "status": "aggregate_not_fetched",
+      "xgboost_filtered_count": 0
+    },
+    {
+      "commit_count": 0,
+      "final_tp_count": 0,
+      "raw_match_count": 0,
+      "repository": "encode/starlette",
+      "status": "aggregate_not_fetched",
+      "xgboost_filtered_count": 0
+    },
+    {
+      "commit_count": 0,
+      "final_tp_count": 0,
+      "raw_match_count": 0,
+      "repository": "pydantic/pydantic",
+      "status": "aggregate_not_fetched",
+      "xgboost_filtered_count": 0
+    }
+  ],
+  "repository_count": 5,
+  "totals": {
+    "commit_count": 0,
+    "final_tp_count": 0,
+    "raw_match_count": 0,
+    "xgboost_filtered_count": 0
+  }
+}

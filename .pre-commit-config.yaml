@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: secret-history-detector
+        name: Secret History Detector staged-secret gate
+        entry: python scripts/pre_commit_hook.py
+        language: system
+        pass_filenames: false

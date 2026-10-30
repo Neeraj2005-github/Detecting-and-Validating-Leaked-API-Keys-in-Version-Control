@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 import yaml
 
 from backend.classification.classifier import classify
@@ -24,3 +25,26 @@ def test_classifier_maps_seeded_rules():
 
     # ensure canonical mapping covers the expected seeded rule IDs
     assert result.secret_type in {"aws_access_key", "generic_high_entropy"}
+
+
+@pytest.mark.parametrize(
+    ("rule_id", "secret_type", "criticality"),
+    [
+        ("aws-access-token", "aws_access_key", 100),
+        ("stripe-access-token", "stripe_key", 90),
+        ("github-pat", "github_pat", 70),
+    ],
+)
+def test_classifier_maps_live_gitleaks_rule_ids(rule_id, secret_type, criticality):
+    finding = RawFinding(
+        commit_sha="abc123",
+        file="config.env",
+        line=1,
+        rule_id=rule_id,
+        matched_string_hash="deadbeef",
+    )
+
+    result = classify(finding)
+
+    assert result.secret_type == secret_type
+    assert result.criticality == criticality

@@ -1,0 +1,8 @@
+[
+  {
+    "timestamp": "2026-10-29T05:24:46.250123+00:00",
+    "test": "tests/test_cp1_complete.py::test_entropy_features_xgboost_and_shap_payload",
+    "exception": "ValueError",
+    "message": "Computing NDCG is only meaningful when there is more than 1 document. Got 1 instead."
+  }
+]

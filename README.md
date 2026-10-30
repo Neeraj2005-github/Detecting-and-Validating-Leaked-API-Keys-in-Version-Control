@@ -55,9 +55,58 @@ pip install -r requirements.txt
 uvicorn src.shd.walker_api:app --reload --port 8000
 ```
 
+The same application is available through the compatibility entry point
+`uvicorn backend.main:app --reload --port 8000`. The CP1 workbench uses the
+REST namespace under `/api/cp1/` for overview, scan, reproduction, benchmark,
+and offline rotation actions.
+
 The API documentation is available at `http://127.0.0.1:8000/docs`.
 
 The default development database is `runtime/shd-local.sqlite3`. Set `DATABASE_URL` to use another supported SQLAlchemy database URL.
+
+## CP1 Gate 1 / O1 evidence
+
+Run the deterministic problem reproduction from the repository root:
+
+```powershell
+python scripts/reproduce_problem.py
+```
+
+This writes the redacted machine-readable evidence to
+`artifacts/o1_reproduction_log.json` and the review document to
+`docs/o1_reproduction_log.md`. The frozen contract is in
+`backend/data/o1_engineering_contract.json` with its readable companion at
+`docs/o1_engineering_contract.md`. When the API is running, the complete
+structured evidence bundle is available at `GET /o1/evidence` and is rendered
+on the frontend's **O1 Evidence** page for inline review and PDF export.
+
+## O2 fixture, history, and detector
+
+Build the versioned synthetic repository and safe grading oracle:
+
+```powershell
+python -c "from backend.services.fixture_generator import generate_fixture; generate_fixture()"
+```
+
+The added-line walker is available as
+`backend.scanner.history_walker.walk_history`; the staged detector is
+`backend.ml.detector.detect_lines`. The detector generates
+`backend/ml/detector_model.pkl` on first use. It uses `XGBClassifier` when
+XGBoost is installed and a deterministic scikit-learn fallback otherwise.
+The fixture and oracle are written to `artifacts/synthetic_repo_v1` and
+`artifacts/ground_truth_oracle.json`.
+
+## CP1 Extra evidence
+
+`GET /cp1/extras` runs and returns the privacy-safe κ benchmark, frozen-split
+XGBoost ablations, TreeSHAP/NDCG risk report, offline rotation MTTR, and
+public-repository aggregate counts. Results are persisted in the
+`cp1_artifacts` SQLAlchemy table and in `artifacts/` JSON files. The same
+bundle is viewable at the frontend's **CP1 Extras** route.
+
+The local pre-commit hook is configured in `.pre-commit-config.yaml` and
+blocks staged additions that the detector classifies as likely active
+credentials.
 
 ## Run the frontend
 
@@ -98,6 +147,17 @@ python -m backend.ml_filter.train
 python -m backend.ml_filter.evaluate
 ```
 
+The deterministic O2 evaluation corpus is `data/o2_evaluation.json` with 20
+labeled examples: 8 training, 4 validation, and 8 test examples. Baseline A
+uses Gitleaks only; Baseline B applies the ML filter to the same test examples.
+
+Run the reproducible evaluation and coverage checks with:
+
+```powershell
+& ".\.venv\Scripts\python.exe" -c "from backend.evaluation_metrics import evaluate; import json; print(json.dumps(evaluate(), indent=2))"
+& ".\.venv\Scripts\python.exe" -m pytest --cov=backend --cov=src --cov-report=term-missing
+```
+
 Evaluation outputs are written to `reports/`. Baseline B is intentionally marked invalid when the test set contains a leakage feature that perfectly separates labels; see `reports/baseline_metrics.json` and `backend/ml_filter/evaluate.py` for the validation warning.
 
 ## Documentation
@@ -110,3 +170,16 @@ Supporting specifications and review material are in `docs/`, including the prob
 - Gitleaks must be installed separately and available on `PATH`.
 - The ML evaluation dataset is synthetic and requires a leakage-free test split before its results can be used as a valid contribution claim.
 - Risk scoring, rotation scheduling, and verification adapters remain stubs for future work.
+### O2.4-O2.6 one-command reproduction
+
+Run the complete benchmark and evidence suite from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\reproduce_o2.py
+```
+
+This regenerates `artifacts\synthetic_repo_v1`, writes
+`artifacts\ground_truth_oracle.json` and `artifacts\o2_benchmark_kpis.json`,
+and runs `tests\test_cp1_complete.py`. Native Gitleaks is used when available;
+otherwise the report records the deterministic rule-set emulator. Test
+failures are appended to `artifacts\failure_log.json`.

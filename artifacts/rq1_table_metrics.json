@@ -1,0 +1,49 @@
+{
+  "held_out_entries": 8,
+  "measurement_note": "Wall-clock measurement covers prediction/rule evaluation over the eight oracle entries; the normalized speed is seconds per 1,000 entries labeled as commits.",
+  "methods": [
+    {
+      "metrics": {
+        "f1_score": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "scan_seconds_per_1000_commits": 0.020124999991821824,
+        "true_negatives": 2,
+        "true_positives": 6
+      },
+      "name": "Regex only"
+    },
+    {
+      "metrics": {
+        "f1_score": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "scan_seconds_per_1000_commits": 3.193725000073755,
+        "true_negatives": 2,
+        "true_positives": 6
+      },
+      "name": "Gitleaks (emulator:backend.ml.detector.PATTERNS)"
+    },
+    {
+      "metrics": {
+        "f1_score": 0.8571428571428571,
+        "false_negatives": 0,
+        "false_positives": 2,
+        "precision": 0.75,
+        "recall": 1.0,
+        "scan_seconds_per_1000_commits": 0.40063749975161045,
+        "true_negatives": 0,
+        "true_positives": 6
+      },
+      "name": "Proposed 14-feature XGBoost"
+    }
+  ],
+  "model": "backend\\ml\\detector_model.pkl",
+  "oracle": "fixtures\\oracle_spec.yaml",
+  "positive_entries": 6,
+  "task": "RQ1 Detection on Held-Out Split"
+}

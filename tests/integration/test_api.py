@@ -30,7 +30,7 @@ def test_scan_api_persists_redacted_current_source_finding(tmp_path: Path) -> No
         response = client.post("/scan", json={"repo_path": str(tmp_path), "repo_id": "api-fixture"})
         assert response.status_code == 200
         payload = response.json()
-        assert payload["findings_count"] == 1
+        assert payload["findings_count"] == 2
         assert payload["scan_id"] == 1
 
         findings = client.get("/findings", params={"repo_id": "api-fixture"})
@@ -92,3 +92,58 @@ def test_scan_rejects_non_git_directory_with_actionable_error(tmp_path: Path) ->
 
     assert response.status_code == 400
     assert response.json()["detail"].startswith("Not a Git repository:")
+
+
+def test_scan_modes_separate_current_and_deleted_history(tmp_path: Path) -> None:
+    repo = git.Repo.init(tmp_path)
+    with repo.config_writer() as config:
+        config.set_value("user", "name", "Mode Fixture")
+        config.set_value("user", "email", "mode-fixture@example.test")
+    config_path = tmp_path / "application.properties"
+    config_path.write_text("aws.access.key=AKIAIOSFODNN7EXAMPLE\n", encoding="utf-8")
+    repo.index.add(["application.properties"])
+    first_commit = repo.index.commit("Add synthetic secret")
+    config_path.unlink()
+    repo.index.remove(["application.properties"])
+    repo.index.commit("Remove synthetic secret")
+    repo.close()
+
+    with TestClient(app) as client:
+        current = client.post("/scan", json={
+            "repo_path": str(tmp_path),
+            "repo_id": "mode-fixture",
+            "analysis_mode": "current",
+        })
+        history = client.post("/scan", json={
+            "repo_path": str(tmp_path),
+            "repo_id": "mode-fixture",
+            "analysis_mode": "history",
+        })
+        full = client.post("/scan", json={
+            "repo_path": str(tmp_path),
+            "repo_id": "mode-fixture",
+            "analysis_mode": "full",
+        })
+
+        assert current.json()["findings_count"] == 0
+        assert history.json()["findings_count"] == 1
+        assert full.json()["findings_count"] == 1
+        historical = client.get("/historical-findings", params={"repo_id": "mode-fixture"}).json()
+        assert historical[0]["commit_hash"] == first_commit.hexsha
+        assert historical[0]["file_path"] == "application.properties"
+        assert historical[0]["commit_message"] == "Add synthetic secret"
+
+
+def test_scan_empty_git_repository_returns_no_findings(tmp_path: Path) -> None:
+    repo = git.Repo.init(tmp_path)
+
+    with TestClient(app) as client:
+        response = client.post("/scan", json={
+            "repo_path": str(tmp_path),
+            "repo_id": "empty-fixture",
+            "analysis_mode": "full",
+        })
+
+    repo.close()
+    assert response.status_code == 200
+    assert response.json()["findings_count"] == 0

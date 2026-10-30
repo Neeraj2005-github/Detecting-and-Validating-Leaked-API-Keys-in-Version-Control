@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "frozen": true,
+  "selection_rule": "repository_group",
+  "test_groups": [
+    "group-03",
+    "group-06"
+  ],
+  "source": "data\\real_repo_20_labels.csv"
+}

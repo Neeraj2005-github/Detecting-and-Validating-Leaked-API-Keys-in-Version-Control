@@ -6,6 +6,8 @@ FEATURE_COLUMNS = [
     "length",
     "char_class_count",
     "digit_ratio",
+    "is_test_path",
+    "has_example_keyword",
     "repeated_char_ratio",
 ]
 

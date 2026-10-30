@@ -1,0 +1,81 @@
+{
+  "approaches": [
+    {
+      "metrics": {
+        "f1_score": 0.7058823529411764,
+        "false_negatives": 0,
+        "false_positive_rate": 1.0,
+        "false_positives": 5,
+        "historical_secrets_found_percent": 100.0,
+        "peak_rss_mb": 323.26953125,
+        "precision": 0.5454545454545454,
+        "recall": 1.0,
+        "scan_wall_clock_ms": 991.9405000000552,
+        "true_positives": 6,
+        "unsafe_outcome_count": 0
+      },
+      "name": "Baseline A: Regex + Entropy",
+      "provenance": "regex_plus_entropy"
+    },
+    {
+      "metrics": {
+        "f1_score": 0.923076923076923,
+        "false_negatives": 0,
+        "false_positive_rate": 0.25,
+        "false_positives": 1,
+        "historical_secrets_found_percent": 100.0,
+        "peak_rss_mb": 323.28125,
+        "precision": 0.8571428571428571,
+        "recall": 1.0,
+        "scan_wall_clock_ms": 1044.2920999994385,
+        "true_positives": 6,
+        "unsafe_outcome_count": 0
+      },
+      "name": "Baseline B: Gitleaks",
+      "provenance": "gitleaks_rule_set_emulator: AWS/JWT/URI/private-key/token assignments"
+    },
+    {
+      "metrics": {
+        "f1_score": 0.0,
+        "false_negatives": 6,
+        "false_positive_rate": 0.0,
+        "false_positives": 1,
+        "historical_secrets_found_percent": 0.0,
+        "peak_rss_mb": 323.43359375,
+        "precision": 0.0,
+        "recall": 0.0,
+        "scan_wall_clock_ms": 251.8634000007296,
+        "true_positives": 0,
+        "unsafe_outcome_count": 2
+      },
+      "name": "Baseline C: detect-secrets/trufflehog pattern baseline",
+      "provenance": "detect_secrets_native"
+    },
+    {
+      "metrics": {
+        "f1_score": 1.0,
+        "false_negatives": 0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "historical_secrets_found_percent": 100.0,
+        "peak_rss_mb": 323.48046875,
+        "precision": 1.0,
+        "recall": 1.0,
+        "scan_wall_clock_ms": 1097.7363999991212,
+        "true_positives": 6,
+        "unsafe_outcome_count": 0
+      },
+      "name": "Our O2 Engine",
+      "provenance": "differential_walker_regex_entropy_xgboost"
+    }
+  ],
+  "fixture": "C:\\Users\\sakal\\AppData\\Local\\Temp\\pytest-of-sakal\\pytest-91\\test_benchmark_generates_all_k0\\synthetic_repo_v1",
+  "oracle": "C:\\Users\\sakal\\AppData\\Local\\Temp\\pytest-of-sakal\\pytest-91\\test_benchmark_generates_all_k0\\oracle.json",
+  "resource_note": "RSS is sampled immediately before and after each run; install psutil for process-level memory telemetry.",
+  "tradeoff_analysis": "The O2 Engine is the reference architecture because it preserves added-line/history lifecycle context, identifies still-in-HEAD exposure, and applies XGBoost false-positive suppression. Native Gitleaks is a useful detector baseline but does not provide the same lifecycle semantics; the emulator preserves benchmark continuity when the optional binary is unavailable.",
+  "truth_counts": {
+    "active_head": 2,
+    "decoy": 4,
+    "true_positive": 6
+  }
+}

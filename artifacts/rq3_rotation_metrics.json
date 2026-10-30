@@ -1,0 +1,40 @@
+{
+  "deleted_but_valid": 1,
+  "mean_mttr_ms": 1.2566499999999998,
+  "runs": [
+    {
+      "credential_id": "oracle-aws-head",
+      "mttr_ms": 2.05,
+      "state": "VERIFIED_SAFE"
+    },
+    {
+      "credential_id": "oracle-db-deleted",
+      "mttr_ms": 1.2515,
+      "state": "VERIFIED_SAFE"
+    },
+    {
+      "credential_id": "oracle-branch-token",
+      "mttr_ms": 1.1219,
+      "state": "VERIFIED_SAFE"
+    },
+    {
+      "credential_id": "oracle-tagged-token",
+      "mttr_ms": 2.0204,
+      "state": "VERIFIED_SAFE"
+    },
+    {
+      "credential_id": "oracle-base64",
+      "mttr_ms": 0.6798,
+      "state": "VERIFIED_SAFE"
+    },
+    {
+      "credential_id": "oracle-rewritten",
+      "mttr_ms": 0.4163,
+      "state": "VERIFIED_SAFE"
+    }
+  ],
+  "sandbox": "sqlite-in-memory-offline",
+  "successfully_rotated_and_verified": 6,
+  "task": "RQ3 Rotation Tracking",
+  "total_findings": 6
+}

@@ -45,6 +45,14 @@ class SourceFinding(BaseModel):
     secret_hash: str
     masked_preview: str
     status: Literal["open", "resolved", "ignored"]
+    commit_sha: str = "working-tree"
+    classification: str = "UNKNOWN"
+    validation_status: str = "NOT_CHECKED"
+    criticality: str = "UNKNOWN"
+    features: dict[str, int | float] = {}
+    ml_verdict: str = "NOT_AVAILABLE"
+    is_current: bool = True
+    is_historical: bool = False
 
 
 class DedupedFinding(BaseModel):

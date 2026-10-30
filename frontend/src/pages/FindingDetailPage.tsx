@@ -7,6 +7,7 @@ import StateTimeline from '../components/StateTimeline';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import EmptyState from '../components/EmptyState';
 import type { Finding } from '../types';
+import { maskCommit, maskSecret } from '../utils/displaySafety';
 
 export default function FindingDetailPage() {
   const { id } = useParams();
@@ -57,7 +58,7 @@ export default function FindingDetailPage() {
         <div className="affinity-block">
           <span>{finding.repository}</span>
           <span>{finding.file_path}</span>
-          <span>{finding.commit_sha.slice(0, 8)}</span>
+          <span>{maskCommit(finding.commit_sha)}</span>
         </div>
       </section>
 
@@ -88,12 +89,12 @@ export default function FindingDetailPage() {
           <div className="meta-item">
             <GitBranch size={14} />
             <span>Commit</span>
-            <strong>{finding.commit_sha.slice(0, 12)}</strong>
+            <strong>{maskCommit(finding.commit_sha)}</strong>
           </div>
           <div className="meta-item">
             <ShieldCheck size={14} />
             <span>Masked hash</span>
-            <strong>{finding.masked_hash || '****a91f'}</strong>
+            <strong>{maskSecret(finding.masked_hash || finding.masked_preview)}</strong>
           </div>
         </div>
       </section>

@@ -60,13 +60,20 @@ export default function RepositoriesPage() {
     event.preventDefault();
     if (!url.trim()) return;
     const repositoryUrl = url.trim();
-    const created = await addRepository(repositoryUrl);
-    setUrl('');
-    const loadedRepos = await load();
-    const createdId = typeof created?.id === 'string' ? created.id : created?.repository?.id;
-    const matchingRepo = loadedRepos.find((repo) => repo.url === repositoryUrl);
-    setAddedRepoId(createdId ?? matchingRepo?.id ?? null);
-    setAddedRepoUrl(repositoryUrl);
+    try {
+      const created = await addRepository(repositoryUrl);
+      setUrl('');
+      const loadedRepos = await load();
+      const createdId = typeof created?.id === 'string' ? created.id : created?.repository?.id;
+      const matchingRepo = loadedRepos.find((repo) => repo.url === repositoryUrl);
+      setAddedRepoId(createdId ?? matchingRepo?.id ?? null);
+      setAddedRepoUrl(repositoryUrl);
+      setStatusMessage('Repository added');
+    } catch (error) {
+      setAddedRepoId(null);
+      setAddedRepoUrl(null);
+      setStatusMessage(`Add failed - ${getScanErrorMessage(error)}`);
+    }
   }
 
   async function onScan(id: string) {
@@ -198,7 +205,7 @@ export default function RepositoriesPage() {
           <EmptyState
             icon={<FolderGit2 size={18} />}
             title="Get started"
-            description="Add a repository URL below to begin the O2 scan workflow."
+            description="Add a repository URL below to begin the history scan workflow."
             action={<ol className="onboarding-steps"><li>Add a repository below</li><li>Click Scan now</li><li>View results on the Dashboard</li></ol>}
           />
         ) : (
