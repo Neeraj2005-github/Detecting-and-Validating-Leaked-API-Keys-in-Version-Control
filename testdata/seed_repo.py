@@ -32,8 +32,8 @@ def _generate_secret_value(kind: str) -> str:
 
 def _generate_false_positive() -> str:
     examples = [
-        "AKIAIOSFODNN7EXAMPLE",
-        "ghp_0123456789abcdefghijklmnopqrstuv",
+        "FAKE_EXAMPLE_AWS_ACCESS_KEY",
+        "FAKE_EXAMPLE_GITHUB_PAT",
         "sk_test_1234567890abcdefghijklmnop",
         "xoxb-example-token-value",
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example.signature",

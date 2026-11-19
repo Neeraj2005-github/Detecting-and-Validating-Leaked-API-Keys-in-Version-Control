@@ -1,0 +1,11 @@
+title = "SecretGuard repository self-scan allowlist"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known synthetic fixtures; do not reuse for target repositories"
+regexTarget = "match"
+regexes = [
+  '''FAKE_EXAMPLE_[A-Z0-Z0-9_]+''',
+]

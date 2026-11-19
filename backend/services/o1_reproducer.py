@@ -43,15 +43,15 @@ logger = logging.getLogger(__name__)
 # Constants
 # ---------------------------------------------------------------------------
 
-_SECRET_MARKER = "AKIAIOSFODNN7EXAMPLE"
+_SECRET_MARKER = "FAKE_EXAMPLE_AWS_ACCESS_KEY"
 """A distinctive substring used to check whether the AWS key is present."""
 
 _PROD_ENV_CONTENT = textwrap.dedent(
     """\
     # Production Configuration - DO NOT COMMIT
-    AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
-    AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-    DATABASE_URL=mysql://admin:SuperSecret123!@prod-db.internal:3306/myapp
+    AWS_ACCESS_KEY_ID=FAKE_EXAMPLE_AWS_ACCESS_KEY
+    AWS_SECRET_ACCESS_KEY=FAKE_EXAMPLE_AWS_SECRET
+    DATABASE_URL=FAKE_EXAMPLE_DATABASE_URL
     """
 )
 
@@ -77,10 +77,9 @@ _AUTHOR = Actor("SecretGuard Bot", "secretguard-bot@example.com")
 def _mask_sensitive_diff(value: str) -> str:
     """Keep persisted evidence useful without persisting credential material."""
     replacements = {
-        "AKIAIOSFODNN7EXAMPLE": "[REDACTED_AWS_ACCESS_KEY]",
-        "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY": "[REDACTED_AWS_SECRET]",
-        "mysql://prod-db.internal:3306/myapp": "[REDACTED_MYSQL_URI]",
-        "******prod-db.internal:3306/myapp": "[REDACTED_MYSQL_URI]",
+        "FAKE_EXAMPLE_AWS_ACCESS_KEY": "[REDACTED_AWS_ACCESS_KEY]",
+        "FAKE_EXAMPLE_AWS_SECRET": "[REDACTED_AWS_SECRET]",
+        "FAKE_EXAMPLE_DATABASE_URL": "[REDACTED_MYSQL_URI]",
     }
     for plaintext, replacement in replacements.items():
         value = value.replace(plaintext, replacement)

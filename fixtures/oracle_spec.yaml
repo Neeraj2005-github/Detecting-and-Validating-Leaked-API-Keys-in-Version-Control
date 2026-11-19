@@ -4,32 +4,32 @@ description: "Synthetic-only planted secrets and high-entropy decoys for lifecyc
 entries:
   - id: "oracle-aws-head"
     secret_type: "aws_access_key"
-    value: "AKIAIOSFODNN7EXAMPLE"
+    value: "FAKE_EXAMPLE_AWS_ACCESS_KEY"
     is_secret: true
     expected_lifecycle: "STILL_IN_HEAD"
   - id: "oracle-db-deleted"
     secret_type: "mysql_uri"
-    value: "mysql://user:example-password@db.invalid:3306/app"
+    value: "FAKE_EXAMPLE_MYSQL_URI"
     is_secret: true
     expected_lifecycle: "DELETED_IN_HISTORY"
   - id: "oracle-branch-token"
     secret_type: "generic_token"
-    value: "sg_orphan_branch_synthetic_8f71b2"
+    value: "FAKE_EXAMPLE_ORPHAN_BRANCH_TOKEN"
     is_secret: true
     expected_lifecycle: "ORPHAN_BRANCH"
   - id: "oracle-tagged-token"
     secret_type: "generic_token"
-    value: "sg_git_tag_synthetic_4ac91e"
+    value: "FAKE_EXAMPLE_TAGGED_TOKEN"
     is_secret: true
     expected_lifecycle: "GIT_TAG"
   - id: "oracle-base64"
     secret_type: "encoded_secret"
-    value: "c2dfYmFzZTY0X3N5bnRoZXRpY19rZXk="
+    value: "FAKE_EXAMPLE_BASE64_VALUE"
     is_secret: true
     expected_lifecycle: "BASE64_ENCODED"
   - id: "oracle-rewritten"
     secret_type: "generic_token"
-    value: "sg_rewritten_history_synthetic_2d0c77"
+    value: "FAKE_EXAMPLE_REWRITTEN_TOKEN"
     is_secret: true
     expected_lifecycle: "REWRITTEN_HISTORY"
   - id: "oracle-entropy-decoy-1"

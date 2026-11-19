@@ -16,6 +16,8 @@ jobs:
       - run: python testdata/seed_repo.py
       - run: python -m backend.ml_filter.train
       - run: pytest --cov=backend --cov-report=term-missing --cov-fail-under=75
+      - name: Self-scan repository
+        run: gitleaks detect --source . --config gitleaks-selfscan.toml --report-format json --report-path /tmp/secretguard-selfscan.json --no-banner
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

@@ -33,14 +33,14 @@
     {
       "id": "sample-001",
       "secret_type": "aws_access_key",
-      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "text": "AWS_ACCESS_KEY_ID=FAKE_EXAMPLE_AWS_KEY",
       "file_path": "src/config.py",
       "expected_label": "TRUE_SECRET"
     },
     {
       "id": "sample-002",
       "secret_type": "github_pat",
-      "text": "TOKEN=ghp_123456789012345678901234567890123456",
+      "text": "TOKEN=FAKE_EXAMPLE_GITHUB_PAT",
       "file_path": "src/settings.py",
       "expected_label": "TRUE_SECRET"
     },
@@ -54,14 +54,14 @@
     {
       "id": "sample-004",
       "secret_type": "aws_access_key",
-      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "text": "AWS_ACCESS_KEY_ID=FAKE_EXAMPLE_AWS_KEY",
       "file_path": "app/config.py",
       "expected_label": "TRUE_SECRET"
     },
     {
       "id": "sample-005",
       "secret_type": "github_pat",
-      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "text": "TOKEN=FAKE_EXAMPLE_GITHUB_PAT",
       "file_path": "deploy/settings.py",
       "expected_label": "TRUE_SECRET"
     },
@@ -75,21 +75,21 @@
     {
       "id": "sample-007",
       "secret_type": "aws_access_key",
-      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "text": "AWS_ACCESS_KEY_ID=FAKE_EXAMPLE_AWS_KEY",
       "file_path": "src/worker.py",
       "expected_label": "TRUE_SECRET"
     },
     {
       "id": "sample-008",
       "secret_type": "github_pat",
-      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "text": "TOKEN=FAKE_EXAMPLE_GITHUB_PAT",
       "file_path": "src/auth.py",
       "expected_label": "TRUE_SECRET"
     },
     {
       "id": "sample-009",
       "secret_type": "aws_access_key",
-      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "text": "AWS_ACCESS_KEY_ID=FAKE_EXAMPLE_AWS_KEY",
       "file_path": "src/loader.py",
       "expected_label": "TRUE_SECRET"
     },
@@ -103,21 +103,21 @@
     {
       "id": "sample-011",
       "secret_type": "aws_access_key",
-      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "text": "AWS_ACCESS_KEY_ID=FAKE_EXAMPLE_AWS_KEY",
       "file_path": "tests/test_config.py",
       "expected_label": "TEST_FIXTURE"
     },
     {
       "id": "sample-012",
       "secret_type": "github_pat",
-      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "text": "TOKEN=FAKE_EXAMPLE_GITHUB_PAT",
       "file_path": "tests/test_auth.py",
       "expected_label": "TEST_FIXTURE"
     },
     {
       "id": "sample-013",
       "secret_type": "aws_access_key",
-      "text": "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE",
+      "text": "AWS_ACCESS_KEY_ID=FAKE_EXAMPLE_AWS_KEY",
       "file_path": "testdata/fixture.py",
       "expected_label": "TEST_FIXTURE"
     },
@@ -131,7 +131,7 @@
     {
       "id": "sample-015",
       "secret_type": "github_pat",
-      "text": "TOKEN=ghp_abcdef1234567890abcdef1234567890abcd",
+      "text": "TOKEN=FAKE_EXAMPLE_GITHUB_PAT",
       "file_path": "docs/example.md",
       "expected_label": "EXAMPLE_DOCUMENTATION"
     },
