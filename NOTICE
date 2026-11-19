@@ -1,0 +1,8 @@
+Gitleaks
+Copyright (c) Zricethezav and Gitleaks contributors.
+Licensed under the MIT License.
+Source: https://github.com/gitleaks/gitleaks
+
+Gitleaks is used as an unmodified external scanning tool. SecretGuard wrapper
+code is maintained separately under backend/detection, backend/services,
+backend/scanner, src/shd, and the repository-level configuration files.

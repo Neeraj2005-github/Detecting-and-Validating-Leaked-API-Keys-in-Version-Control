@@ -72,9 +72,10 @@ def test_rotation_transitions_and_positive_mttr() -> None:
     success = rotate("cp1-success")
     failure = rotate("cp1-failure", force_failure=True)
     assert [item["state"] for item in success["transitions"]] == [
-        "DETECTED", "SANDBOX_VALIDATING", "ROTATING_CREDENTIAL", "VERIFIED_SAFE"
+        "DETECTED", "EXPOSED_IN_HISTORY", "VALIDITY_UNKNOWN",
+        "STILL_VALID", "ROTATED_UNVERIFIED", "VERIFIED_REVOKED"
     ]
-    assert failure["state"] == "FAILED_ROLLBACK"
+    assert failure["state"] == "VALIDITY_UNKNOWN"
     assert success["mttr_ms"] > 0
 
 

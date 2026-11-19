@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import os
 
 from src.shd.dedup import compute_secret_id, deduplicate, normalize_secret
 from src.shd.models import RawFinding
@@ -27,8 +28,17 @@ def make_finding(
 
 
 def test_normalization_strips_whitespace_without_changing_case() -> None:
+    os.environ["SHD_HMAC_KEY"] = "test-key-a"
     assert normalize_secret("  SecretValue  ") == "SecretValue"
     assert compute_secret_id(" SecretValue") != compute_secret_id(" secretvalue")
+
+
+def test_hmac_changes_with_key(monkeypatch) -> None:
+    monkeypatch.setenv("SHD_HMAC_KEY", "key-a")
+    first = compute_secret_id("SAME")
+    monkeypatch.setenv("SHD_HMAC_KEY", "key-b")
+    second = compute_secret_id("SAME")
+    assert first != second
 
 
 def test_same_secret_across_commits_is_merged_deterministically() -> None:

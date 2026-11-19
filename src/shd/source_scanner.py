@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import os
 import tempfile
+import hmac
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -39,7 +40,10 @@ def _is_binary(data: bytes) -> bool:
 
 
 def _fingerprint(value: str) -> str:
-    return hashlib.sha256(value.strip().encode("utf-8")).hexdigest()
+    key = os.getenv("SHD_HMAC_KEY")
+    if not key:
+        raise RuntimeError("SHD_HMAC_KEY is required")
+    return hmac.new(key.encode("utf-8"), value.strip().encode("utf-8"), hashlib.sha256).hexdigest()
 
 
 def _mask(value: str) -> str:
@@ -96,8 +100,10 @@ def _scan_local_source(repo_path: str) -> SourceScanResult:
             for raw in match(blob):
                 findings.append(
                     SourceFinding(
-                        finding_id=hashlib.sha256(
-                            f"{relative_path}:{raw.line_number}:{raw.secret_type}:{raw.matched_string}".encode("utf-8")
+                        finding_id=hmac.new(
+                            os.environ["SHD_HMAC_KEY"].encode("utf-8"),
+                            f"{relative_path}:{raw.line_number}:{raw.secret_type}:{raw.matched_string}".encode("utf-8"),
+                            hashlib.sha256,
                         ).hexdigest(),
                         repository_path=str(root),
                         file_path=relative_path,

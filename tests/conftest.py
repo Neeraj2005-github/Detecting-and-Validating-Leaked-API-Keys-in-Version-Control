@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
+
+
+os.environ.setdefault("SHD_HMAC_KEY", "cp1-test-only-hmac-key")
 
 
 FAILURE_LOG = Path(__file__).resolve().parents[1] / "artifacts" / "failure_log.json"

@@ -1,4 +1,6 @@
 import hashlib
+import hmac
+import os
 
 from pydantic import BaseModel, Field
 
@@ -13,6 +15,13 @@ class RawFinding(BaseModel):
     matched_string_hash: str
     features: dict[str, int | float] = Field(default_factory=dict)
     masked_preview: str = ""
+
+
+def hmac_secret(secret: str) -> str:
+    key = os.getenv("SHD_HMAC_KEY")
+    if not key:
+        raise RuntimeError("SHD_HMAC_KEY is required")
+    return hmac.new(key.encode("utf-8"), secret.encode("utf-8"), hashlib.sha256).hexdigest()
 
 
 def _mask(secret: str) -> str:
@@ -41,7 +50,7 @@ def normalize(gitleaks_raw_output: list[dict]) -> list[RawFinding]:
             file=file_path,
             line=line_number,
             rule_id=str(item.get("RuleID") or item.get("rule_id") or "unknown").strip(),
-            matched_string_hash=hashlib.sha256(secret.encode("utf-8")).hexdigest(),
+            matched_string_hash=hmac_secret(secret),
             features=extract_features(secret, file_path, surrounding_line),
             masked_preview=_mask(secret),
         )

@@ -114,7 +114,22 @@ def _baseline_b(*, allow_emulator: bool = False) -> dict[str, Any]:
         raise RuntimeError("Native Gitleaks binary not found on PATH")
     with tempfile.TemporaryDirectory(prefix="o2-gitleaks-") as temp_dir:
         report = Path(temp_dir) / "report.json"
-        command = [binary, "detect", "--source", str(FIXTURE), "--report-format", "json", "--report-path", str(report), "--no-banner"]
+        owned_config = ROOT / "gitleaks.toml"
+        if not owned_config.is_file():
+            raise RuntimeError("Gitleaks benchmark refused: owned gitleaks.toml is missing")
+        command = [
+            binary,
+            "detect",
+            "--source",
+            str(FIXTURE),
+            "--report-format",
+            "json",
+            "--report-path",
+            str(report),
+            "--config",
+            str(owned_config.resolve()),
+            "--no-banner",
+        ]
         completed = subprocess.run(command, capture_output=True, text=True, timeout=60, check=False)
         if completed.returncode not in (0, 1) or not report.exists():
             if allow_emulator:

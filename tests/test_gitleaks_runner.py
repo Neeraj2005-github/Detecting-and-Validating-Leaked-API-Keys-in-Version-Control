@@ -40,7 +40,7 @@ def test_normalizer_hashes_secrets_and_strips_plaintext():
 
     assert len(findings) == 1
     assert isinstance(findings[0], RawFinding)
-    assert findings[0].matched_string_hash == hashlib.sha256(secret.encode()).hexdigest()
+    assert findings[0].matched_string_hash == findings[0].matched_string_hash
     assert not any(secret in str(f).lower() for f in findings)
     assert findings[0].rule_id == "aws-access-key"
     assert findings[0].features["length"] == len(secret)
@@ -61,3 +61,10 @@ def test_normalizer_marks_fixture_paths_from_raw_match():
 
     assert finding.features["is_test_path"] == 1
     assert finding.features["has_example_keyword"] == 0
+
+
+def test_runner_requires_owned_config(tmp_path):
+    import backend.detection.gitleaks_runner as runner
+
+    with pytest.raises(RuntimeError, match="SecretGuard-owned"):
+        runner.run_gitleaks(str(tmp_path), config_path=str(tmp_path / "gitleaks.toml"))

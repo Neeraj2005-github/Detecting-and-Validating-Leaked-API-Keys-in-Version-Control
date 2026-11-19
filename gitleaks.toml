@@ -1,0 +1,13 @@
+title = "SecretGuard owned gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "secretguard-private-key"
+description = "Private key material"
+regex = '''-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----'''
+tags = ["key", "private-key"]
+
+[allowlist]
+description = "Repository-local allowlists are never trusted"

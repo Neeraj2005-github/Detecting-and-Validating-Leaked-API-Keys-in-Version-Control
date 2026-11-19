@@ -64,6 +64,7 @@ class DedupedFinding(BaseModel):
     secret_type: str
     commit_hashes: list[str]
     first_seen_commit: str
+    last_seen_commit: str = ""
     present_in_head: bool
     label_ground_truth: bool
     dataset_split: Literal["reference", "eval"]

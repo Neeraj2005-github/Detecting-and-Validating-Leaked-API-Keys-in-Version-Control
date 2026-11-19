@@ -30,5 +30,5 @@ def test_xgboost_ablation_has_five_folds_and_four_configs() -> None:
 
 
 def test_rotation_success_and_rollback_are_terminal() -> None:
-    assert rotate("test-success")["state"] == "VERIFIED_SAFE"
-    assert rotate("test-failure", force_failure=True)["state"] == "FAILED_ROLLBACK"
+    assert rotate("test-success")["state"] == "VERIFIED_REVOKED"
+    assert rotate("test-failure", force_failure=True)["state"] == "VALIDITY_UNKNOWN"

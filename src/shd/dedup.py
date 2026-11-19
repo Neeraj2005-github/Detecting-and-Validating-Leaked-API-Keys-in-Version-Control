@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
+import os
 from collections import defaultdict
 from collections.abc import Iterable
 
@@ -14,7 +16,10 @@ def normalize_secret(matched_string: str) -> str:
 
 
 def compute_secret_id(matched_string: str) -> str:
-    return hashlib.sha256(normalize_secret(matched_string).encode("utf-8")).hexdigest()
+    key = os.getenv("SHD_HMAC_KEY")
+    if not key:
+        raise RuntimeError("SHD_HMAC_KEY is required")
+    return hmac.new(key.encode("utf-8"), normalize_secret(matched_string).encode("utf-8"), hashlib.sha256).hexdigest()
 
 
 def deduplicate(
@@ -57,6 +62,7 @@ def deduplicate(
                 secret_type=first.secret_type,
                 commit_hashes=sorted({finding.commit_hash for finding in findings}),
                 first_seen_commit=first.commit_hash,
+                last_seen_commit=ordered[-1].commit_hash,
                 present_in_head=any(finding.is_head for finding in findings),
                 label_ground_truth=bool(matching_entries),
                 dataset_split=matching_entries[0][0].split if matching_entries else "reference",
