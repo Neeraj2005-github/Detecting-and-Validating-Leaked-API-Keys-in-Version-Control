@@ -145,3 +145,36 @@ def test_real_shallow_clone_and_full_repo_exit_contract(tmp_path):
     )
     manifest = build_coverage(full)
     assert manifest["commits_reachable"] == manifest["commits_actually_scanned"]
+
+
+def test_skipped_section_counts_files_lines_and_reasons(tmp_path):
+    repo = git.Repo.init(tmp_path)
+    with repo.config_writer() as config:
+        config.set_value("user", "name", "CP1 Test")
+        config.set_value("user", "email", "cp1@example.test")
+    (tmp_path / "payload.zip").write_bytes(b"PK")
+    (tmp_path / "binary.bin").write_bytes(b"\x00\x01")
+    (tmp_path / "large.txt").write_text("A" * (1024 * 1024 + 1), encoding="utf-8")
+    (tmp_path / ".gitmodules").write_text("path=fake-submodule\n", encoding="utf-8")
+    (tmp_path / "pointer.bin").write_text("version https://git-lfs.github.com/spec/v1\n", encoding="utf-8")
+    repo.index.add(["payload.zip", "binary.bin", "large.txt", ".gitmodules", "pointer.bin"])
+    repo.index.commit("malicious security fixtures")
+
+    manifest = build_coverage(tmp_path)
+    assert manifest["skipped"]["files"] >= 5
+    assert {"archive", "binary", "too_long", "submodule", "lfs_pointer"} <= set(manifest["skipped"]["by_reason"])
+    assert "skipped_files=" in manifest["human_summary"]
+    assert "skipped_lines=" in manifest["human_summary"]
+
+
+def test_skipped_threshold_makes_partial_scan_exit_two(tmp_path):
+    repo = git.Repo.init(tmp_path)
+    with repo.config_writer() as config:
+        config.set_value("user", "name", "CP1 Test")
+        config.set_value("user", "email", "cp1@example.test")
+    (tmp_path / "payload.zip").write_bytes(b"PK")
+    repo.index.add(["payload.zip"])
+    repo.index.commit("archive")
+
+    with pytest.raises(RuntimeError, match="SCAN_SKIPPED_THRESHOLD_EXCEEDED"):
+        assert_scan_complete(tmp_path, skipped_threshold=0)

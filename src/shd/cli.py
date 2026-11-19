@@ -39,6 +39,7 @@ def _build_parser() -> argparse.ArgumentParser:
     scan_parser.add_argument("--repo-path", required=True)
     scan_parser.add_argument("--manifest")
     scan_parser.add_argument("--output")
+    scan_parser.add_argument("--skipped-threshold", type=int, default=None)
 
     evaluate_parser = subparsers.add_parser("evaluate", help="evaluate deduplicated findings")
     evaluate_parser.add_argument("--findings", required=True)
@@ -62,7 +63,10 @@ def main(argv: list[str] | None = None) -> int:
                 return 4
             from backend.services.coverage import assert_scan_complete
             try:
-                coverage = assert_scan_complete(args.repo_path)
+                coverage = assert_scan_complete(
+                    args.repo_path,
+                    skipped_threshold=args.skipped_threshold,
+                )
             except ValueError:
                 return 4
             except RuntimeError:

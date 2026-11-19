@@ -194,7 +194,7 @@ See [`docs/api-documentation.md`](docs/api-documentation.md).
 |---|---|
 | 0 | Clean result with verified full coverage |
 | 1 | Findings present |
-| 2 | Partial scan or coverage mismatch |
+| 2 | Partial scan, coverage mismatch, or skipped items exceed the configurable threshold |
 | 3 | Tool, configuration, or report-schema error |
 | 4 | Preflight refusal: shallow clone, empty/missing repository, or bad path |
 
