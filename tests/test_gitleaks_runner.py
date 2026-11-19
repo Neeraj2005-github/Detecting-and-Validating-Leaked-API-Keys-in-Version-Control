@@ -2,6 +2,7 @@ import hashlib
 from pathlib import Path
 
 import pytest
+pytestmark = pytest.mark.req("NFR-1")
 
 from backend.detection.gitleaks_runner import run_gitleaks
 from backend.detection.normalizer import RawFinding, normalize

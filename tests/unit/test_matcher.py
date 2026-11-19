@@ -1,4 +1,7 @@
 from datetime import datetime, timezone
+import pytest
+
+pytestmark = pytest.mark.req("FR-2")
 
 from src.shd.matcher import match
 from src.shd.models import BlobRecord

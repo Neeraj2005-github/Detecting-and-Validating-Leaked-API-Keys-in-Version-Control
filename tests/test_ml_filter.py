@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import pytest
+pytestmark = pytest.mark.req("FR-3")
 
 from backend.ml_filter import evaluate as evaluate_module
 from backend.ml_filter.features import extract_features

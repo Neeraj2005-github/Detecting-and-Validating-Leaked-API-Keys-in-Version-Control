@@ -2,6 +2,8 @@ import json
 
 import pytest
 
+pytestmark = [pytest.mark.req("NFR-1"), pytest.mark.req("NFR-5")]
+
 from backend.services.audit_log import append_audit, verify_chain
 from backend.services.report_parser import validate_gitleaks_report
 

@@ -10,6 +10,8 @@ import src.shd.walker as walker
 from src.shd.walker import get_commit_details, validate_repository, walk_repository
 from tests.fixtures.make_fixture_repo import make_fixture_repo
 
+pytestmark = pytest.mark.req("FR-1")
+
 
 def test_deleted_file_last_content_is_recorded(tmp_path: Path) -> None:
     repo_path = make_fixture_repo(str(tmp_path))

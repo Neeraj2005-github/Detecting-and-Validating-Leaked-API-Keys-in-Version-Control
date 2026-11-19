@@ -12,7 +12,14 @@ from backend.services.benchmark_engine import run_benchmark
 from backend.services.fixture_generator import generate_fixture
 from backend.services.o1_reproducer import run_reproduction
 from backend.services.rotation_state_machine import rotate
-pytestmark = []
+import pytest
+
+pytestmark = [
+    pytest.mark.req("FR-4"),
+    pytest.mark.req("FR-5"),
+    pytest.mark.req("FR-6"),
+    pytest.mark.req("NFR-6"),
+]
 
 
 def _repo(path: Path) -> git.Repo:

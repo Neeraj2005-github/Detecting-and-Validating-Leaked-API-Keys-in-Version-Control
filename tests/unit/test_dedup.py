@@ -1,5 +1,8 @@
 from datetime import datetime, timezone
 import os
+import pytest
+
+pytestmark = pytest.mark.req("FR-3")
 
 from src.shd.dedup import compute_secret_id, deduplicate, normalize_secret
 from src.shd.models import RawFinding

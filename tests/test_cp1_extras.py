@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+import pytest
+
+pytestmark = [pytest.mark.req("FR-7"), pytest.mark.req("NFR-4")]
 
 from backend.ml.dataset_kappa import evaluate_kappa
 from backend.ml.xgboost_rigour import run_rigour

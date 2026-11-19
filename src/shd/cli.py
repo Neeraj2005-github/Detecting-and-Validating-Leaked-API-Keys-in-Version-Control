@@ -44,6 +44,8 @@ def _build_parser() -> argparse.ArgumentParser:
     evaluate_parser.add_argument("--findings", required=True)
     evaluate_parser.add_argument("--manifest", required=True)
     evaluate_parser.add_argument("--output")
+    audit_parser = subparsers.add_parser("verify-audit", help="verify a hash-chained audit log")
+    audit_parser.add_argument("--audit", required=True)
     return parser
 
 
@@ -65,6 +67,10 @@ def main(argv: list[str] | None = None) -> int:
             return 4
         except Exception:
             return 3
+
+    if args.command == "verify-audit":
+        from backend.services.audit_log import verify_chain
+        return 0 if verify_chain(args.audit) else 3
 
     findings = [DedupedFinding.model_validate(item) for item in json.loads(Path(args.findings).read_text(encoding="utf-8"))]
     manifest_entries = load_manifest(args.manifest)
