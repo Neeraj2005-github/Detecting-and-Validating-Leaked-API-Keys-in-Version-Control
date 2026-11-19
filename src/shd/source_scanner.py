@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import os
 import tempfile
+import time
+import zipfile
 import hmac
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,6 +23,9 @@ SUPPORTED_EXTENSIONS = {
 }
 SUPPORTED_FILENAMES = {".env", ".env.local", ".env.production", "Dockerfile"}
 SKIPPED_DIRECTORIES = {".git", ".venv", "__pycache__", "node_modules", "build", "dist"}
+MAX_FILE_BYTES = 10 * 1024 * 1024
+MAX_LINE_LENGTH = 1 * 1024 * 1024
+PER_FILE_TIMEOUT_SECONDS = 2.0
 
 
 @dataclass(frozen=True)
@@ -75,10 +80,22 @@ def _scan_local_source(repo_path: str) -> SourceScanResult:
         for filename in sorted(filenames):
             path = Path(current_root) / filename
             files_discovered += 1
+            if path.is_symlink():
+                files_skipped += 1
+                continue
+            try:
+                resolved = path.resolve(strict=True)
+                resolved.relative_to(root)
+            except (OSError, RuntimeError, ValueError):
+                files_skipped += 1
+                continue
             if not _is_supported(path):
                 files_skipped += 1
                 continue
             try:
+                if path.stat().st_size > MAX_FILE_BYTES:
+                    files_skipped += 1
+                    continue
                 data = path.read_bytes()
                 if _is_binary(data):
                     files_skipped += 1
@@ -90,6 +107,15 @@ def _scan_local_source(repo_path: str) -> SourceScanResult:
 
             files_scanned += 1
             relative_path = path.relative_to(root).as_posix()
+            started = time.perf_counter()
+            if any(len(line) > MAX_LINE_LENGTH for line in content.splitlines()):
+                files_skipped += 1
+                files_scanned -= 1
+                continue
+            if time.perf_counter() - started > PER_FILE_TIMEOUT_SECONDS:
+                files_skipped += 1
+                files_scanned -= 1
+                continue
             blob = BlobRecord(
                 commit_hash="working-tree",
                 commit_timestamp=None,

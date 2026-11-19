@@ -107,3 +107,41 @@ def test_force_push_dropped_commit_is_unreachable(tmp_path):
     manifest = build_coverage(tmp_path)
     assert dropped.hexsha not in manifest["commits_reachable_shas"]
     assert manifest["unreachable_object_count"] >= 1
+
+
+def test_real_shallow_clone_and_full_repo_exit_contract(tmp_path):
+    source = tmp_path / "source"
+    source.mkdir()
+    subprocess.run(
+        ["git", "-C", str(source), "init", "-b", "main"],
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(["git", "-C", str(source), "config", "user.name", "E2E Coverage"], check=True)
+    subprocess.run(["git", "-C", str(source), "config", "user.email", "e2e@example.test"], check=True)
+    (source / "A.txt").write_text("A\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(source), "add", "A.txt"], check=True)
+    subprocess.run(["git", "-C", str(source), "commit", "-m", "A"], check=True)
+    (source / "B.txt").write_text("B\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(source), "add", "B.txt"], check=True)
+    subprocess.run(["git", "-C", str(source), "commit", "-m", "B"], check=True)
+
+    shallow = tmp_path / "shallow"
+    subprocess.run(
+        ["git", "clone", "--depth", "1", "--no-local", source.as_uri(), str(shallow)],
+        check=True,
+        capture_output=True,
+    )
+    shallow_manifest = build_coverage(shallow)
+    assert shallow_manifest["shallow"] is True
+    with pytest.raises(ValueError, match="SHALLOW_REPOSITORY_REFUSED"):
+        assert_scan_complete(shallow)
+
+    full = tmp_path / "full"
+    subprocess.run(
+        ["git", "clone", "--no-local", source.as_uri(), str(full)],
+        check=True,
+        capture_output=True,
+    )
+    manifest = build_coverage(full)
+    assert manifest["commits_reachable"] == manifest["commits_actually_scanned"]
