@@ -92,39 +92,52 @@ def _baseline_a() -> dict[str, Any]:
     return {"predicted": predicted, "provenance": "regex_plus_entropy"}
 
 
-def _emulator() -> dict[str, Any]:
+def _emulator(*, explicit_allowance: bool) -> dict[str, Any]:
+    if not explicit_allowance:
+        raise RuntimeError("Gitleaks emulator requires explicit allow_emulator=True")
     predicted: set[tuple[str, int]] = set()
     for line in _added_line_values():
         text = str(line["added_line"])
         if any(pattern.search(text) for _, pattern in PATTERNS):
             predicted.add(_key(str(line["file_path"]), int(line["line_number"])))
-    return {"predicted": predicted, "provenance": "gitleaks_rule_set_emulator: AWS/JWT/URI/private-key/token assignments"}
+    return {
+        "predicted": predicted,
+        "provenance": "EMULATED - NOT VALID FOR GATE 2",
+    }
 
 
-def _baseline_b() -> dict[str, Any]:
+def _baseline_b(*, allow_emulator: bool = False) -> dict[str, Any]:
     binary = shutil.which("gitleaks")
     if not binary:
-        return _emulator()
+        if allow_emulator:
+            return _emulator(explicit_allowance=True)
+        raise RuntimeError("Native Gitleaks binary not found on PATH")
     with tempfile.TemporaryDirectory(prefix="o2-gitleaks-") as temp_dir:
         report = Path(temp_dir) / "report.json"
         command = [binary, "detect", "--source", str(FIXTURE), "--report-format", "json", "--report-path", str(report), "--no-banner"]
         completed = subprocess.run(command, capture_output=True, text=True, timeout=60, check=False)
         if completed.returncode not in (0, 1) or not report.exists():
-            return _emulator() | {"provenance": f"gitleaks_native_failed_fallback:{completed.returncode}"}
+            if allow_emulator:
+                return _emulator(explicit_allowance=True)
+            raise RuntimeError(f"Native Gitleaks failed with exit code {completed.returncode}")
         try:
             findings = json.loads(report.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
-            return _emulator() | {"provenance": "gitleaks_native_invalid_report_fallback"}
+            if allow_emulator:
+                return _emulator(explicit_allowance=True)
+            raise RuntimeError("Native Gitleaks returned an invalid JSON report")
         predicted = {_key(str(item.get("File", "")), int(item.get("StartLine", 1))) for item in findings if item.get("File")}
-        return {"predicted": predicted, "provenance": "gitleaks_native"}
+        return {"predicted": predicted, "provenance": "gitleaks_native_v8.18.4"}
 
 
-def _baseline_c() -> dict[str, Any]:
+def _baseline_c(*, allow_emulator: bool = False) -> dict[str, Any]:
     try:
         from detect_secrets import SecretsCollection
         from detect_secrets.settings import default_settings
     except ImportError:
-        return _emulator() | {"provenance": "detect_secrets_unavailable_rule_emulator"}
+        if allow_emulator:
+            return _emulator(explicit_allowance=True)
+        raise RuntimeError("detect-secrets is not installed")
     collection = SecretsCollection()
     with default_settings():
         collection.scan_file(str(FIXTURE / "config" / "application.env"))
@@ -140,15 +153,20 @@ def _our_engine() -> dict[str, Any]:
     }
 
 
-def run_benchmark(fixture_path: str | Path = FIXTURE, oracle_path: str | Path = ORACLE) -> dict[str, Any]:
+def run_benchmark(
+    fixture_path: str | Path = FIXTURE,
+    oracle_path: str | Path = ORACLE,
+    *,
+    allow_emulator: bool = False,
+) -> dict[str, Any]:
     global FIXTURE
     FIXTURE = Path(fixture_path).resolve()
     oracle = json.loads(Path(oracle_path).read_text(encoding="utf-8"))
     true, decoys, active = _truth(oracle)
     results = [
         _profile("Baseline A: Regex + Entropy", _baseline_a, true, decoys, active),
-        _profile("Baseline B: Gitleaks", _baseline_b, true, decoys, active),
-        _profile("Baseline C: detect-secrets/trufflehog pattern baseline", _baseline_c, true, decoys, active),
+        _profile("Baseline B: Gitleaks", lambda: _baseline_b(allow_emulator=allow_emulator), true, decoys, active),
+        _profile("Baseline C: detect-secrets/trufflehog pattern baseline", lambda: _baseline_c(allow_emulator=allow_emulator), true, decoys, active),
         _profile("Our O2 Engine", _our_engine, true, decoys, active),
     ]
     payload = {

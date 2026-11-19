@@ -1,0 +1,15 @@
+{
+  "gitleaks": {
+    "version": "8.18.4",
+    "download_url": "https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_windows_x64.zip",
+    "release_url": "https://github.com/gitleaks/gitleaks/releases/tag/v8.18.4",
+    "archive_sha256": "9ba442ca7dda19885a2e569f43a127289feeb2b5fb0dfa251dafd277f4a0ba91",
+    "binary_sha256": "b3ef977b1b8b3f6921e16759e7cfbd91cf738c4f6aa13e676d8e0ed264103912",
+    "license": "MIT",
+    "source_repository": "https://github.com/gitleaks/gitleaks",
+    "os": "Windows",
+    "go_version": null,
+    "access_date": "2026-11-19",
+    "verification": "SHA-256 matched the official v8.18.4 Windows x64 release checksum."
+  }
+}
