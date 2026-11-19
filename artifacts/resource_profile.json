@@ -1,0 +1,144 @@
+{
+  "status": "MEASURED",
+  "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+  "gitleaks_version": "8.18.4",
+  "runs": [
+    {
+      "commits": 100,
+      "repo_size_bytes": 89041,
+      "runs": [
+        {
+          "returncode": 0,
+          "wall_time_seconds": 0.7607170000001133,
+          "cpu_time_seconds": 0.265625,
+          "peak_rss_mb": 20.95703125,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 100 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 565ms\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 0.5808573000003889,
+          "cpu_time_seconds": 0.15625,
+          "peak_rss_mb": 19.35546875,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 100 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 433ms\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 0.679966499999864,
+          "cpu_time_seconds": 0.21875,
+          "peak_rss_mb": 20.9140625,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 100 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 547ms\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 0.8261173999999301,
+          "cpu_time_seconds": 0.21875,
+          "peak_rss_mb": 19.33203125,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 100 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 676ms\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 0.7414137000005212,
+          "cpu_time_seconds": 0.21875,
+          "peak_rss_mb": 20.67578125,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 100 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 581ms\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        }
+      ],
+      "median_min_max": {
+        "wall_time_seconds": {
+          "median": 0.7414137000005212,
+          "min": 0.5808573000003889,
+          "max": 0.8261173999999301
+        },
+        "cpu_time_seconds": {
+          "median": 0.21875,
+          "min": 0.15625,
+          "max": 0.265625
+        },
+        "peak_rss_mb": {
+          "median": 20.67578125,
+          "min": 19.33203125,
+          "max": 20.95703125
+        }
+      }
+    },
+    {
+      "commits": 1000,
+      "repo_size_bytes": 654820,
+      "runs": [
+        {
+          "returncode": 0,
+          "wall_time_seconds": 3.2461637000005794,
+          "cpu_time_seconds": 0.828125,
+          "peak_rss_mb": 23.046875,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 1000 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 3.07s\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 2.405473599999823,
+          "cpu_time_seconds": 0.5,
+          "peak_rss_mb": 21.86328125,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 1000 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 2.27s\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 1.590212199999769,
+          "cpu_time_seconds": 0.375,
+          "peak_rss_mb": 22.5,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 1000 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 1.44s\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 1.6595247999994172,
+          "cpu_time_seconds": 0.3125,
+          "peak_rss_mb": 22.8515625,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 1000 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 1.55s\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        },
+        {
+          "returncode": 0,
+          "wall_time_seconds": 1.8004860000000917,
+          "cpu_time_seconds": 0.28125,
+          "peak_rss_mb": 22.36328125,
+          "stdout": "",
+          "stderr": "\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m 1000 commits scanned.\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m scan completed in 1.69s\n\u001b[90m11:49AM\u001b[0m \u001b[32mINF\u001b[0m no leaks found\n"
+        }
+      ],
+      "median_min_max": {
+        "wall_time_seconds": {
+          "median": 1.8004860000000917,
+          "min": 1.590212199999769,
+          "max": 3.2461637000005794
+        },
+        "cpu_time_seconds": {
+          "median": 0.375,
+          "min": 0.28125,
+          "max": 0.828125
+        },
+        "peak_rss_mb": {
+          "median": 22.5,
+          "min": 21.86328125,
+          "max": 23.046875
+        }
+      }
+    },
+    {
+      "commits": 4533,
+      "repo_size_bytes": 3310453,
+      "runs": [],
+      "median_min_max": {
+        "wall_time_seconds": "NOT MEASURED",
+        "cpu_time_seconds": "NOT MEASURED",
+        "peak_rss_mb": "NOT MEASURED"
+      },
+      "reason": "INCOMPLETE_SCALING_REPO: expected 10000"
+    }
+  ]
+}

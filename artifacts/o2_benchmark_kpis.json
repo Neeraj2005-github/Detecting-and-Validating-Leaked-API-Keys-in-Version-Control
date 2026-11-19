@@ -3,8 +3,8 @@
     {
       "metrics": {
         "commit_count": 5,
-        "cpu_model": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
-        "cpu_time_seconds": 0.109375,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 0.21875,
         "f1_score": 0.7058823529411764,
         "false_negatives": 0,
         "false_positive_rate": 1.0,
@@ -12,12 +12,12 @@
         "gitleaks_version": "8.18.4",
         "historical_secrets_found_percent": 100.0,
         "os": "Windows-11-10.0.26300-SP0",
-        "peak_rss_mb": 289.53515625,
+        "peak_rss_mb": 435.6875,
         "precision": 0.5454545454545454,
         "ram_bytes": 16831815680,
         "recall": 1.0,
-        "repo_size_bytes": 33196,
-        "scan_wall_clock_ms": 1231.292399999802,
+        "repo_size_bytes": 33236,
+        "scan_wall_clock_ms": 1249.6380000002318,
         "true_positives": 6,
         "unsafe_outcome_count": 0
       },
@@ -27,8 +27,8 @@
     {
       "metrics": {
         "commit_count": 5,
-        "cpu_model": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
-        "cpu_time_seconds": 0.03125,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 0.09375,
         "f1_score": 0.4444444444444444,
         "false_negatives": 4,
         "false_positive_rate": 0.25,
@@ -36,12 +36,12 @@
         "gitleaks_version": "8.18.4",
         "historical_secrets_found_percent": 0.0,
         "os": "Windows-11-10.0.26300-SP0",
-        "peak_rss_mb": 290.48046875,
+        "peak_rss_mb": 19.3359375,
         "precision": 0.6666666666666666,
         "ram_bytes": 16831815680,
         "recall": 0.3333333333333333,
-        "repo_size_bytes": 33196,
-        "scan_wall_clock_ms": 170.15149999951973,
+        "repo_size_bytes": 33236,
+        "scan_wall_clock_ms": 226.71789999913017,
         "true_positives": 2,
         "unsafe_outcome_count": 0
       },
@@ -51,8 +51,8 @@
     {
       "metrics": {
         "commit_count": 5,
-        "cpu_model": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
-        "cpu_time_seconds": 0.109375,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 0.0,
         "f1_score": 0.0,
         "false_negatives": 6,
         "false_positive_rate": 0.0,
@@ -60,12 +60,12 @@
         "gitleaks_version": "8.18.4",
         "historical_secrets_found_percent": 0.0,
         "os": "Windows-11-10.0.26300-SP0",
-        "peak_rss_mb": 290.48046875,
+        "peak_rss_mb": 435.6875,
         "precision": 0.0,
         "ram_bytes": 16831815680,
         "recall": 0.0,
-        "repo_size_bytes": 33196,
-        "scan_wall_clock_ms": 219.20609999961016,
+        "repo_size_bytes": 33236,
+        "scan_wall_clock_ms": 24.428999999145162,
         "true_positives": 0,
         "unsafe_outcome_count": 2
       },
@@ -75,8 +75,8 @@
     {
       "metrics": {
         "commit_count": 5,
-        "cpu_model": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
-        "cpu_time_seconds": 0.234375,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 2.171875,
         "f1_score": 1.0,
         "false_negatives": 0,
         "false_positive_rate": 0.0,
@@ -84,12 +84,12 @@
         "gitleaks_version": "8.18.4",
         "historical_secrets_found_percent": 100.0,
         "os": "Windows-11-10.0.26300-SP0",
-        "peak_rss_mb": 290.48046875,
+        "peak_rss_mb": 435.6875,
         "precision": 1.0,
         "ram_bytes": 16831815680,
         "recall": 1.0,
-        "repo_size_bytes": 33196,
-        "scan_wall_clock_ms": 1285.967100000562,
+        "repo_size_bytes": 33236,
+        "scan_wall_clock_ms": 1544.729199998983,
         "true_positives": 6,
         "unsafe_outcome_count": 0
       },
@@ -97,8 +97,8 @@
       "provenance": "differential_walker_regex_entropy_xgboost"
     }
   ],
-  "fixture": "D:\\Detecting secret across version control\\artifacts\\synthetic_repo_v1",
-  "oracle": "D:\\Detecting secret across version control\\artifacts\\ground_truth_oracle.json",
+  "fixture": "C:\\Users\\sakal\\AppData\\Local\\Temp\\pytest-of-sakal\\pytest-117\\test_benchmark_generates_all_k0\\synthetic_repo_v1",
+  "oracle": "C:\\Users\\sakal\\AppData\\Local\\Temp\\pytest-of-sakal\\pytest-117\\test_benchmark_generates_all_k0\\oracle.json",
   "resource_note": "RSS is sampled immediately before and after each run; install psutil for process-level memory telemetry.",
   "tradeoff_analysis": "The O2 Engine is the reference architecture because it preserves added-line/history lifecycle context, identifies still-in-HEAD exposure, and applies XGBoost false-positive suppression. Native Gitleaks is a useful detector baseline but does not provide the same lifecycle semantics; the emulator preserves benchmark continuity when the optional binary is unavailable.",
   "truth_counts": {

@@ -78,6 +78,91 @@ def sys_platform() -> str:
     return platform.system().lower()
 
 
+def cpu_model_name() -> str:
+    if os.name == "nt":
+        try:
+            completed = subprocess.run(
+                [
+                    "powershell.exe",
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-Command",
+                    "(Get-CimInstance Win32_Processor | Select-Object -First 1 -ExpandProperty Name)",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+                shell=False,
+            )
+            name = completed.stdout.strip()
+            if name:
+                return name
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    return platform.processor() or "NOT MEASURED"
+
+
+def profile_child_process(command: list[str], cwd: str | Path) -> dict[str, Any]:
+    """Measure wall, CPU and peak working set for a direct child process."""
+    started_wall = time.perf_counter()
+    process = subprocess.Popen(
+        command,
+        cwd=str(cwd),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        shell=False,
+    )
+    child = psutil.Process(process.pid)
+    peak_rss_mb: float | None = None
+    started_cpu = child.cpu_times()
+    max_child_cpu = started_cpu.user + started_cpu.system
+    try:
+        while process.poll() is None:
+            try:
+                peak_rss_mb = max(
+                    peak_rss_mb or 0.0,
+                    child.memory_info().rss / (1024 * 1024),
+                )
+                current_cpu = child.cpu_times()
+                max_child_cpu = max(
+                    max_child_cpu,
+                    current_cpu.user + current_cpu.system,
+                )
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                break
+            time.sleep(0.005)
+        stdout, stderr = process.communicate(timeout=30)
+        try:
+            cpu = child.cpu_times()
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            cpu = started_cpu
+        max_child_cpu = max(max_child_cpu, cpu.user + cpu.system)
+        try:
+            if os.name == "nt":
+                peak_rss_mb = peak_rss_mb or 0.0
+            else:
+                peak_rss_mb = peak_rss_mb or child.memory_info().rss / (1024 * 1024)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+    except subprocess.TimeoutExpired:
+        process.kill()
+        stdout, stderr = process.communicate()
+        raise RuntimeError("PROFILED_PROCESS_TIMEOUT")
+    wall = time.perf_counter() - started_wall
+    return {
+        "returncode": process.returncode,
+        "wall_time_seconds": wall,
+        "cpu_time_seconds": float(
+            max(0.0, max_child_cpu - (started_cpu.user + started_cpu.system))
+        ),
+        "peak_rss_mb": peak_rss_mb,
+        "stdout": stdout,
+        "stderr": stderr,
+    }
+
+
 def gitleaks_version() -> str:
     binary = shutil.which("gitleaks")
     if not binary:
@@ -110,7 +195,7 @@ def profile_host(repo_path: str | Path) -> dict[str, Any]:
         "wall_time_seconds": "NOT MEASURED",
         "repo_size_bytes": repo_size_bytes(repo_path),
         "commit_count": commit_count,
-        "cpu_model": platform.processor() or "NOT MEASURED",
+        "cpu_model": cpu_model_name(),
         "ram_bytes": psutil.virtual_memory().total,
         "os": platform.platform() or "NOT MEASURED",
         "python_version": platform.python_version(),

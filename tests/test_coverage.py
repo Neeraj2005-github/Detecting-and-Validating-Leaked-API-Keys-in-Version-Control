@@ -70,3 +70,40 @@ def test_shallow_repository_is_refused(tmp_path):
     assert manifest["shallow"] is True
     with pytest.raises(ValueError, match="SHALLOW_REPOSITORY_REFUSED"):
         assert_scan_complete(shallow)
+
+
+def test_coverage_mismatch_fires_when_scanned_count_is_lower(tmp_path):
+    repo = git.Repo.init(tmp_path)
+    with repo.config_writer() as config:
+        config.set_value("user", "name", "CP1 Test")
+        config.set_value("user", "email", "cp1@example.test")
+    path = tmp_path / "main.txt"
+    path.write_text("main\n", encoding="utf-8")
+    repo.index.add(["main.txt"])
+    repo.index.commit("main")
+
+    expected = build_coverage(tmp_path)
+    with pytest.raises(RuntimeError, match="SCAN_COVERAGE_MISMATCH"):
+        assert_scan_complete(
+            tmp_path,
+            commits_scanned=expected["commits_reachable"] - 1,
+        )
+
+
+def test_force_push_dropped_commit_is_unreachable(tmp_path):
+    repo = git.Repo.init(tmp_path)
+    with repo.config_writer() as config:
+        config.set_value("user", "name", "CP1 Test")
+        config.set_value("user", "email", "cp1@example.test")
+    path = tmp_path / "history.txt"
+    path.write_text("A\n", encoding="utf-8")
+    repo.index.add(["history.txt"])
+    first = repo.index.commit("A")
+    path.write_text("B\n", encoding="utf-8")
+    repo.index.add(["history.txt"])
+    dropped = repo.index.commit("B")
+    repo.head.reset(first, index=True, working_tree=True)
+
+    manifest = build_coverage(tmp_path)
+    assert dropped.hexsha not in manifest["commits_reachable_shas"]
+    assert manifest["unreachable_object_count"] >= 1

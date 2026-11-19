@@ -15,6 +15,7 @@ from backend.ml.detector import PATTERNS, detect_lines, shannon_entropy
 from backend.scanner.history_walker import walk_history
 from backend.services.artifact_store import save_cp1_artifact
 from backend.services.resource_profile import ResourceRun
+from backend.services.resource_profile import profile_child_process
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "artifacts" / "synthetic_repo_v1"
@@ -86,6 +87,13 @@ def _profile(name: str, runner: Any, true: set[tuple[str, int]], decoys: set[tup
         "os": resource_profile["os"],
         "gitleaks_version": resource_profile["gitleaks_version"],
     })
+    if isinstance(result, dict) and "child_resource_profile" in result:
+        child_profile = result["child_resource_profile"]
+        metrics.update({
+            "scan_wall_clock_ms": child_profile["wall_time_seconds"] * 1000,
+            "cpu_time_seconds": child_profile["cpu_time_seconds"],
+            "peak_rss_mb": child_profile["peak_rss_mb"],
+        })
     return {"name": name, "provenance": result.get("provenance", "unknown"), "metrics": metrics}
 
 
@@ -140,11 +148,12 @@ def _baseline_b(*, allow_emulator: bool = False) -> dict[str, Any]:
             str(owned_config.resolve()),
             "--no-banner",
         ]
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=60, check=False)
-        if completed.returncode not in (0, 1) or not report.exists():
+        profiled = profile_child_process(command, ROOT)
+        completed_returncode = profiled["returncode"]
+        if completed_returncode not in (0, 1) or not report.exists():
             if allow_emulator:
                 return _emulator(explicit_allowance=True)
-            raise RuntimeError(f"Native Gitleaks failed with exit code {completed.returncode}")
+            raise RuntimeError(f"Native Gitleaks failed with exit code {completed_returncode}")
         try:
             findings = json.loads(report.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
@@ -152,7 +161,11 @@ def _baseline_b(*, allow_emulator: bool = False) -> dict[str, Any]:
                 return _emulator(explicit_allowance=True)
             raise RuntimeError("Native Gitleaks returned an invalid JSON report")
         predicted = {_key(str(item.get("File", "")), int(item.get("StartLine", 1))) for item in findings if item.get("File")}
-        return {"predicted": predicted, "provenance": "gitleaks_native_v8.18.4"}
+        return {
+            "predicted": predicted,
+            "provenance": "gitleaks_native_v8.18.4",
+            "child_resource_profile": profiled,
+        }
 
 
 def _baseline_c(*, allow_emulator: bool = False) -> dict[str, Any]:
