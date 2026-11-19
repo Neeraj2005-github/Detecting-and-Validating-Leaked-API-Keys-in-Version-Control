@@ -1,0 +1,4 @@
+{
+  "per_file_limit_applied": true,
+  "safe_behavior": "overlong line skipped"
+}
