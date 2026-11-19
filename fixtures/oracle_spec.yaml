@@ -24,7 +24,7 @@ entries:
     expected_lifecycle: "GIT_TAG"
   - id: "oracle-base64"
     secret_type: "encoded_secret"
-    value: "FAKE_EXAMPLE_BASE64_VALUE"
+    value: "RUFLRV9FWEE...=="
     is_secret: true
     expected_lifecycle: "BASE64_ENCODED"
   - id: "oracle-rewritten"

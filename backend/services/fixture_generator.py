@@ -109,7 +109,10 @@ def generate_fixture(
     records: list[dict[str, Any]] = []
     aws = _entry(entries, "oracle-aws-head", "AKIAIOSFODNN7EXAMPLE")
     base64_value = _entry(entries, "oracle-base64", "c2dfYmFzZTY0X3N5bnRoZXRpY19rZXk=")
-    base64_plaintext = base64.b64decode(base64_value).decode("utf-8")
+    try:
+        base64_plaintext = base64.b64decode(base64_value, validate=True).decode("utf-8")
+    except (base64.binascii.Error, UnicodeDecodeError):
+        base64_plaintext = "FAKE_EXAMPLE_BASE64_PLAINTEXT"
     head_content = (
         f"AWS_ACCESS_KEY_ID={aws}\n"
         "APP_NAME=synthetic-service\n"
