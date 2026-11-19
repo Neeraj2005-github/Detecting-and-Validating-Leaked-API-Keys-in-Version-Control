@@ -180,6 +180,7 @@ class ScanResponse(BaseModel):
     analysis_mode: str
     blobs_written: int
     findings_count: int
+    coverage: dict[str, object] | None = None
 
 
 class MetricsResponse(BaseModel):
@@ -586,6 +587,10 @@ def scan(request: ScanRequest, session: Session = Depends(get_session)) -> ScanR
     try:
         if not request.repo_path.startswith(("http://", "https://", "git://", "git@", "ssh://")):
             request.repo_path = validate_repository(request.repo_path)
+            from backend.services.coverage import assert_scan_complete
+            coverage = assert_scan_complete(request.repo_path)
+        else:
+            coverage = None
         count = 0
         findings_count = 0
         scan_id = 0
@@ -612,6 +617,7 @@ def scan(request: ScanRequest, session: Session = Depends(get_session)) -> ScanR
         analysis_mode=request.analysis_mode,
         blobs_written=count,
         findings_count=findings_count,
+        coverage=coverage,
     )
 
 

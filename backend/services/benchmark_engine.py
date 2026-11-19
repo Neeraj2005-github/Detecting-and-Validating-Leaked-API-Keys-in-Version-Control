@@ -14,6 +14,7 @@ from typing import Any, Iterable
 from backend.ml.detector import PATTERNS, detect_lines, shannon_entropy
 from backend.scanner.history_walker import walk_history
 from backend.services.artifact_store import save_cp1_artifact
+from backend.services.resource_profile import ResourceRun
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "artifacts" / "synthetic_repo_v1"
@@ -65,16 +66,25 @@ def _metrics(predicted: set[tuple[str, int]], true: set[tuple[str, int]], decoys
 
 
 def _profile(name: str, runner: Any, true: set[tuple[str, int]], decoys: set[tuple[str, int]], active: set[tuple[str, int]]) -> dict[str, Any]:
-    rss_before = _rss_mb()
-    start = time.perf_counter()
-    result = runner()
-    elapsed_ms = (time.perf_counter() - start) * 1000
-    rss_after = _rss_mb()
+    with ResourceRun() as resource_run:
+        rss_before = _rss_mb()
+        start = time.perf_counter()
+        result = runner()
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        rss_after = _rss_mb()
+        resource_profile = resource_run.finish(FIXTURE)
     predicted = set(result["predicted"])
     metrics = _metrics(predicted, true, decoys, active)
     metrics.update({
         "scan_wall_clock_ms": elapsed_ms,
-        "peak_rss_mb": max(value for value in (rss_before, rss_after) if value is not None) if rss_before is not None or rss_after is not None else None,
+        "peak_rss_mb": resource_profile["peak_rss_mb"],
+        "cpu_time_seconds": resource_profile["cpu_time_seconds"],
+        "repo_size_bytes": resource_profile["repo_size_bytes"],
+        "commit_count": resource_profile["commit_count"],
+        "cpu_model": resource_profile["cpu_model"],
+        "ram_bytes": resource_profile["ram_bytes"],
+        "os": resource_profile["os"],
+        "gitleaks_version": resource_profile["gitleaks_version"],
     })
     return {"name": name, "provenance": result.get("provenance", "unknown"), "metrics": metrics}
 

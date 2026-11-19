@@ -60,8 +60,18 @@ def main(argv: list[str] | None = None) -> int:
                     return 4
             except git.GitCommandError:
                 return 4
+            from backend.services.coverage import assert_scan_complete
+            try:
+                coverage = assert_scan_complete(args.repo_path)
+            except ValueError:
+                return 4
+            except RuntimeError:
+                return 2
             findings = run_pipeline(args.repo_path, args.manifest)
-            _write_json(args.output, [finding.model_dump(mode="json") for finding in findings])
+            _write_json(args.output, {
+                "coverage": coverage,
+                "findings": [finding.model_dump(mode="json") for finding in findings],
+            })
             return 1 if findings else 0
         except (ValueError, OSError, git.InvalidGitRepositoryError):
             return 4
