@@ -73,11 +73,11 @@
       {"name": "Rotation MTTR", "definition": "Time from authorized synthetic rotation request to verified sandbox result", "target": "Baseline recorded; no provider call"}
     ],
     "negative_tests": [
-      {"id": "NT-1", "case": "Empty repo", "expected": "No findings; structured PASS/empty result"},
-      {"id": "NT-2", "case": "10MB single-line minified JavaScript", "expected": "Bounded scan; no timeout or unbounded memory growth"},
-      {"id": "NT-3", "case": "Binary file bomb", "expected": "Skip safely; no decoding exception or plaintext output"},
-      {"id": "NT-4", "case": "Detached HEAD/orphaned branch", "expected": "Report refs and lifecycle labels without assuming HEAD reachability"},
-      {"id": "NT-5", "case": "Corrupted encoding", "expected": "Record a safe skip/error status and continue scanning other files"}
+      {"id": "EC-1", "case": "Empty repo", "expected": "No findings; structured PASS/empty result"},
+      {"id": "EC-2", "case": "10MB single-line minified JavaScript", "expected": "Bounded scan; no timeout or unbounded memory growth"},
+      {"id": "EC-3", "case": "Binary file bomb", "expected": "Skip safely; no decoding exception or plaintext output"},
+      {"id": "EC-4", "case": "Detached HEAD/orphaned branch", "expected": "Report refs and lifecycle labels without assuming HEAD reachability"},
+      {"id": "EC-5", "case": "Corrupted encoding", "expected": "Record a safe skip/error status and continue scanning other files"}
     ]
   }
 }

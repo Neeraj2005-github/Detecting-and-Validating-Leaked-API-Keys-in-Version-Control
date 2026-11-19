@@ -50,9 +50,21 @@ def _build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
     if args.command == "scan":
-        findings = run_pipeline(args.repo_path, args.manifest)
-        _write_json(args.output, [finding.model_dump(mode="json") for finding in findings])
-        return 0
+        try:
+            import git
+            repo = git.Repo(args.repo_path)
+            try:
+                if repo.git.rev_parse("--is-shallow-repository").strip() == "true":
+                    return 4
+            except git.GitCommandError:
+                return 4
+            findings = run_pipeline(args.repo_path, args.manifest)
+            _write_json(args.output, [finding.model_dump(mode="json") for finding in findings])
+            return 1 if findings else 0
+        except (ValueError, OSError, git.InvalidGitRepositoryError):
+            return 4
+        except Exception:
+            return 3
 
     findings = [DedupedFinding.model_validate(item) for item in json.loads(Path(args.findings).read_text(encoding="utf-8"))]
     manifest_entries = load_manifest(args.manifest)

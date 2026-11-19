@@ -12,6 +12,7 @@ from backend.services.benchmark_engine import run_benchmark
 from backend.services.fixture_generator import generate_fixture
 from backend.services.o1_reproducer import run_reproduction
 from backend.services.rotation_state_machine import rotate
+pytestmark = []
 
 
 def _repo(path: Path) -> git.Repo:
@@ -79,19 +80,19 @@ def test_rotation_transitions_and_positive_mttr() -> None:
     assert success["mttr_ms"] > 0
 
 
-def test_nt1_empty_repository(tmp_path: Path) -> None:
+def test_ec1_empty_repository(tmp_path: Path) -> None:
     repo = _repo(tmp_path / "empty")
     assert list(walk_history(repo.working_tree_dir)) == []
 
 
-def test_nt2_ten_mb_single_line(tmp_path: Path) -> None:
+def test_ec2_ten_mb_single_line(tmp_path: Path) -> None:
     repo_path = tmp_path / "large"
     repo = _repo(repo_path)
     _commit(repo, repo_path / "bundle.js", "A" * (10 * 1024 * 1024), "large line")
     assert list(walk_history(repo_path))
 
 
-def test_nt3_binary_file(tmp_path: Path) -> None:
+def test_ec3_binary_file(tmp_path: Path) -> None:
     repo_path = tmp_path / "binary"
     repo = _repo(repo_path)
     binary = repo_path / "image.bin"
@@ -102,7 +103,7 @@ def test_nt3_binary_file(tmp_path: Path) -> None:
     assert all(line.file_path != "image.bin" or "\x00" not in line.added_line for line in lines)
 
 
-def test_nt4_detached_head(tmp_path: Path) -> None:
+def test_ec4_detached_head(tmp_path: Path) -> None:
     repo_path = tmp_path / "detached"
     repo = _repo(repo_path)
     _commit(repo, repo_path / "a.txt", "token=AKIAIOSFODNN7EXAMPLE\n")
@@ -110,7 +111,7 @@ def test_nt4_detached_head(tmp_path: Path) -> None:
     assert list(walk_history(repo_path))
 
 
-def test_nt5_malformed_encoding(tmp_path: Path) -> None:
+def test_ec5_malformed_encoding(tmp_path: Path) -> None:
     repo_path = tmp_path / "encoding"
     repo = _repo(repo_path)
     malformed = repo_path / "bad.txt"

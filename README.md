@@ -188,6 +188,16 @@ See [`docs/api-documentation.md`](docs/api-documentation.md).
 
 ## Testing and health checks
 
+### Scan exit codes
+
+| Code | Meaning |
+|---|---|
+| 0 | Clean result with verified full coverage |
+| 1 | Findings present |
+| 2 | Partial scan or coverage mismatch |
+| 3 | Tool, configuration, or report-schema error |
+| 4 | Preflight refusal: shallow clone, empty/missing repository, or bad path |
+
 Run the Python suite:
 
 ```powershell

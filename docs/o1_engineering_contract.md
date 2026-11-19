@@ -111,11 +111,11 @@ graph LR
 
 | ID | Case | Expected |
 |---|---|---|
-| NT-1 | Empty repo | No findings and structured pass/empty result |
-| NT-2 | 10MB single-line minified JavaScript | Bounded scan without timeout or unbounded memory |
-| NT-3 | Binary file bomb | Safe skip without decoding exception or plaintext output |
-| NT-4 | Detached HEAD/orphaned branch | Report refs/lifecycle without assuming HEAD reachability |
-| NT-5 | Corrupted encoding | Safe skip/error status while continuing other files |
+| EC-1 | Empty repo | No findings and structured pass/empty result |
+| EC-2 | 10MB single-line minified JavaScript | Bounded scan without timeout or unbounded memory |
+| EC-3 | Binary file bomb | Safe skip without decoding exception or plaintext output |
+| EC-4 | Detached HEAD/orphaned branch | Report refs/lifecycle without assuming HEAD reachability |
+| EC-5 | Corrupted encoding | Safe skip/error status while continuing other files |
 
 ## Evidence surfaces
 
