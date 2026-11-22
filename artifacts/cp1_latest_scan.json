@@ -1,7 +1,79 @@
 {
+  "coverage": {
+    "commits_actually_scanned": 6,
+    "commits_reachable": 6,
+    "commits_reachable_shas": [
+      "05cd5337a39d3968da8381bc11ae073d807b89c9",
+      "18c62b15c2ae40ebcd1e9f261a2f07060ecc9dfa",
+      "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "43e24330c85b40ed84d66f85d4f227e78b25315f",
+      "684d7c7055041a5bd5270e8292916e4141279d6a",
+      "a1db1c0da29b70a3d8ab0b7345b4424c029e11a1"
+    ],
+    "completeness": "complete",
+    "human_summary": "branches=2, tags=1, reachable_commits=6, scanned_commits=6, shallow=false, skipped_files=3, skipped_lines=3, completeness=complete",
+    "refs": {
+      "branch_count": 2,
+      "branches": [
+        "feature/legacy-auth",
+        "main"
+      ],
+      "tag_count": 1,
+      "tags": [
+        "v0.1-alpha"
+      ]
+    },
+    "shallow": false,
+    "skipped": {
+      "by_reason": {
+        "archive": {
+          "files": 1,
+          "lines": 0
+        },
+        "binary": {
+          "files": 1,
+          "lines": 0
+        },
+        "lfs_pointer": {
+          "files": 1,
+          "lines": 3
+        }
+      },
+      "files": 3,
+      "items": [
+        {
+          "lines": 0,
+          "path": "demo/archive.fake.zip",
+          "reason": "archive"
+        },
+        {
+          "lines": 0,
+          "path": "demo/binary.fake.bin",
+          "reason": "binary"
+        },
+        {
+          "lines": 3,
+          "path": "demo/lfs-pointer.txt",
+          "reason": "lfs_pointer"
+        }
+      ],
+      "lines": 3
+    },
+    "skipped_items": [
+      "archive",
+      "binary",
+      "lfs_pointer"
+    ],
+    "skipped_items_count": 6,
+    "skipped_threshold": 100,
+    "skipped_threshold_exceeded": false,
+    "unreachable_object_count": 4
+  },
   "findings": [
     {
+      "commit": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
       "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "deleted_later": false,
       "features": {
         "assignment_operator_present": 1.0,
         "digit_ratio": 0.1875,
@@ -18,15 +90,20 @@
         "transition_frequency": 1.0,
         "uppercase_ratio": 0.4375
       },
+      "file": "config/application.env",
       "file_path": "config/application.env",
       "fingerprint": "e03106d8eeec1fd079d427c57a42d9cd5c50a69b939e2e3fef1e9142c96b20b7",
       "git_lifecycle_state": "ACTIVE_HEAD",
       "is_base64_encoded": false,
       "is_false_positive": false,
       "lifecycle_badge": "Active in HEAD",
+      "lifecycle_status": "Active in HEAD",
+      "line": 3,
       "line_number": 3,
       "masked_match": "c2df************************ZXk=",
+      "masked_value": "c2df************************ZXk=",
       "ml_probability": 0.5,
+      "recommended_action": "Rotate and revoke; verify the credential is no longer usable.",
       "risk_score": 71.5,
       "secret_type": "generic_assignment",
       "shap": [
@@ -54,7 +131,9 @@
       "still_in_head": true
     },
     {
+      "commit": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
       "commit_sha": "30ba77a3fcd2a6aca01e288263021209aa1f0117",
+      "deleted_later": false,
       "features": {
         "assignment_operator_present": 1.0,
         "digit_ratio": 0.08695652173913043,
@@ -71,15 +150,20 @@
         "transition_frequency": 1.0,
         "uppercase_ratio": 0.0
       },
+      "file": "config/application.env",
       "file_path": "config/application.env",
       "fingerprint": "211dbbf6abe7057ebbd00882d1003ffb629f273b457e6312dae5a71bc1321334",
       "git_lifecycle_state": "ACTIVE_HEAD",
       "is_base64_encoded": true,
       "is_false_positive": false,
       "lifecycle_badge": "Active in HEAD",
+      "lifecycle_status": "Active in HEAD",
+      "line": 3,
       "line_number": 3,
       "masked_match": "sg_b***************_key",
+      "masked_value": "sg_b***************_key",
       "ml_probability": 0.5,
+      "recommended_action": "Rotate and revoke; verify the credential is no longer usable.",
       "risk_score": 71.5,
       "secret_type": "base64_encoded",
       "shap": [
@@ -107,7 +191,9 @@
       "still_in_head": true
     },
     {
+      "commit": "684d7c7055041a5bd5270e8292916e4141279d6a",
       "commit_sha": "684d7c7055041a5bd5270e8292916e4141279d6a",
+      "deleted_later": true,
       "features": {
         "assignment_operator_present": 1.0,
         "digit_ratio": 0.08163265306122448,
@@ -124,15 +210,20 @@
         "transition_frequency": 0.9166666666666666,
         "uppercase_ratio": 0.0
       },
+      "file": "config/legacy.env",
       "file_path": "config/legacy.env",
       "fingerprint": "5d962004ce482205cddb3972a24f1a1692cc61665d017113d7684f8c28bd551f",
       "git_lifecycle_state": "DELETED_HISTORY",
       "is_base64_encoded": false,
       "is_false_positive": false,
       "lifecycle_badge": "Deleted in History",
+      "lifecycle_status": "Deleted in History",
+      "line": 1,
       "line_number": 1,
       "masked_match": "mysq*****************************************/app",
+      "masked_value": "mysq*****************************************/app",
       "ml_probability": 0.5,
+      "recommended_action": "Rotate and revoke; verify the credential is no longer usable.",
       "risk_score": 43.5,
       "secret_type": "mysql_uri",
       "shap": [
@@ -160,7 +251,9 @@
       "still_in_head": false
     },
     {
+      "commit": "18c62b15c2ae40ebcd1e9f261a2f07060ecc9dfa",
       "commit_sha": "18c62b15c2ae40ebcd1e9f261a2f07060ecc9dfa",
+      "deleted_later": false,
       "features": {
         "assignment_operator_present": 1.0,
         "digit_ratio": 0.1111111111111111,
@@ -177,15 +270,20 @@
         "transition_frequency": 1.0,
         "uppercase_ratio": 0.0
       },
+      "file": "config/tagged.env",
       "file_path": "config/tagged.env",
       "fingerprint": "eb7bb149631fe05ca21bb5d82dbfd4055b92f4bc154cb30957d392a61ce86a8a",
       "git_lifecycle_state": "BRANCH_TAG",
       "is_base64_encoded": false,
       "is_false_positive": false,
       "lifecycle_badge": "Branch/Tag",
+      "lifecycle_status": "Branch/Tag",
+      "line": 1,
       "line_number": 1,
       "masked_match": "sg_g*******************c91e",
+      "masked_value": "sg_g*******************c91e",
       "ml_probability": 0.5,
+      "recommended_action": "Review and rotate if still valid.",
       "risk_score": 42.0,
       "secret_type": "generic_assignment",
       "shap": [
@@ -213,7 +311,9 @@
       "still_in_head": false
     },
     {
+      "commit": "a1db1c0da29b70a3d8ab0b7345b4424c029e11a1",
       "commit_sha": "a1db1c0da29b70a3d8ab0b7345b4424c029e11a1",
+      "deleted_later": false,
       "features": {
         "assignment_operator_present": 1.0,
         "digit_ratio": 0.12121212121212122,
@@ -230,15 +330,20 @@
         "transition_frequency": 1.0,
         "uppercase_ratio": 0.0
       },
+      "file": "config/legacy_auth.env",
       "file_path": "config/legacy_auth.env",
       "fingerprint": "3b5644039df32b3ec606d51e4e18b697d3910a8b161cb26bbcd21bed61f8d466",
       "git_lifecycle_state": "BRANCH_TAG",
       "is_base64_encoded": false,
       "is_false_positive": false,
       "lifecycle_badge": "Branch/Tag",
+      "lifecycle_status": "Branch/Tag",
+      "line": 1,
       "line_number": 1,
       "masked_match": "sg_o*************************71b2",
+      "masked_value": "sg_o*************************71b2",
       "ml_probability": 0.5,
+      "recommended_action": "Review and rotate if still valid.",
       "risk_score": 42.0,
       "secret_type": "generic_assignment",
       "shap": [
@@ -266,7 +371,9 @@
       "still_in_head": false
     },
     {
+      "commit": "2fdc5ede13ce2fadffa63df37808a303e1fb10c5",
       "commit_sha": "2fdc5ede13ce2fadffa63df37808a303e1fb10c5",
+      "deleted_later": false,
       "features": {
         "assignment_operator_present": 1.0,
         "digit_ratio": 0.10810810810810811,
@@ -283,15 +390,20 @@
         "transition_frequency": 0.9444444444444444,
         "uppercase_ratio": 0.0
       },
+      "file": "config/rewritten.env",
       "file_path": "config/rewritten.env",
       "fingerprint": "875ec4007b9fbd864b7b7646ed6ab061e16256d4b58f1fe7d9418d4f36ef53e0",
       "git_lifecycle_state": "REWRITTEN",
       "is_base64_encoded": false,
       "is_false_positive": false,
       "lifecycle_badge": "Rewritten History",
+      "lifecycle_status": "Rewritten History",
+      "line": 1,
       "line_number": 1,
       "masked_match": "sg_r*****************************0c77",
+      "masked_value": "sg_r*****************************0c77",
       "ml_probability": 0.5,
+      "recommended_action": "Review and rotate if still valid.",
       "risk_score": 37.5,
       "secret_type": "generic_assignment",
       "shap": [
@@ -320,6 +432,8 @@
     }
   ],
   "fixture": true,
+  "lifecycle_status": "DETECTED",
+  "meaning": "This result indicates repository-pattern matches under the current rules. It does not prove every credential is valid or that all possible secret formats exist.",
   "ndcg": {
     "at_10": 0.9945498058479257,
     "at_5": 0.954264741448103
@@ -358,6 +472,28 @@
       "shap": [],
       "status": "ROTATED_SAFE",
       "still_in_head": false
+    }
+  ],
+  "result_explanation": "6 secret findings found.",
+  "rules_applied": [
+    "Gitleaks default rules",
+    "SecretGuard-owned project rules"
+  ],
+  "skipped_files": [
+    {
+      "lines": 0,
+      "path": "demo/archive.fake.zip",
+      "reason": "archive"
+    },
+    {
+      "lines": 0,
+      "path": "demo/binary.fake.bin",
+      "reason": "binary"
+    },
+    {
+      "lines": 3,
+      "path": "demo/lfs-pointer.txt",
+      "reason": "lfs_pointer"
     }
   ],
   "summary": {
