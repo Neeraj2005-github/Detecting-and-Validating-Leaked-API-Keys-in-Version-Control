@@ -1,0 +1,485 @@
+{
+  "detect_secrets_version": "1.5.0",
+  "fixtures": {
+    "100": {
+      "detect-secrets": {
+        "metrics": {
+          "added-then-deleted": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          },
+          "clean-negative": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          },
+          "documentation-false-positive": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          }
+        },
+        "resources": {
+          "cpu_seconds": {
+            "ci95_high": 0.015625,
+            "ci95_low": 0.003125,
+            "max": 0.015625,
+            "median": 0.015625,
+            "min": 0.0
+          },
+          "peak_rss_bytes": {
+            "ci95_high": 4608819.2,
+            "ci95_low": 4603904.0,
+            "max": 4612096.0,
+            "median": 4603904.0,
+            "min": 4603904.0
+          },
+          "wall_seconds": {
+            "ci95_high": 5.639566760000525,
+            "ci95_low": 4.943490020000536,
+            "max": 6.028870600001028,
+            "median": 5.138488400001734,
+            "min": 4.831166300000405
+          }
+        },
+        "runs": 5
+      },
+      "gitleaks": {
+        "metrics": {
+          "added-then-deleted": {
+            "f1": {
+              "ci95_high": 1.0,
+              "ci95_low": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "min": 1.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 1.0,
+              "ci95_low": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "min": 1.0
+            },
+            "recall": {
+              "ci95_high": 1.0,
+              "ci95_low": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "min": 1.0
+            }
+          },
+          "clean-negative": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          },
+          "documentation-false-positive": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          }
+        },
+        "resources": {
+          "cpu_seconds": {
+            "ci95_high": 0.290625,
+            "ci95_low": 0.165625,
+            "max": 0.328125,
+            "median": 0.203125,
+            "min": 0.15625
+          },
+          "peak_rss_bytes": {
+            "ci95_high": 21996339.2,
+            "ci95_low": 20844544.0,
+            "max": 22380544.0,
+            "median": 21737472.0,
+            "min": 20434944.0
+          },
+          "wall_seconds": {
+            "ci95_high": 0.6887157199987997,
+            "ci95_low": 0.4148128799988626,
+            "max": 0.8570843999987119,
+            "median": 0.5200493999982427,
+            "min": 0.340844799999104
+          }
+        },
+        "runs": 5
+      },
+      "measured_commits": 100
+    },
+    "1000": {
+      "detect-secrets": {
+        "metrics": {
+          "added-then-deleted": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          },
+          "clean-negative": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          },
+          "documentation-false-positive": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          }
+        },
+        "resources": {
+          "cpu_seconds": {
+            "ci95_high": 0.021875,
+            "ci95_low": 0.003125,
+            "max": 0.03125,
+            "median": 0.015625,
+            "min": 0.0
+          },
+          "peak_rss_bytes": {
+            "ci95_high": 4606361.6,
+            "ci95_low": 4601446.4,
+            "max": 4608000.0,
+            "median": 4603904.0,
+            "min": 4599808.0
+          },
+          "wall_seconds": {
+            "ci95_high": 6.870766360000198,
+            "ci95_low": 5.047507060000498,
+            "max": 7.905355900000359,
+            "median": 5.494139099999302,
+            "min": 4.728073100000984
+          }
+        },
+        "runs": 5
+      },
+      "gitleaks": {
+        "metrics": {
+          "added-then-deleted": {
+            "f1": {
+              "ci95_high": 1.0,
+              "ci95_low": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "min": 1.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 1.0,
+              "ci95_low": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "min": 1.0
+            },
+            "recall": {
+              "ci95_high": 1.0,
+              "ci95_low": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "min": 1.0
+            }
+          },
+          "clean-negative": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          },
+          "documentation-false-positive": {
+            "f1": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "false_positive_rate": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "precision": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            },
+            "recall": {
+              "ci95_high": 0.0,
+              "ci95_low": 0.0,
+              "max": 0.0,
+              "median": 0.0,
+              "min": 0.0
+            }
+          }
+        },
+        "resources": {
+          "cpu_seconds": {
+            "ci95_high": 0.13125,
+            "ci95_low": 0.109375,
+            "max": 0.140625,
+            "median": 0.109375,
+            "min": 0.109375
+          },
+          "peak_rss_bytes": {
+            "ci95_high": 22687744.0,
+            "ci95_low": 21478604.8,
+            "max": 23105536.0,
+            "median": 21966848.0,
+            "min": 21278720.0
+          },
+          "wall_seconds": {
+            "ci95_high": 0.25126931999984664,
+            "ci95_low": 0.20625458000031358,
+            "max": 0.2783983999997872,
+            "median": 0.21776779999891005,
+            "min": 0.2033542999997735
+          }
+        },
+        "runs": 5
+      },
+      "measured_commits": 1000
+    }
+  },
+  "generated": "2026-11-22T07:11:59Z",
+  "gitleaks_version": "8.18.4"
+}

@@ -15,25 +15,39 @@ def main() -> int:
     subprocess.run(["git", "init", "--initial-branch=main", str(output)], check=True, capture_output=True)
 
     count = int(args.size)
+    fake_secret = "AKIAIOSFODNN7EXAMPLE"
     stream = bytearray()
     stream.extend(b"reset refs/heads/main\n")
-    stream.extend(b"commit refs/heads/main\n")
-    stream.extend(b"mark :1\n")
-    stream.extend(b"author Fixture <fixture@example.test> 1704067200 +0000\n")
-    stream.extend(b"committer Fixture <fixture@example.test> 1704067200 +0000\n")
-    stream.extend(b"data 31\nAdd benchmark fixture commit 1\n")
-    stream.extend(b"M 100644 inline README.md\n")
-    stream.extend(b"data 58\n")
-    stream.extend(b"# FAKE benchmark fixture\nClean documentation example: EXAMPLE_ONLY\n")
-    for index in range(1, count):
-        stream.extend(f"commit refs/heads/main\nmark :{index + 1}\n".encode("ascii"))
+    for index in range(1, count + 1):
+        stream.extend(b"commit refs/heads/main\n")
+        stream.extend(f"mark :{index}\n".encode("ascii"))
         stream.extend(b"author Fixture <fixture@example.test> 1704067200 +0000\n")
         stream.extend(b"committer Fixture <fixture@example.test> 1704067200 +0000\n")
-        stream.extend(f"data {len(f'Benchmark commit {index + 1}')}\n".encode("ascii"))
-        stream.extend(f"Benchmark commit {index + 1}\n".encode("ascii"))
-        stream.extend(b"M 100644 inline README.md\n")
-        stream.extend(f"data {18 + len(str(index))}\n".encode("ascii"))
-        stream.extend(f"Commit {index + 1} FAKE\n".encode("ascii"))
+        message = f"Benchmark fixture commit {index}\n"
+        stream.extend(f"data {len(message.encode('utf-8'))}\n".encode("ascii"))
+        stream.extend(message.encode("utf-8"))
+        if index == 1:
+            config = f"AWS_ACCESS_KEY_ID={fake_secret}\n"
+            stream.extend(b"M 100644 inline config.env\n")
+            stream.extend(f"data {len(config.encode('utf-8'))}\n".encode("ascii"))
+            stream.extend(config.encode("utf-8"))
+            readme = "# FAKE benchmark fixture\nClean documentation example: EXAMPLE_ONLY\n"
+            stream.extend(b"M 100644 inline README.md\n")
+            stream.extend(f"data {len(readme.encode('utf-8'))}\n".encode("ascii"))
+            stream.extend(readme.encode("utf-8"))
+        elif index == 2:
+            stream.extend(b"D config.env\n")
+        elif index % 10 == 0:
+            evidence = f"clean_negative_{index}=NOT_A_SECRET\n"
+            stream.extend(b"M 100644 inline evidence.txt\n")
+            stream.extend(f"data {len(evidence.encode('utf-8'))}\n".encode("ascii"))
+            stream.extend(evidence.encode("utf-8"))
+    stream.extend(b"tag v1-FAKE\n")
+    stream.extend(f"from :{count}\n".encode("ascii"))
+    stream.extend(b"tagger Fixture <fixture@example.test> 1704067200 +0000\n")
+    tag_message = "Synthetic benchmark tag\n"
+    stream.extend(f"data {len(tag_message.encode('utf-8'))}\n".encode("ascii"))
+    stream.extend(tag_message.encode("utf-8"))
     subprocess.run(
         ["git", "fast-import", "--quiet"],
         cwd=output,
