@@ -1,0 +1,14 @@
+[
+  {
+    "timestamp": "2026-10-29T05:24:46.250123+00:00",
+    "test": "tests/test_cp1_complete.py::test_entropy_features_xgboost_and_shap_payload",
+    "exception": "ValueError",
+    "message": "Computing NDCG is only meaningful when there is more than 1 document. Got 1 instead."
+  },
+  {
+    "timestamp": "2026-11-22T05:42:57.583296+00:00",
+    "test": "tests/test_phase_b_edge_cases.py::test_force_push_dropped_commit_is_unreachable",
+    "exception": "AssertionError",
+    "message": "assert '58b5d0e470702002cdd95794b6cc31085401da1a' not in {'58b5d0e470702002cdd95794b6cc31085401da1a'}\n +  where '58b5d0e470702002cdd95794b6cc31085401da1a' = <git.Commit \"58b5d0e470702002cdd95794b6cc31085401da1a\">.hexsha"
+  }
+]
