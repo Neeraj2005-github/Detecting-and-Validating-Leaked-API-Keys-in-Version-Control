@@ -1,0 +1,109 @@
+{
+  "approaches": [
+    {
+      "metrics": {
+        "commit_count": 5,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 0.046875,
+        "f1_score": 0.7058823529411764,
+        "false_negatives": 0,
+        "false_positive_rate": 1.0,
+        "false_positives": 5,
+        "gitleaks_version": "8.18.4",
+        "historical_secrets_found_percent": 100.0,
+        "os": "Windows-11-10.0.26300-SP0",
+        "peak_rss_mb": 436.15234375,
+        "precision": 0.5454545454545454,
+        "ram_bytes": 16831815680,
+        "recall": 1.0,
+        "repo_size_bytes": 33149,
+        "scan_wall_clock_ms": 668.6511000007158,
+        "true_positives": 6,
+        "unsafe_outcome_count": 0
+      },
+      "name": "Baseline A: Regex + Entropy",
+      "provenance": "regex_plus_entropy"
+    },
+    {
+      "metrics": {
+        "commit_count": 5,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 0.046875,
+        "f1_score": 0.0,
+        "false_negatives": 6,
+        "false_positive_rate": 0.25,
+        "false_positives": 1,
+        "gitleaks_version": "8.18.4",
+        "historical_secrets_found_percent": 0.0,
+        "os": "Windows-11-10.0.26300-SP0",
+        "peak_rss_mb": 18.953125,
+        "precision": 0.0,
+        "ram_bytes": 16831815680,
+        "recall": 0.0,
+        "repo_size_bytes": 33149,
+        "scan_wall_clock_ms": 105.42610000084096,
+        "true_positives": 0,
+        "unsafe_outcome_count": 2
+      },
+      "name": "Baseline B: Gitleaks",
+      "provenance": "gitleaks_native_v8.18.4"
+    },
+    {
+      "metrics": {
+        "commit_count": 5,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 0.0,
+        "f1_score": 0.0,
+        "false_negatives": 6,
+        "false_positive_rate": 0.0,
+        "false_positives": 1,
+        "gitleaks_version": "8.18.4",
+        "historical_secrets_found_percent": 0.0,
+        "os": "Windows-11-10.0.26300-SP0",
+        "peak_rss_mb": 436.15234375,
+        "precision": 0.0,
+        "ram_bytes": 16831815680,
+        "recall": 0.0,
+        "repo_size_bytes": 33149,
+        "scan_wall_clock_ms": 9.703300000182935,
+        "true_positives": 0,
+        "unsafe_outcome_count": 2
+      },
+      "name": "Baseline C: detect-secrets/trufflehog pattern baseline",
+      "provenance": "detect_secrets_native"
+    },
+    {
+      "metrics": {
+        "commit_count": 5,
+        "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+        "cpu_time_seconds": 3.8125,
+        "f1_score": 0.8,
+        "false_negatives": 2,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "gitleaks_version": "8.18.4",
+        "historical_secrets_found_percent": 75.0,
+        "os": "Windows-11-10.0.26300-SP0",
+        "peak_rss_mb": 436.15234375,
+        "precision": 1.0,
+        "ram_bytes": 16831815680,
+        "recall": 0.6666666666666666,
+        "repo_size_bytes": 33149,
+        "scan_wall_clock_ms": 1182.3950999987574,
+        "true_positives": 4,
+        "unsafe_outcome_count": 1
+      },
+      "name": "Our O2 Engine",
+      "provenance": "differential_walker_regex_entropy_xgboost"
+    }
+  ],
+  "fixture": "C:\\Users\\sakal\\AppData\\Local\\Temp\\pytest-of-sakal\\pytest-160\\test_benchmark_generates_all_k0\\synthetic_repo_v1",
+  "oracle": "C:\\Users\\sakal\\AppData\\Local\\Temp\\pytest-of-sakal\\pytest-160\\test_benchmark_generates_all_k0\\oracle.json",
+  "resource_note": "RSS is sampled immediately before and after each run; install psutil for process-level memory telemetry.",
+  "tradeoff_analysis": "The O2 Engine is the reference architecture because it preserves added-line/history lifecycle context, identifies still-in-HEAD exposure, and applies XGBoost false-positive suppression. Native Gitleaks is a useful detector baseline but does not provide the same lifecycle semantics; the emulator preserves benchmark continuity when the optional binary is unavailable.",
+  "truth_counts": {
+    "active_head": 2,
+    "decoy": 4,
+    "true_positive": 6
+  }
+}

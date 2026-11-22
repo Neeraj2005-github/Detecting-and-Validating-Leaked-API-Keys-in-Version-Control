@@ -1,0 +1,28 @@
+{
+  "credential_id": "FAKE_CREDENTIAL",
+  "mttr_ms": 0.0417,
+  "sandbox": "sqlite-in-memory-offline",
+  "state": "VALIDITY_UNKNOWN",
+  "transitions": [
+    {
+      "detail": "synthetic finding accepted",
+      "state": "DETECTED",
+      "timestamp": "2026-11-22T07:05:23.398215+00:00"
+    },
+    {
+      "detail": "source removal does not remove history",
+      "state": "EXPOSED_IN_HISTORY",
+      "timestamp": "2026-11-22T07:05:23.398215+00:00"
+    },
+    {
+      "detail": "provider validity is not checked",
+      "state": "VALIDITY_UNKNOWN",
+      "timestamp": "2026-11-22T07:05:23.398215+00:00"
+    },
+    {
+      "detail": "verification failed: RuntimeError",
+      "state": "VALIDITY_UNKNOWN",
+      "timestamp": "2026-11-22T07:05:23.398215+00:00"
+    }
+  ]
+}

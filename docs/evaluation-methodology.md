@@ -19,6 +19,17 @@ and F1=1.0 for that synthetic run. The separate RQ1 held-out 14-feature
 XGBoost row reports precision 0.75, recall 1.0, and F1 0.8571428571428571.
 These are different evaluation scopes.
 
+## Combined coverage
+
+The CI coverage target is measured over both `backend` and `src/shd`.
+The 2026-11-22 run used:
+
+```text
+python -m pytest --cov=backend --cov=src/shd --cov-report=term-missing -q
+```
+
+Real result: `146 passed`, combined coverage `77%`.
+
 ## Feature ablation
 
 [`backend/ml/xgboost_rigour.py`](../backend/ml/xgboost_rigour.py) evaluates

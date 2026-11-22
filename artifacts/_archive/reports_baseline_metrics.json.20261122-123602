@@ -1,0 +1,17 @@
+{
+  "baseline_A_gitleaks_only": {
+    "precision": 0.4,
+    "recall": 1.0,
+    "f1": 0.5714285714285714,
+    "false_positive_rate": 1.0
+  },
+  "baseline_B_gitleaks_plus_ml_filter": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "test_set_size": 5,
+  "model": "RandomForestClassifier",
+  "random_state": 42
+}
