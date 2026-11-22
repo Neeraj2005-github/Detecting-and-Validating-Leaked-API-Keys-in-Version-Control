@@ -9,5 +9,21 @@ description = "Private key material"
 regex = '''-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----'''
 tags = ["key", "private-key"]
 
+[[rules]]
+id = "secretguard-db-password-assignment"
+description = "Database password assignments"
+regex = '''(?i)\b(?:DB_PASSWORD|MYSQL_PWD|POSTGRES_PASSWORD)\b\s*(?:=|:)\s*[^\s#,\}"']{8,}'''
+tags = ["database", "password", "assignment"]
+
+[[rules]]
+id = "secretguard-db-connection-uri"
+description = "Database connection URI with credentials"
+regex = '''(?i)\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/[^\/\s:@]+:[^@\s\/]+@[^\s\/]+(?:\/[^\s]+)?'''
+tags = ["database", "credential", "uri"]
+
 [allowlist]
 description = "Repository-local allowlists are never trusted"
+regexTarget = "secret"
+regexes = [
+  '''(?i)(?:your[_-]?(?:db[_-]?)?(?:password|secret)|replace[_-]?me|change[_-]?me|changeme|placeholder|dummy[_-]?(?:password|secret))''',
+]
