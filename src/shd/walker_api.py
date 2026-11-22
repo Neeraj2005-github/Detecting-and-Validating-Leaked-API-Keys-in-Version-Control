@@ -78,7 +78,18 @@ _scan_stage_executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="sec
 _clone_cache: dict[str, tuple[Path, tempfile.TemporaryDirectory[str]]] = {}
 _clone_cache_lock = threading.Lock()
 STAGE_TIMEOUT_SECONDS = 30.0
-JOB_TIMEOUT_SECONDS = 180.0
+JOB_TIMEOUT_SECONDS = 300.0
+STAGE_TIMEOUTS = {
+    "clone": 120.0,
+    "preflight": 30.0,
+    "scan": 60.0,
+    "parse": 30.0,
+    "filter": 180.0,
+    "dedupe": 30.0,
+    "mask": 30.0,
+    "lifecycle": 30.0,
+    "report": 30.0,
+}
 
 app = FastAPI(title="Secret History Detector")
 app.add_middleware(
@@ -145,12 +156,11 @@ def _cp1_repo_path(request: CP1ScanRequest) -> tuple[Path, tempfile.TemporaryDir
             cached = _clone_cache.get(value)
         if cached is not None:
             return cached[0], None
-        _, temp_dir, destination = clone_https_repository(value)
         with _clone_cache_lock:
             previous = _clone_cache.get(value)
             if previous is not None:
-                temp_dir.cleanup()
                 return previous[0], None
+            _, temp_dir, destination = clone_https_repository(value)
             _clone_cache[value] = (destination, temp_dir)
         return destination, None
     return Path(value).expanduser().resolve(), None
@@ -521,7 +531,7 @@ def _run_stage(job_id: str, name: str, operation) -> object:
         started = time.monotonic()
     future = _scan_stage_executor.submit(operation)
     try:
-        value = future.result(timeout=STAGE_TIMEOUT_SECONDS)
+        value = future.result(timeout=STAGE_TIMEOUTS.get(name, STAGE_TIMEOUT_SECONDS))
     except FuturesTimeoutError:
         future.cancel()
         raise TimeoutError(f"Stage timed out: {name}")

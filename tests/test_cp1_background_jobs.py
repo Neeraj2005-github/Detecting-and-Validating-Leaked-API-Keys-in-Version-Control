@@ -30,6 +30,7 @@ def test_cp1_scan_job_returns_done_result_and_stages() -> None:
 
         terminal = _wait_job(client, job["job_id"])
         assert terminal["status"] == "done"
+        assert terminal["result"]["summary"]["total"] >= 1
         assert terminal["result"]["coverage"]["completeness"] in {"complete", "incomplete"}
         assert terminal["result"]["result_explanation"]
         assert terminal["result"]["skipped_files"] == terminal["result"]["coverage"]["skipped"]["items"]

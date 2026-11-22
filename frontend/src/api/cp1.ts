@@ -10,7 +10,7 @@ export const scanCp1 = async (payload: { repo_url?: string; synthetic_fixture: b
   const started = await startCp1Scan(payload);
   const jobId = started.job_id;
   onProgress?.(started);
-  const deadline = Date.now() + 180000;
+  const deadline = Date.now() + 300000;
   while (Date.now() < deadline) {
     await new Promise(resolve => setTimeout(resolve, 500));
     const job = await fetchCp1ScanJob(jobId);
