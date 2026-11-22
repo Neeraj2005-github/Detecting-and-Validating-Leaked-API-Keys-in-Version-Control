@@ -242,18 +242,29 @@ def _is_excluded_path(file_path: str) -> bool:
     return False
 
 
-def _literal_suppression_reason(token: str, file_path: str, line: str) -> str:
+def _literal_suppression_reason(
+    token: str,
+    file_path: str,
+    line: str,
+    *,
+    require_entropy: bool = True,
+) -> str:
     value = token.strip().strip("'\"`,;")
     lower = value.lower()
     if _is_excluded_path(file_path):
         return "dependency path"
     if re.search(r"\$[A-Z_a-z][A-Z_a-z0-9]*|\$\{[^}]+\}|%[^%]+%|process\.env\.|system\.getenv\(|os\.environ\[", value, re.I):
         return "variable reference"
-    if "(" in value or ".get" in lower or re.search(r"\b(?:this|self|obj)\.[A-Z_a-z][A-Z_a-z0-9]*\b", value):
+    if "(" in value or re.fullmatch(r"[A-Z_a-z][A-Z_a-z0-9]*(?:\.[A-Z_a-z][A-Z_a-z0-9]*)+", value):
         return "variable reference"
-    if re.fullmatch(r"[A-Za-z][A-Za-z0-9]*(?:_[A-Z_a-z][A-Z_a-z0-9]*)+", value) and not any(char.isdigit() or char in "$@!#%_-+=" for char in value):
-        return "variable reference"
-    if re.fullmatch(r"[A-Z_a-z][A-Z_a-z0-9]*_[A-Z_a-z0-9_]*", value) and not any(char.isdigit() or char in "$@!#%_-+=" for char in value):
+    if (
+        re.fullmatch(r"[A-Za-z][A-Za-z0-9]*", value)
+        and re.search(r"[a-z][A-Z]|[A-Z]{2,}[a-z]", value)
+    ) or (
+        re.fullmatch(r"[A-Z_a-z][A-Z_a-z0-9]*", value)
+        and "_" in value
+        and not any(char.isdigit() for char in value)
+    ):
         return "variable reference"
     placeholders = (
         "changeme", "<password>", "your_", "example", "xxx",
@@ -263,7 +274,7 @@ def _literal_suppression_reason(token: str, file_path: str, line: str) -> str:
         return "placeholder"
     if any(marker in f"/{file_path.lower()}/" for marker in ("/test/", "/tests/", "/mock/", "/fixtures/", "/docs/", "/examples/", "/sample/")):
         return "test/doc value"
-    if len(value) < 8 or shannon_entropy(value) < 3.5:
+    if len(value) < 8 or (require_entropy and shannon_entropy(value) < 3.5):
         return "placeholder"
     return ""
 
@@ -318,7 +329,12 @@ def detect_lines(lines: Iterable[object], model: object | None = None) -> list[D
         for index, (item, secret_type, token, encoded, features, value, line, vector) in enumerate(pending):
             probability = float(probabilities[index][1] if len(probabilities[index]) > 1 else probabilities[index][0])
             heuristic_fp = _heuristic_false_positive(token, str(value.get("file_path", "")), line)
-            suppression_reason = _literal_suppression_reason(token, str(value.get("file_path", "")), line)
+            suppression_reason = _literal_suppression_reason(
+                token,
+                str(value.get("file_path", "")),
+                line,
+                require_entropy=secret_type != "private_key",
+            )
             if not suppression_reason and heuristic_fp:
                 normalized_path = str(value.get("file_path", "")).lower()
                 if _is_excluded_path(str(value.get("file_path", ""))):
