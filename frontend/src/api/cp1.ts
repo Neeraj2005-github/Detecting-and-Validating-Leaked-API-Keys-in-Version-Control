@@ -1,5 +1,5 @@
 import api from './client';
-import { shouldStopScanning } from '../utils/scanState';
+import { partialResultFromTimedOutJob, shouldStopScanning } from '../utils/scanState';
 
 export const fetchCp1Overview = async () => (await api.get('/api/cp1/overview', { timeout: 30000 })).data;
 export const startCp1Scan = async (payload: { repo_url?: string; synthetic_fixture: boolean; use_ai_filter: boolean; fast_scan?: boolean }) =>
@@ -16,7 +16,8 @@ export const scanCp1 = async (payload: { repo_url?: string; synthetic_fixture: b
     const job = await fetchCp1ScanJob(jobId);
     onProgress?.(job);
     if (job.status === 'done') return job.result;
-    if (job.status === 'timed_out' && job.result) return job.result;
+    const partialResult = partialResultFromTimedOutJob(job);
+    if (partialResult) return partialResult;
     if (shouldStopScanning(job.status)) {
       throw new Error(`${job.error?.stage ?? 'Scan'}: ${job.error?.reason ?? 'The scan did not complete.'}`);
     }
