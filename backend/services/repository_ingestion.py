@@ -31,11 +31,16 @@ def _is_public_ip(address: str) -> bool:
     )
 
 
-def validate_https_url(value: str) -> str:
+def validate_https_url(
+    value: str,
+    *,
+    allow_loopback_test: bool = False,
+    allow_http_test: bool = False,
+) -> str:
     raw = value.strip()
     parsed = urllib.parse.urlparse(raw)
     scheme = parsed.scheme.lower()
-    if scheme in FORBIDDEN_SCHEMES or scheme != "https":
+    if scheme in FORBIDDEN_SCHEMES or (scheme != "https" and not (allow_http_test and scheme == "http")):
         raise ValueError("Only an https:// URL is accepted")
     if not parsed.hostname or parsed.username or parsed.password:
         raise ValueError("Repository URL is malformed")
@@ -48,7 +53,8 @@ def validate_https_url(value: str) -> str:
     except ValueError:
         literal = None
     if literal is not None and not _is_public_ip(str(literal)):
-        raise ValueError("Private, link-local, or local repository addresses are not accepted")
+        if not (allow_loopback_test and literal.is_loopback):
+            raise ValueError("Private, link-local, or local repository addresses are not accepted")
 
     try:
         addresses = {
@@ -57,7 +63,10 @@ def validate_https_url(value: str) -> str:
         }
     except socket.gaierror as exc:
         raise ValueError("Repository hostname could not be resolved") from exc
-    if not addresses or any(not _is_public_ip(address) for address in addresses):
+    if not addresses or any(
+        not _is_public_ip(address) and not (allow_loopback_test and ipaddress.ip_address(address).is_loopback)
+        for address in addresses
+    ):
         raise ValueError("Repository hostname resolves to a forbidden address")
     return parsed.geturl()
 
@@ -67,8 +76,18 @@ class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
         return None
 
 
-def validate_redirect_chain(value: str, timeout_seconds: int = 10) -> str:
-    url = validate_https_url(value)
+def validate_redirect_chain(
+    value: str,
+    timeout_seconds: int = 10,
+    *,
+    allow_loopback_test: bool = False,
+    allow_http_test: bool = False,
+) -> str:
+    url = validate_https_url(
+        value,
+        allow_loopback_test=allow_loopback_test,
+        allow_http_test=allow_http_test,
+    )
     current = url
     seen: set[str] = set()
     for _ in range(10):
@@ -87,7 +106,11 @@ def validate_redirect_chain(value: str, timeout_seconds: int = 10) -> str:
             location = exc.headers.get("Location")
             if not location:
                 raise ValueError("Repository redirect has no destination")
-            current = validate_https_url(urllib.parse.urljoin(current, location))
+            current = validate_https_url(
+                urllib.parse.urljoin(current, location),
+                allow_loopback_test=allow_loopback_test,
+                allow_http_test=allow_http_test,
+            )
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             raise ValueError("Repository URL could not be reached safely") from exc
     raise ValueError("Repository URL redirected too many times")
@@ -104,16 +127,48 @@ def _directory_size_bytes(path: Path) -> int:
     return total
 
 
+def build_clone_command(url: str, destination: Path, hooks_dir: Path) -> list[str]:
+    return [
+        "git",
+        "-c", f"core.hooksPath={hooks_dir.as_posix()}",
+        "-c", "protocol.file.allow=never",
+        "-c", "http.followRedirects=initial",
+        "clone",
+        "--no-recurse-submodules",
+        "--",
+        url,
+        str(destination),
+    ]
+
+
+def configure_askpass(parent: Path, env: dict[str, str], token: str) -> Path:
+    askpass = parent / "askpass.cmd"
+    askpass.write_text(
+        "@echo off\r\n"
+        "echo %SHD_GIT_TOKEN%\r\n",
+        encoding="ascii",
+    )
+    env["GIT_ASKPASS"] = str(askpass)
+    env["SHD_GIT_TOKEN"] = token
+    return askpass
+
+
 def clone_https_repository(
     value: str,
     *,
     timeout_seconds: int | None = None,
     max_size_mb: int | None = None,
+    allow_loopback_test: bool = False,
+    allow_http_test: bool = False,
 ) -> tuple[git.Repo, tempfile.TemporaryDirectory[str], Path]:
     # Import lazily so URL validation remains usable if GitPython is unavailable.
     import git
 
-    url = validate_redirect_chain(value)
+    url = validate_redirect_chain(
+        value,
+        allow_loopback_test=allow_loopback_test,
+        allow_http_test=allow_http_test,
+    )
     timeout = timeout_seconds if timeout_seconds is not None else int(os.getenv("SHD_CLONE_TIMEOUT", "300"))
     max_size = max_size_mb if max_size_mb is not None else int(os.getenv("SHD_MAX_REPO_MB", "1024"))
 
@@ -131,20 +186,10 @@ def clone_https_repository(
         "GIT_CONFIG_NOSYSTEM": "1",
     })
     token = os.environ.get("SHD_GIT_TOKEN")
-
-    command = [
-        "git",
-        "-c", f"core.hooksPath={hooks_dir.as_posix()}",
-        "-c", "protocol.file.allow=never",
-        "-c", "http.followRedirects=initial",
-        "clone",
-        "--no-recurse-submodules",
-        "--",
-        url,
-        str(destination),
-    ]
     if token:
-        command[1:1] = ["-c", f"http.extraHeader=Authorization: Bearer {token}"]
+        configure_askpass(parent, env, token)
+
+    command = build_clone_command(url, destination, hooks_dir)
     try:
         completed = subprocess.run(
             command,

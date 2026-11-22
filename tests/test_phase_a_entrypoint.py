@@ -4,6 +4,10 @@ import json
 import os
 import subprocess
 import sys
+import threading
+import http.server
+import subprocess
+import time
 from pathlib import Path
 
 import git
@@ -12,6 +16,11 @@ import pytest
 from backend.services.repository_ingestion import (
     _directory_size_bytes,
     validate_https_url,
+)
+from backend.services.repository_ingestion import build_clone_command, configure_askpass
+from backend.services.repository_ingestion import (
+    clone_https_repository,
+    validate_redirect_chain,
 )
 
 
@@ -107,3 +116,93 @@ def test_https_url_accepts_only_a_resolved_public_host() -> None:
 def test_oversize_limit_helper(tmp_path: Path) -> None:
     (tmp_path / "small.bin").write_bytes(b"FAKE" * 16)
     assert _directory_size_bytes(tmp_path) == 64
+
+
+def test_clone_argv_never_contains_token(tmp_path: Path) -> None:
+    token = "FAKE_TOKEN_NOT_A_REAL_SECRET"
+    env: dict[str, str] = {}
+    askpass = configure_askpass(tmp_path, env, token)
+    command = build_clone_command(
+        "https://example.invalid/repository.git",
+        tmp_path / "repository",
+        tmp_path / "empty-hooks",
+    )
+    assert token not in command
+    assert all(token not in argument for argument in command)
+    assert env["SHD_GIT_TOKEN"] == token
+    assert env["GIT_ASKPASS"] == str(askpass)
+
+
+def test_local_http_redirect_to_private_ip_is_rejected() -> None:
+    class RedirectHandler(http.server.BaseHTTPRequestHandler):
+        def do_HEAD(self) -> None:
+            self.send_response(302)
+            self.send_header("Location", "http://10.0.0.10/repository.git")
+            self.end_headers()
+
+        def log_message(self, format: str, *args: object) -> None:
+            return
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), RedirectHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        url = f"http://127.0.0.1:{server.server_port}/redirect"
+        with pytest.raises(ValueError, match="Private|private|forbidden"):
+            validate_redirect_chain(
+                url,
+                timeout_seconds=2,
+                allow_loopback_test=True,
+                allow_http_test=True,
+            )
+    finally:
+        server.shutdown()
+        thread.join(timeout=2)
+        server.server_close()
+
+
+def test_local_http_clone_timeout_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    import backend.services.repository_ingestion as ingestion
+
+    monkeypatch.setattr(
+        ingestion,
+        "validate_redirect_chain",
+        lambda *args, **kwargs: "http://127.0.0.1/repository.git",
+    )
+
+    def timeout_run(*args: object, **kwargs: object) -> None:
+        raise subprocess.TimeoutExpired(cmd="git-clone", timeout=1)
+
+    monkeypatch.setattr(ingestion.subprocess, "run", timeout_run)
+    with pytest.raises(RuntimeError, match="timed out"):
+        clone_https_repository(
+            "http://127.0.0.1/repository.git",
+            timeout_seconds=1,
+            allow_loopback_test=True,
+            allow_http_test=True,
+        )
+
+
+def test_oversize_local_clone_is_rejected(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    import backend.services.repository_ingestion as ingestion
+
+    monkeypatch.setattr(
+        ingestion,
+        "validate_redirect_chain",
+        lambda *args, **kwargs: "http://127.0.0.1/repository.git",
+    )
+
+    def fake_clone(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        destination = Path(command[-1])
+        destination.mkdir(parents=True)
+        (destination / "large.bin").write_bytes(b"F" * (1024 * 1024 + 1))
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(ingestion.subprocess, "run", fake_clone)
+    with pytest.raises(RuntimeError, match="exceeds"):
+        clone_https_repository(
+            "http://127.0.0.1/repository.git",
+            max_size_mb=1,
+            allow_loopback_test=True,
+            allow_http_test=True,
+        )
