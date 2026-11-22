@@ -29,15 +29,28 @@ class RotationStateMachine:
     state: str = "DETECTED"
     started_ns: int = field(default_factory=time.perf_counter_ns)
 
-    def _transition(self, state: str, detail: str) -> None:
+    def transition(self, state: str, detail: str) -> None:
+        if state not in STATES:
+            raise ValueError("UNKNOWN_LIFECYCLE_STATE")
+        if state not in ALLOWED_TRANSITIONS[self.state]:
+            raise ValueError(f"FORBIDDEN_TRANSITION:{self.state}->{state}")
         self.state = state
         self.transitions.append({"state": state, "timestamp": datetime.now(timezone.utc).isoformat(), "detail": detail})
 
+    def _transition(self, state: str, detail: str) -> None:
+        self.transition(state, detail)
+
     def run(self, *, force_failure: bool = False) -> dict[str, Any]:
         try:
-            self._transition("DETECTED", "synthetic finding accepted")
+            self.transitions.append({
+                "state": "DETECTED",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "detail": "synthetic finding accepted",
+            })
             self._transition("EXPOSED_IN_HISTORY", "source removal does not remove history")
             self._transition("VALIDITY_UNKNOWN", "provider validity is not checked")
+            if force_failure:
+                raise RuntimeError("deterministic rotation failure requested")
             connection = sqlite3.connect(":memory:")
             connection.execute("CREATE TABLE credentials (id TEXT PRIMARY KEY, active INTEGER)")
             connection.execute("INSERT INTO credentials VALUES (?, 1)", (self.credential_id,))
@@ -50,7 +63,8 @@ class RotationStateMachine:
             self._transition("VERIFIED_REVOKED" if safe else "VALIDITY_UNKNOWN", "verified sandbox revocation")
             connection.close()
         except (sqlite3.Error, RuntimeError) as exc:
-            self._transition("VALIDITY_UNKNOWN", f"verification failed: {type(exc).__name__}")
+            if self.state == "VALIDITY_UNKNOWN":
+                self.transitions.append({"state": "VALIDITY_UNKNOWN", "timestamp": datetime.now(timezone.utc).isoformat(), "detail": f"verification failed: {type(exc).__name__}"})
         payload = {"credential_id": self.credential_id, "state": self.state, "transitions": self.transitions, "mttr_ms": (time.perf_counter_ns() - self.started_ns) / 1_000_000, "sandbox": "sqlite-in-memory-offline"}
         save_cp1_artifact("rotation_state_machine", payload, Path(__file__).resolve().parents[2] / "artifacts" / "rotation_state_machine.json")
         return payload
