@@ -34,9 +34,9 @@ FEATURE_NAMES = [
 PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("aws_access_key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
     ("github_pat", re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b")),
-    ("mysql_uri", re.compile(r"\b(?:mysql|postgres(?:ql)?|jdbc:mysql|jdbc:postgresql)://[^\s'\"<>]+", re.I)),
+    ("mysql_uri", re.compile(r"\b(?:mysql|postgres(?:ql)?|jdbc:mysql|jdbc:postgresql|redis)://[^\s'\"<>]+", re.I)),
     ("mongodb_uri", re.compile(r"\b(?:mongodb(?:\+srv)?|mongo)://[^\s'\"<>]+:[^\s'\"<>]+@[^\s'\"<>]+", re.I)),
-    ("db_password_assignment", re.compile(r"(?i)\b(?:DB_PASSWORD|MYSQL_PWD|POSTGRES_PASSWORD)\s*(?:=|:)\s*['\"]?([A-Za-z0-9_+/=.$:@!#%\-]{8,})")),
+    ("db_password_assignment", re.compile(r"(?i)[\"']?(?:DB_PASSWORD|MYSQL_PWD|POSTGRES_PASSWORD)[\"']?\s*(?:=|:)\s*[\"']?([A-Za-z0-9_+/=.$:@!#%\-<>{}]{8,})")),
     ("private_key", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
     ("jwt", re.compile(r"\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b")),
     ("slack_token", re.compile(r"\bxox[baprs]-[0-9A-Za-z-]{10,}\b")),
@@ -53,6 +53,7 @@ _PLACEHOLDER_VALUES = {
     "replace_me",
     "changeme",
     "example",
+    "<password>",
 }
 _FRONTEND_BOILERPLATE = (
     "localstorage.getitem",
