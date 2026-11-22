@@ -24,8 +24,9 @@ def test_hardware_evidence_is_real_or_explicitly_unknown() -> None:
     manifest = Path("docs/evidence-manifest.json")
     assert manifest.is_file()
     payload = json.loads(manifest.read_text(encoding="utf-8"))
-    assert payload["hardware"]["cpu"] == "NOT MEASURED"
-    assert payload["hardware"]["ram"] == "NOT MEASURED"
+    assert payload["hardware"]["cpu"] == "12th Gen Intel(R) Core(TM) i5-1235U"
+    assert payload["hardware"]["ram"].startswith("16831815680 bytes")
+    assert payload["hardware"]["os"] == "Microsoft Windows 11 Home Single Language"
 
 
 def test_independent_oracle_has_no_secret_values() -> None:

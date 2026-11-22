@@ -10,9 +10,9 @@
     "project": "2026-11-22"
   },
   "hardware": {
-    "cpu": "NOT MEASURED",
-    "ram": "NOT MEASURED",
-    "os": "Windows"
+    "cpu": "12th Gen Intel(R) Core(TM) i5-1235U",
+    "ram": "16831815680 bytes (15.68 GiB)",
+    "os": "Microsoft Windows 11 Home Single Language"
   },
   "gitleaks": {
     "version": "8.18.4",
