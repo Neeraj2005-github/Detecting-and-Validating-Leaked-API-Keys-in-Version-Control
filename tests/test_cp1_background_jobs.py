@@ -38,6 +38,8 @@ def test_cp1_scan_job_returns_done_result_and_stages() -> None:
             "clone", "preflight", "scan", "parse", "filter", "dedupe",
             "mask", "lifecycle", "report",
         }
+        scan_stage = next(stage for stage in terminal["stages"] if stage["name"] == "scan")
+        assert "batched_history_walk" in {sub["name"] for sub in scan_stage["sub_steps"]}
 
 
 def test_cp1_filter_exception_is_sanitized_in_failed_job(monkeypatch) -> None:
@@ -57,3 +59,27 @@ def test_cp1_filter_exception_is_sanitized_in_failed_job(monkeypatch) -> None:
     assert terminal["status"] == "failed"
     assert terminal["error"]["stage"] == "filter"
     assert "real internal" not in str(terminal["error"])
+
+
+def test_cp1_scan_stage_timeout_reports_sub_step(monkeypatch) -> None:
+    import time
+    import shd.walker_api as walker_api
+
+    def slow_history(repo):
+        time.sleep(0.1)
+        return []
+
+    monkeypatch.setattr(walker_api, "walk_history", slow_history)
+    monkeypatch.setitem(walker_api.STAGE_TIMEOUTS, "scan", 0.001)
+
+    with TestClient(app) as client:
+        started = client.post(
+            "/api/cp1/scan",
+            json={"synthetic_fixture": True, "use_ai_filter": True},
+        )
+        terminal = _wait_job(client, started.json()["job_id"])
+
+    assert terminal["status"] == "timed_out"
+    assert terminal["error"]["stage"] == "scan"
+    assert terminal["error"]["reason"] == "timeout"
+    assert terminal["error"]["sub_step"] == "batched_history_walk"

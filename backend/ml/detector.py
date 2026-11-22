@@ -10,6 +10,7 @@ import logging
 import math
 import os
 import re
+import threading
 from collections import Counter
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -23,6 +24,8 @@ ROOT = Path(__file__).resolve().parents[2]
 MODEL_PATH = ROOT / "backend" / "ml" / "detector_model.pkl"
 MODEL_META_PATH = ROOT / "backend" / "ml" / "detector_model.json"
 FINGERPRINT_SALT = os.getenv("O2_FINGERPRINT_SALT", "secretguard-o2-local-synthetic-salt")
+_MODEL_CACHE_LOCK = threading.Lock()
+_MODEL_CACHE: object | None = None
 FEATURE_NAMES = [
     "entropy", "normalized_entropy", "token_length", "digit_ratio",
     "uppercase_ratio", "lowercase_ratio", "symbol_ratio",
@@ -179,6 +182,10 @@ def _train_model() -> tuple[object, str]:
 
 def ensure_model() -> object:
     """Load or deterministically generate the XGBoost model artifact."""
+    global _MODEL_CACHE
+    with _MODEL_CACHE_LOCK:
+        if _MODEL_CACHE is not None:
+            return _MODEL_CACHE
     if MODEL_PATH.exists():
         try:
             metadata = json.loads(MODEL_META_PATH.read_text(encoding="utf-8"))
@@ -189,6 +196,8 @@ def ensure_model() -> object:
             model = joblib.load(MODEL_PATH)
             if not hasattr(model, "predict_proba"):
                 raise TypeError(f"persisted model {model_name or MODEL_PATH.name} has no predict_proba")
+            with _MODEL_CACHE_LOCK:
+                _MODEL_CACHE = model
             return model
         except (OSError, EOFError, ValueError, TypeError, AttributeError, ImportError, ModuleNotFoundError) as exc:
             logger.warning("Persisted detector model is unusable; rebuilding fallback: %s", type(exc).__name__)
@@ -213,6 +222,8 @@ def ensure_model() -> object:
         model, model_name = _train_model()
     joblib.dump(model, MODEL_PATH)
     MODEL_META_PATH.write_text(json.dumps({"model": model_name, "features": FEATURE_NAMES, "random_state": 42}, indent=2) + "\n", encoding="utf-8")
+    with _MODEL_CACHE_LOCK:
+        _MODEL_CACHE = model
     return model
 
 
@@ -241,9 +252,9 @@ def _candidates(line: str) -> list[tuple[str, str, bool]]:
     return list(unique)
 
 
-def detect_lines(lines: Iterable[object]) -> list[DetectionCandidate]:
+def detect_lines(lines: Iterable[object], model: object | None = None) -> list[DetectionCandidate]:
     """Detect candidates from ``HistoryLine`` objects or compatible mappings."""
-    model = ensure_model()
+    model = ensure_model() if model is None else model
     findings: list[DetectionCandidate] = []
     for item in lines:
         value = item if isinstance(item, Mapping) else asdict(item)

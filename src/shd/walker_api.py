@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import hashlib
 import logging
+import os
 import urllib.parse
 import tempfile
 import time
@@ -45,7 +46,7 @@ from backend.services.oracle_loader import load_oracle
 from backend.ml.dataset_kappa import evaluate_kappa
 from backend.ml.xgboost_rigour import run_rigour
 from backend.ml.shap_risk_scorer import score_findings
-from backend.ml.detector import detect_lines
+from backend.ml.detector import detect_lines, ensure_model
 from backend.scanner.history_walker import walk_history
 from backend.services.benchmark_engine import run_benchmark
 from backend.services.rotation_state_machine import rotate
@@ -82,7 +83,7 @@ JOB_TIMEOUT_SECONDS = 300.0
 STAGE_TIMEOUTS = {
     "clone": 120.0,
     "preflight": 30.0,
-    "scan": 60.0,
+    "scan": float(os.getenv("SHD_SCAN_STAGE_TIMEOUT", "60")),
     "parse": 30.0,
     "filter": 180.0,
     "dedupe": 30.0,
@@ -497,7 +498,7 @@ def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
     """Start a repository scan as a background job."""
     job_id = uuid.uuid4().hex
     stages = [
-        {"name": name, "status": "queued", "count": 0, "duration_ms": 0}
+        {"name": name, "status": "queued", "count": 0, "duration_ms": 0, "sub_steps": []}
         for name in STAGE_NAMES
     ]
     with _scan_jobs_lock:
@@ -521,14 +522,29 @@ def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
     return {"job_id": job_id, "status": "running", "stage": "clone", "stages": stages}
 
 
-def _run_stage(job_id: str, name: str, operation) -> object:
+def _set_stage_substep(job_id: str, stage_name: str, sub_step: str, status: str, duration_ms: int = 0) -> None:
+    index = STAGE_NAMES.index(stage_name)
+    with _scan_jobs_lock:
+        sub_steps = _scan_jobs[job_id]["stages"][index]["sub_steps"]
+        existing = next((item for item in sub_steps if item["name"] == sub_step), None)
+        if existing is None:
+            sub_steps.append({"name": sub_step, "status": status, "duration_ms": duration_ms})
+        else:
+            existing["status"] = status
+            existing["duration_ms"] = duration_ms
+
+
+def _run_stage(job_id: str, name: str, operation, sub_step: str | None = None) -> object:
     stage_index = STAGE_NAMES.index(name)
     with _scan_jobs_lock:
         job = _scan_jobs[job_id]
         job["stage"] = name
+        job["stage_sub_step"] = sub_step or name
         stage = job["stages"][stage_index]
         stage["status"] = "running"
         started = time.monotonic()
+    if sub_step:
+        _set_stage_substep(job_id, name, sub_step, "running")
     future = _scan_stage_executor.submit(operation)
     try:
         value = future.result(timeout=STAGE_TIMEOUTS.get(name, STAGE_TIMEOUT_SECONDS))
@@ -542,6 +558,8 @@ def _run_stage(job_id: str, name: str, operation) -> object:
         stage = _scan_jobs[job_id]["stages"][stage_index]
         stage["status"] = "done"
         stage["duration_ms"] = duration_ms
+    if sub_step:
+        _set_stage_substep(job_id, name, sub_step, "done", duration_ms)
     return value
 
 
@@ -569,12 +587,12 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             coverage = build_coverage(repository)
             coverage_holder["coverage"] = coverage
             return coverage
-        coverage = _run_stage(job_id, "preflight", preflight)
+        coverage = _run_stage(job_id, "preflight", preflight, "coverage_walk")
         _set_stage_count(job_id, "preflight", len(coverage["refs"]["branches"]) + len(coverage["refs"]["tags"]))
 
         def scan() -> list[object]:
             return list(walk_history(repository))
-        history = _run_stage(job_id, "scan", scan)
+        history = _run_stage(job_id, "scan", scan, "batched_history_walk")
         _set_stage_count(job_id, "scan", len(history))
 
         def parse() -> list[dict[str, object]]:
@@ -583,8 +601,16 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
         _set_stage_count(job_id, "parse", len(parsed))
 
         def filter_candidates() -> list[DetectionCandidate]:
-            return detect_lines(history)
-        candidates = _run_stage(job_id, "filter", filter_candidates)
+            load_started = time.monotonic()
+            model = ensure_model()
+            load_ms = int((time.monotonic() - load_started) * 1000)
+            _set_stage_substep(job_id, "filter", "ml_model_load", "done", load_ms)
+            inference_started = time.monotonic()
+            result = detect_lines(history, model=model)
+            inference_ms = int((time.monotonic() - inference_started) * 1000)
+            _set_stage_substep(job_id, "filter", "ml_inference", "done", inference_ms)
+            return result
+        candidates = _run_stage(job_id, "filter", filter_candidates, "ml_model_load")
         _set_stage_count(job_id, "filter", len(candidates))
 
         shap_report = score_findings(candidates) if candidates else {"findings": [], "ndcg_at_5": 0.0, "ndcg_at_10": 0.0}
@@ -667,7 +693,7 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             }
             save_cp1_artifact("cp1_latest_scan", response, PROJECT_ROOT / "artifacts" / "cp1_latest_scan.json")
             return response
-        result = _run_stage(job_id, "report", report)
+        result = _run_stage(job_id, "report", report, "report_write")
         _set_stage_count(job_id, "report", len(result["findings"]))
         with _scan_jobs_lock:
             job = _scan_jobs[job_id]
@@ -675,15 +701,13 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             job["stage"] = "report"
             job["finished_at"] = time.time()
             job["result"] = result
-    except FuturesTimeoutError:
-        pass
     except Exception as exc:
         stage = "unknown"
         timed_out = isinstance(exc, TimeoutError)
         if timed_out:
             status = "timed_out"
             stage = str(exc).removeprefix("Stage timed out: ") or "unknown"
-            reason = f"The {stage} stage exceeded its time limit."
+            reason = "timeout"
         else:
             status = "failed"
             with _scan_jobs_lock:
@@ -696,9 +720,15 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             job["status"] = status
             job["stage"] = stage
             job["finished_at"] = time.time()
-            job["error"] = {"stage": stage, "reason": reason}
+            sub_step = str(job.get("stage_sub_step") or "")
+            job["error"] = {"stage": stage, "reason": reason, "sub_step": sub_step}
             if stage in STAGE_NAMES:
                 job["stages"][STAGE_NAMES.index(stage)]["status"] = status
+                if sub_step:
+                    sub_steps = job["stages"][STAGE_NAMES.index(stage)]["sub_steps"]
+                    sub = next((item for item in sub_steps if item["name"] == sub_step), None)
+                    if sub is not None:
+                        sub["status"] = status
     finally:
         if temporary is not None:
             temporary.cleanup()
@@ -718,6 +748,7 @@ def cp1_scan_status(job_id: str) -> dict[str, object]:
             job["error"] = {
                 "stage": stage,
                 "reason": "The scan exceeded its overall time limit.",
+                "sub_step": str(job.get("stage_sub_step") or ""),
             }
             if stage in STAGE_NAMES:
                 job["stages"][STAGE_NAMES.index(stage)]["status"] = "timed_out"

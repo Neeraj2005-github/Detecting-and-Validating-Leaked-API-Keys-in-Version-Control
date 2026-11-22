@@ -57,19 +57,17 @@ def _head_line_hashes(repo: git.Repo) -> dict[str, set[str]]:
 
 
 def _reachable_head(repo: git.Repo) -> set[str]:
-    if not repo.head.is_valid():
+    try:
+        return {line.strip() for line in repo.git.rev_list("HEAD").splitlines() if line.strip()}
+    except git.GitCommandError:
         return set()
-    return {commit.hexsha for commit in repo.iter_commits("HEAD")}
 
 
 def _ref_commits(repo: git.Repo) -> set[str]:
-    result: set[str] = set()
-    for ref in repo.refs:
-        try:
-            result.update(commit.hexsha for commit in repo.iter_commits(ref))
-        except (git.GitCommandError, ValueError):
-            continue
-    return result
+    try:
+        return {line.strip() for line in repo.git.rev_list("--all").splitlines() if line.strip()}
+    except git.GitCommandError:
+        return set()
 
 
 def _reflog_only_commits(repo: git.Repo) -> set[str]:
@@ -122,6 +120,54 @@ def _diff_added_lines(repo_path: str, parent: str, commit: str) -> Iterator[tupl
             next_line += 1
 
 
+def _batched_added_lines(repo_path: str) -> Iterator[tuple[str, str, int, str]]:
+    """Read all reachable added lines with one git log subprocess."""
+    try:
+        diff = subprocess.run(
+            [
+                "git",
+                "log",
+                "--all",
+                "--reflog",
+                "--unified=0",
+                "--no-ext-diff",
+                "--format=__SECRETGUARD_COMMIT__%H",
+                "--",
+            ],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=True,
+            timeout=30,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError("Unable to walk repository history") from exc
+
+    commit_sha = ""
+    current_file = ""
+    next_line = 0
+    for raw in diff.splitlines():
+        if raw.startswith("__SECRETGUARD_COMMIT__"):
+            commit_sha = raw[len("__SECRETGUARD_COMMIT__"):].strip()
+            current_file = ""
+            continue
+        if raw.startswith("+++ b/"):
+            current_file = raw[6:]
+            continue
+        hunk = _HUNK_RE.match(raw)
+        if hunk:
+            next_line = int(hunk.group(1))
+            continue
+        if raw.startswith("+") and not raw.startswith("+++"):
+            if commit_sha:
+                yield commit_sha, current_file, next_line, raw[1:]
+            next_line += 1
+        elif not raw.startswith("-") and current_file:
+            next_line += 1
+
+
 def walk_history(repo_path: str | Path) -> Iterator[HistoryLine]:
     """Yield only added lines from all refs and reflog-visible commits."""
     path = Path(repo_path).resolve()
@@ -133,31 +179,27 @@ def walk_history(repo_path: str | Path) -> Iterator[HistoryLine]:
     head_commits = _reachable_head(repo)
     ref_commits = _ref_commits(repo)
     reflog_only = _reflog_only_commits(repo)
-    for commit_sha in _commit_ids(repo):
-        commit = repo.commit(commit_sha)
-        parents = [parent.hexsha for parent in commit.parents] or [EMPTY_TREE_SHA]
-        for parent_sha in parents:
-            for file_path, line_number, added_line in _diff_added_lines(str(path), parent_sha, commit_sha):
-                normalized = added_line.strip()
-                still = hashlib.sha256(normalized.encode("utf-8")).hexdigest() in head_hashes.get(file_path, set())
-                if commit_sha in reflog_only:
-                    lifecycle = "REWRITTEN"
-                elif commit_sha not in head_commits and commit_sha in ref_commits:
-                    lifecycle = "BRANCH_TAG"
-                elif still:
-                    lifecycle = "ACTIVE_HEAD"
-                else:
-                    lifecycle = "DELETED_HISTORY"
-                yield HistoryLine(
-                    commit_sha=commit_sha,
-                    parent_sha=None if parent_sha == EMPTY_TREE_SHA else parent_sha,
-                    file_path=file_path,
-                    line_number=line_number,
-                    added_line=added_line,
-                    masked_line=_mask_line(added_line),
-                    still_in_head=still,
-                    git_lifecycle_state=lifecycle,
-                )
+    for commit_sha, file_path, line_number, added_line in _batched_added_lines(str(path)):
+        normalized = added_line.strip()
+        still = hashlib.sha256(normalized.encode("utf-8")).hexdigest() in head_hashes.get(file_path, set())
+        if commit_sha in reflog_only:
+            lifecycle = "REWRITTEN"
+        elif commit_sha not in head_commits and commit_sha in ref_commits:
+            lifecycle = "BRANCH_TAG"
+        elif still:
+            lifecycle = "ACTIVE_HEAD"
+        else:
+            lifecycle = "DELETED_HISTORY"
+        yield HistoryLine(
+            commit_sha=commit_sha,
+            parent_sha=None,
+            file_path=file_path,
+            line_number=line_number,
+            added_line=added_line,
+            masked_line=_mask_line(added_line),
+            still_in_head=still,
+            git_lifecycle_state=lifecycle,
+        )
 
 
 HistoryFinding = HistoryLine

@@ -215,7 +215,7 @@ function Pipeline({ stages }: { stages?: any[] } = {}) {
   const byName = new Map((stages ?? []).map(stage => [stage.name, stage]));
   return <div className="vg-pipeline">{names.map((name, index) => {
     const stage = byName.get(name);
-    return <div key={name}><span>{index + 1}</span><b>{name}</b><small>{stage?.status ?? 'queued'} · {stage?.count ?? 0} · {stage?.duration_ms ?? 0} ms</small>{index < names.length - 1 && <ArrowRight size={17} />}</div>;
+    return <div key={name}><span>{index + 1}</span><b>{name}</b><small>{stage?.status ?? 'queued'} · {stage?.count ?? 0} · {stage?.duration_ms ?? 0} ms</small>{(stage?.sub_steps ?? []).map((sub: any) => <small key={sub.name}>{sub.name}: {sub.status} · {sub.duration_ms} ms</small>)}{index < names.length - 1 && <ArrowRight size={17} />}</div>;
   })}</div>;
 }
 function Timeline({ overview }: any) { const timeline = overview?.reproduction?.timeline ?? [{ message: 'Secret added to config.env', sha: 'a8f921c' }, { message: 'Configuration file deleted', sha: '9f4b2c1' }, { message: 'Normal application code committed', sha: 'b17d02e' }]; return <div className="vg-timeline">{timeline.slice(0, 3).map((item: any, index: number) => <div key={item.sha}><span>{index + 1}</span><b>{item.message}</b><code>{String(item.sha).slice(0, 12)}</code></div>)}</div>; }
