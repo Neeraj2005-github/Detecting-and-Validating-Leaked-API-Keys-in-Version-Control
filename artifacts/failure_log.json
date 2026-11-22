@@ -16,5 +16,17 @@
     "test": "tests/test_phase_a_entrypoint.py::test_cli_local_repo_json_end_to_end",
     "exception": "AssertionError",
     "message": "assert 0 == 1\n +  where 0 = CompletedProcess(args=['C:\\\\Program Files\\\\Python312\\\\python.exe', '-m', 'src.shd.cli', 'scan', 'C:\\\\Users\\\\sakal\\\\App...cted skipped=0 lifecycle=VALIDITY_UNKNOWN exit-code=0 clean, 1 findings, 2 skipped, 3 runtime, 4 invalid\\n', stderr='').returncode"
+  },
+  {
+    "timestamp": "2026-11-22T09:48:30.558137+00:00",
+    "test": "tests/test_project_db_rules.py::test_db_project_rules_detect_and_allowlist",
+    "exception": "AssertionError",
+    "message": "assert False\n +  where False = any(<generator object test_db_project_rules_detect_and_allowlist.<locals>.<genexpr> at 0x000002A7C208AC20>)"
+  },
+  {
+    "timestamp": "2026-11-22T09:48:38.363847+00:00",
+    "test": "tests/test_phase_a_entrypoint.py::test_cli_local_repo_json_end_to_end",
+    "exception": "AssertionError",
+    "message": "assert 0 == 1\n +  where 0 = CompletedProcess(args=['C:\\\\Program Files\\\\Python312\\\\python.exe', '-m', 'src.shd.cli', 'scan', 'C:\\\\Users\\\\sakal\\\\App...cted skipped=0 lifecycle=VALIDITY_UNKNOWN exit-code=0 clean, 1 findings, 2 skipped, 3 runtime, 4 invalid\\n', stderr='').returncode"
   }
 ]
