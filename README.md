@@ -34,20 +34,23 @@ deleted-history, branch/tag, and rewritten-history states.
 
 ```mermaid
 flowchart LR
-    A[Git repository] --> B[History walker]
-    B --> C[Regex and entropy candidates]
-    C --> D[Normalization and masking]
-    D --> E[Feature extraction]
-    E --> F[XGBoost / fallback model]
-    F --> G[TreeSHAP explanation]
-    G --> H[Risk score and prioritization]
-    H --> I[SQLite rotation sandbox]
-    H --> J[FastAPI API]
-    J --> K[React/Vite workbench]
-    B --> L[Oracle and benchmark evaluation]
-    F --> L
-    I --> L
+    I[Input: local path or HTTPS URL] --> C[Clone or open repository]
+    C --> P[Preflight: refs, shallow state, coverage]
+    P --> G[Gitleaks scan]
+    G --> PA[Parse]
+    PA --> F[Filter]
+    F --> D[Dedupe and HMAC]
+    D --> M[Mask]
+    M --> L[Exposure lifecycle]
+    L --> R[Report and audit log]
+    R -. provider integration stub .-> V[Validity check]
+    V -. provider integration stub .-> X[Rotation]
+    X -. local demonstration only .-> S[SQLite mock service]
 ```
+
+The validity and provider-rotation integrations are stubs. The local SQLite
+service exercises a fail-closed rotation state machine; it does not contact a
+credential provider or revoke a real credential.
 
 The primary API application is
 [`src/shd/walker_api.py`](src/shd/walker_api.py), exposed through the
@@ -77,7 +80,7 @@ sequenceDiagram
     U->>W: Validate and rotate
     W->>A: POST /api/cp1/rotate/{finding_id}
     A->>S: Synthetic state transition and verification
-    S-->>A: VERIFIED_SAFE and MTTR
+    S-->>A: VERIFIED_REVOKED (local mock only)
     A-->>W: Rotation result
 ```
 
@@ -172,7 +175,12 @@ Set-Location frontend
 npm run dev
 ```
 
-Open `http://localhost:5173/vaultguard/home`.
+Open `http://localhost:5173/vaultguard/scanner`.
+
+For a one-command local demo, run `.\scripts\demo.ps1` on Windows or
+`bash scripts/demo.sh` from Bash. Both start the backend and frontend and open the
+scanner page. See [`docs/REVIEW_GUIDE.md`](docs/REVIEW_GUIDE.md) for a timed
+review walkthrough.
 
 ## Quick start: `shd scan`
 
@@ -203,8 +211,12 @@ docker run --rm --network none --read-only --memory 1g --pids-limit 256 `
 Sample one-line summary:
 
 ```text
-commits=4 branches=2 tags=1 findings=2 lifecycle=DETECTED exit-code=0 clean, 1 findings, 2 skipped, 3 runtime, 4 invalid
+commits=6 branches=2 tags=1 findings=6 result=6 found skipped=3 lifecycle=DETECTED exit-codes=0 completed, 1 findings (--fail-on-findings), 2 skipped threshold, 3 runtime, 4 invalid
 ```
+
+This is the observed output from the bundled synthetic fixture on the
+measurement machine. It contains only counts and status; findings remain
+masked in reports. `--fail-on-findings` changes exit code 1 behavior.
 
 Useful API routes include:
 
@@ -218,17 +230,24 @@ Useful API routes include:
 Compatibility JSON routes `/api/scan` and `/api/rotate` are also available.
 See [`docs/api-documentation.md`](docs/api-documentation.md).
 
+See [`docs/comparison.md`](docs/comparison.md) for measured native-Gitleaks
+versus wrapper results and their fixture scope. Results are synthetic and are
+not measurements of `DEVOPS-LAB-EXAM`.
+See [`docs/limitations.md`](docs/limitations.md) and
+[`docs/known-gaps.md`](docs/known-gaps.md) for scanner limitations, unmeasured
+items, and review-machine tasks.
+
 ## Testing and health checks
 
 ### Scan exit codes
 
 | Code | Meaning |
 |---|---|
-| 0 | Clean result with verified full coverage |
-| 1 | Findings present |
-| 2 | Partial scan, coverage mismatch, or skipped items exceed the configurable threshold |
+| 0 | Scan completed; no configured failure condition was met (findings may be present) |
+| 1 | Findings present when `--fail-on-findings` is enabled |
+| 2 | Skipped file/line threshold exceeded |
 | 3 | Tool, configuration, or report-schema error |
-| 4 | Preflight refusal: shallow clone, empty/missing repository, or bad path |
+| 4 | Preflight refusal: shallow repository, missing repository, or invalid target |
 
 Run the Python suite:
 

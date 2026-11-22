@@ -27,13 +27,20 @@ Request:
 }
 ```
 
-The response contains `findings`, `suppressed_findings`,
-`resolved_findings`, `summary`, and `ndcg`.
+The response starts a background job and returns a `job_id`. Poll
+`GET /api/cp1/jobs/{job_id}` for stage progress, elapsed time, sanitized errors,
+and the final result. Timed-out jobs may include redacted partial findings.
+Completed results include `findings`, `suppressed_findings`,
+`resolved_findings`, `summary`, and a coverage manifest. Finding payloads
+contain masked matches, lifecycle dates/status, recoverability flags, a visible
+risk breakdown, and a remediation playbook.
 
 ### `POST /api/cp1/rotate/{finding_id}`
 
 Accepts optional `{ "force_failure": false }` and returns state transitions,
-`mttr_ms`, sandbox name, and (on success) `status: "ROTATED_SAFE"`.
+`mttr_ms`, sandbox name, and (on success) `status: "VERIFIED_REVOKED"`. This is
+verification in the local mock service only; it does not contact a provider or
+verify that an external credential has been revoked.
 
 ### `GET /api/cp1/overview`
 

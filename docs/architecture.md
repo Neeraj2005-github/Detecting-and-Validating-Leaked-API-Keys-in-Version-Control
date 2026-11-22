@@ -24,10 +24,10 @@ flowchart TD
 | Pattern detector | Added line | Provider regexes, Base64 checks, candidate extraction | Candidate tokens |
 | Feature extraction | Candidate, path, context | Entropy, ratios, keywords, path risk, syntax, length | 14-feature vector |
 | Model filter | Feature vector | XGBoost probability and heuristic decoy checks | ML probability/false-positive flag |
-| Normalization | Raw detector fields | SHA-256 hash and masked preview | Safe finding boundary |
+| Normalization | Raw detector fields | Keyed HMAC-SHA256 fingerprint and masked preview | Safe finding boundary |
 | TreeSHAP scorer | Model and feature matrix | Feature contributions and composite risk | Explanations and NDCG |
 | API/storage | Findings and requests | FastAPI routes and SQLAlchemy persistence | JSON/UI data |
-| Rotation sandbox | Finding ID | SQLite state transitions and post-update verification | `VERIFIED_SAFE`, failure state, MTTR |
+| Rotation sandbox | Finding ID | SQLite state transitions and post-update verification | `VERIFIED_REVOKED` in the local mock only |
 
 ## Application entry points
 
@@ -42,7 +42,10 @@ flowchart TD
 
 ## Data safety
 
-The normalizer hashes the detected value and stores a masked preview. The
-history walker masks externally persisted lines. Frontend display helpers mask
-values again. Synthetic fixtures intentionally contain credential-shaped test
-strings and must remain clearly labeled as synthetic.
+The normalizer computes a keyed HMAC-SHA256 fingerprint and stores a masked
+preview. The history walker masks externally persisted lines. Frontend display
+helpers mask values again. HMAC is not encryption; production deployments must
+protect and consistently configure `SHD_HMAC_KEY`. Synthetic fixtures
+intentionally contain credential-shaped test strings and must remain clearly
+labeled as synthetic. Rotation verification applies only to the local mock
+service.

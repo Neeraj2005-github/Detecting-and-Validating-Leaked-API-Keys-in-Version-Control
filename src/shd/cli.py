@@ -245,9 +245,9 @@ def main(argv: list[str] | None = None) -> int:
                 "skipped_files": coverage["skipped"]["items"],
                 "meaning": "This result indicates repository-pattern matches under the current rules. It does not prove every credential is valid or that all possible secret formats exist.",
                 "exit_code_meaning": {
-                    "0": "no findings and skips below threshold",
-                    "1": "findings present",
-                    "2": "skipped-item threshold exceeded",
+                    "0": "scan completed; findings do not fail unless --fail-on-findings is set",
+                    "1": "findings present and --fail-on-findings is set",
+                    "2": "skipped-item threshold exceeded when configured",
                     "3": "scan runtime error",
                     "4": "invalid target",
                 },
@@ -280,7 +280,8 @@ def main(argv: list[str] | None = None) -> int:
                 f"result={'no secrets detected' if not redacted_findings else f'{len(redacted_findings)} found'} "
                 f"skipped={coverage['skipped']['files']} "
                 f"lifecycle={report['lifecycle_status']} "
-                f"exit-code=0 clean, 1 findings, 2 skipped, 3 runtime, 4 invalid"
+                "exit-codes=0 completed, 1 findings (--fail-on-findings), "
+                "2 skipped threshold, 3 runtime, 4 invalid"
             )
             print(summary)
             for skipped_item in coverage["skipped"]["items"]:

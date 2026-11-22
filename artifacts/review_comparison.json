@@ -1,0 +1,46 @@
+{
+  "fixture": "artifacts/synthetic_repo_v1",
+  "fixture_commits": 6,
+  "oracle_examples": 10,
+  "skipped_files": 3,
+  "same_fixture": {
+    "native_gitleaks": {
+      "findings": 6,
+      "true_positives": 4,
+      "false_positives": 1,
+      "false_negatives": 2,
+      "precision": 0.8,
+      "recall": 0.6667,
+      "coverage_manifest": "not provided"
+    },
+    "wrapper": {
+      "findings": 6,
+      "true_positives": 4,
+      "false_positives": 1,
+      "false_negatives": 2,
+      "precision": 0.8,
+      "recall": 0.6667,
+      "deleted_but_recoverable": 2,
+      "coverage": "complete",
+      "commits_scanned": 6,
+      "skipped_files": 3,
+      "ai_filter": false,
+      "suppressed": 0
+    }
+  },
+  "dedupe_100_commits": {
+    "native_gitleaks_findings": 100,
+    "wrapper_findings": 1,
+    "wrapper_commits_scanned": 100,
+    "wrapper_coverage": "complete",
+    "wrapper_elapsed_ms": 1225,
+    "fixture_description": "One synthetic AWS-shaped value re-added to one tracked file on each commit"
+  },
+  "notes": [
+    "Synthetic fixture results only; DEVOPS-LAB-EXAM was NOT MEASURED.",
+    "The wrapper comparison used use_ai_filter=false to isolate detector and lifecycle behavior.",
+    "Wrapper artifact writes and SHAP presentation output were disabled by the measurement harness.",
+    "Complete coverage is subject to the configured skip threshold and may include listed skipped files.",
+    "A 100-commit, 100-distinct-path lifecycle case exceeded the 30-second parse-stage timeout."
+  ]
+}

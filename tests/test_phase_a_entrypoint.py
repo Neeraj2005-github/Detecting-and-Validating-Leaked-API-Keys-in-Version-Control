@@ -68,9 +68,11 @@ def test_cli_local_repo_json_end_to_end(tmp_path: Path) -> None:
     assert payload["coverage"]["refs"]["branch_count"] >= 1
     assert payload["coverage"]["refs"]["tag_count"] >= 0
     assert payload["findings"]
+    assert payload["exit_code_meaning"]["0"].startswith("scan completed")
+    assert payload["exit_code_meaning"]["1"].endswith("--fail-on-findings is set")
     assert "AKIAIOSFODNN7EXAMPLE" not in out.read_text(encoding="utf-8")
     assert "commits=" in completed.stdout
-    assert "exit-code=" in completed.stdout
+    assert "exit-codes=0 completed" in completed.stdout
 
 
 @pytest.mark.parametrize(
