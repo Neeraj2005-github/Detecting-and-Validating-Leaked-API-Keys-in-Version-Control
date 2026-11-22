@@ -33,6 +33,16 @@ def main() -> int:
     }
     target = ROOT / "docs" / "traceability-generated.json"
     target.write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
+    lines = [
+        "# Generated traceability matrix",
+        "",
+        "| Requirement | Test names | Last pass date |",
+        "|---|---|---|",
+    ]
+    for requirement in output["requirements"]:
+        tests = "<br>".join(requirement["tests"])
+        lines.append(f"| {requirement['id']} | {tests} | {output['generated']} |")
+    (ROOT / "docs" / "traceability_matrix.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return 0
 
 

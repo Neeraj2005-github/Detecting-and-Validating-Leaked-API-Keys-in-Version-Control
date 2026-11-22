@@ -1,4 +1,19 @@
 {
+  "sources": {
+    "gitleaks": "https://github.com/gitleaks/gitleaks",
+    "git": "https://git-scm.com/",
+    "project": "Repository-local source"
+  },
+  "access_dates": {
+    "gitleaks": "2026-11-19",
+    "git": "NOT MEASURED",
+    "project": "2026-11-22"
+  },
+  "hardware": {
+    "cpu": "NOT MEASURED",
+    "ram": "NOT MEASURED",
+    "os": "Windows"
+  },
   "gitleaks": {
     "version": "8.18.4",
     "download_url": "https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_windows_x64.zip",

@@ -1,9 +1,18 @@
 {
-  "generated": "2026-11-19",
+  "generated": "2026-11-22",
   "requirements": [
     {
       "id": "FR-1",
       "tests": [
+        "tests/test_phase_b_edge_cases.py::test_deleted_branch_commit_is_out_of_reachable_history",
+        "tests/test_phase_b_edge_cases.py::test_tagged_commit_is_visible_in_full_history",
+        "tests/test_phase_b_edge_cases.py::test_merge_commit_is_visible_with_two_parents",
+        "tests/test_phase_b_edge_cases.py::test_renamed_file_history_is_visible",
+        "tests/test_phase_b_edge_cases.py::test_force_push_dropped_commit_is_unreachable",
+        "tests/test_phase_b_edge_cases.py::test_stash_commit_is_not_a_normal_branch_tip",
+        "tests/test_phase_b_edge_cases.py::test_encoded_fake_values_do_not_leak_plaintext",
+        "tests/test_phase_b_edge_cases.py::test_pem_fixture_is_masked",
+        "tests/test_phase_b_edge_cases.py::test_split_fake_secret_is_not_reconstructed",
         "tests/unit/test_walker.py::test_deleted_file_last_content_is_recorded",
         "tests/unit/test_walker.py::test_commit_details_include_root_and_deleted_file_changes",
         "tests/unit/test_walker.py::test_non_git_directory_is_rejected",
@@ -90,6 +99,11 @@
         "tests/test_cp1_complete.py::test_ec4_detached_head",
         "tests/test_cp1_complete.py::test_ec5_malformed_encoding",
         "tests/test_cp1_complete.py::test_benchmark_generates_all_kpis_and_provenance",
+        "tests/test_phase_e_lifecycle.py::test_every_allowed_transition_is_accepted",
+        "tests/test_phase_e_lifecycle.py::test_every_forbidden_transition_is_rejected",
+        "tests/test_phase_e_lifecycle.py::test_unknown_state_is_rejected",
+        "tests/test_phase_e_lifecycle.py::test_rotation_force_failure_stays_unverified",
+        "tests/test_phase_e_lifecycle.py::test_audit_hash_chain_detects_tampering",
         "tests/test_stubs.py::test_validity_stub_is_fail_closed",
         "tests/test_stubs.py::test_rotation_stub_is_fail_closed"
       ]
@@ -112,7 +126,10 @@
         "tests/test_gitleaks_runner.py::test_run_gitleaks_seeded_repo",
         "tests/test_gitleaks_runner.py::test_normalizer_hashes_secrets_and_strips_plaintext",
         "tests/test_gitleaks_runner.py::test_normalizer_marks_fixture_paths_from_raw_match",
-        "tests/test_gitleaks_runner.py::test_runner_requires_owned_config"
+        "tests/test_gitleaks_runner.py::test_runner_requires_owned_config",
+        "tests/test_phase_c_supply_chain.py::test_dockerfile_is_pinned_nonroot_and_network_ready",
+        "tests/test_phase_c_supply_chain.py::test_readonly_root_repo_mount_contract_is_documented",
+        "tests/test_phase_c_supply_chain.py::test_dependency_lockfiles_exist"
       ]
     },
     {
@@ -139,7 +156,10 @@
       "id": "NFR-5",
       "tests": [
         "tests/test_audit_and_parser.py::test_audit_chain_detects_tampering",
-        "tests/test_audit_and_parser.py::test_gitleaks_parser_rejects_schema_change"
+        "tests/test_audit_and_parser.py::test_gitleaks_parser_rejects_schema_change",
+        "tests/test_phase_d_evaluation.py::test_deterministic_json_hash_comparison",
+        "tests/test_phase_d_evaluation.py::test_hardware_evidence_is_real_or_explicitly_unknown",
+        "tests/test_phase_d_evaluation.py::test_independent_oracle_has_no_secret_values"
       ]
     },
     {
@@ -155,6 +175,11 @@
         "tests/test_cp1_complete.py::test_ec4_detached_head",
         "tests/test_cp1_complete.py::test_ec5_malformed_encoding",
         "tests/test_cp1_complete.py::test_benchmark_generates_all_kpis_and_provenance",
+        "tests/test_phase_e_lifecycle.py::test_every_allowed_transition_is_accepted",
+        "tests/test_phase_e_lifecycle.py::test_every_forbidden_transition_is_rejected",
+        "tests/test_phase_e_lifecycle.py::test_unknown_state_is_rejected",
+        "tests/test_phase_e_lifecycle.py::test_rotation_force_failure_stays_unverified",
+        "tests/test_phase_e_lifecycle.py::test_audit_hash_chain_detects_tampering",
         "tests/test_stubs.py::test_validity_stub_is_fail_closed",
         "tests/test_stubs.py::test_rotation_stub_is_fail_closed"
       ]

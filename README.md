@@ -174,6 +174,38 @@ npm run dev
 
 Open `http://localhost:5173/vaultguard/home`.
 
+## Quick start: `shd scan`
+
+Only scan repositories you are authorised to assess.
+
+### Local path
+
+```powershell
+python -m src.shd.cli scan C:\path\to\authorized-repo --format json --out scan.json
+```
+
+### HTTPS URL
+
+```powershell
+python -m src.shd.cli scan https://example.test/authorized/repository.git --format sarif --out scan.sarif
+```
+
+Only `https://` is accepted. Private, link-local, localhost, and redirected-to-private targets are refused.
+
+### Docker
+
+```powershell
+docker build -t secretguard-cp1 .
+docker run --rm --network none --read-only --memory 1g --pids-limit 256 `
+  -v "${PWD}:/repo:ro" secretguard-cp1 python -m src.shd.cli scan /repo --format json
+```
+
+Sample one-line summary:
+
+```text
+commits=4 branches=2 tags=1 findings=2 lifecycle=DETECTED exit-code=0 clean, 1 findings, 2 skipped, 3 runtime, 4 invalid
+```
+
 Useful API routes include:
 
 - `GET /health`
