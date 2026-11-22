@@ -56,6 +56,7 @@ from backend.services.artifact_store import save_cp1_artifact
 from backend.services.fixture_generator import generate_fixture
 from backend.services.repository_ingestion import clone_https_repository, validate_https_url
 from backend.services.coverage import build_coverage
+from backend.services.exposure_lifecycle import build_exposure_lifecycle, calculate_exposure_risk
 from scripts.scan_public_repos_summary import build_summary
 
 logger = logging.getLogger(__name__)
@@ -136,6 +137,7 @@ class CP1ScanRequest(BaseModel):
     synthetic_fixture: bool = True
     use_ai_filter: bool = True
     fast_scan: bool = False
+    public_repo: bool = False
 
 
 class CP1RotateRequest(BaseModel):
@@ -179,6 +181,8 @@ def _cp1_repo_path(request: CP1ScanRequest) -> tuple[Path, tempfile.TemporaryDir
 def _cp1_finding_payload(finding: object, shap_by_key: dict[tuple[str, int], dict[str, object]]) -> dict[str, object]:
     item = finding.as_dict() if hasattr(finding, "as_dict") else dict(finding)
     item.pop("feature_vector", None)
+    item.pop("added_line", None)
+    item.pop("exposure_lifecycle", None)
     item["risk_score"] = shap_by_key.get((str(item["file_path"]), int(item["line_number"])), {}).get("risk_score", 0)
     item["shap"] = shap_by_key.get((str(item["file_path"]), int(item["line_number"])), {}).get("contributors", [])
     item["lifecycle_badge"] = {
@@ -188,10 +192,8 @@ def _cp1_finding_payload(finding: object, shap_by_key: dict[tuple[str, int], dic
         "REWRITTEN": "Rewritten History",
     }.get(str(item.get("git_lifecycle_state")), str(item.get("git_lifecycle_state")))
     if str(item.get("fingerprint")) in _rotated_findings:
-        item["status"] = "ROTATED_SAFE"
-        item["lifecycle_badge"] = "Rotated & Safe"
-        item["still_in_head"] = False
-        item["risk_score"] = 0.0
+        item["status"] = "VERIFIED_REVOKED"
+        item["lifecycle_badge"] = "Verified revoked in local sandbox"
         item["shap"] = []
     elif item.get("is_false_positive"):
         item["status"] = "SUPPRESSED_DECOY"
@@ -533,10 +535,18 @@ def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
     return {"job_id": job_id, "status": "running", "stage": "clone", "stages": stages}
 
 
-def _set_stage_substep(job_id: str, stage_name: str, sub_step: str, status: str, duration_ms: int = 0) -> None:
+def _set_stage_substep(
+    job_id: str,
+    stage_name: str,
+    sub_step: str,
+    status: str,
+    duration_ms: int = 0,
+    *,
+    active: bool = True,
+) -> None:
     index = STAGE_NAMES.index(stage_name)
     with _scan_jobs_lock:
-        if status == "running":
+        if status == "running" and active:
             _scan_jobs[job_id]["stage_sub_step"] = sub_step
         sub_steps = _scan_jobs[job_id]["stages"][index]["sub_steps"]
         existing = next((item for item in sub_steps if item["name"] == sub_step), None)
@@ -610,10 +620,10 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
         def scan_parallel() -> tuple[list[dict[str, object]], dict[str, object]]:
             scan_started = time.monotonic()
             _set_stage_substep(job_id, "scan", "gitleaks_subprocess", "running")
-            _set_stage_substep(job_id, "scan", "coverage_walk", "running")
+            _set_stage_substep(job_id, "scan", "coverage_walk", "running", active=False)
             gitleaks_started = time.monotonic()
             gitleaks_future = _scan_stage_executor.submit(run_gitleaks, str(repository))
-            _set_stage_substep(job_id, "scan", "coverage_walk", "running")
+            _set_stage_substep(job_id, "scan", "coverage_walk", "running", active=False)
             coverage_started = time.monotonic()
             coverage_future = _scan_stage_executor.submit(build_coverage, repository)
             _set_stage_substep(job_id, "scan", "gitleaks_subprocess", "running")
@@ -647,16 +657,26 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
                 os.environ["SHD_HMAC_KEY"] = hashlib.sha256(str(repository).encode("utf-8")).hexdigest()
             normalized = normalize(raw_findings)
             repo = git.Repo(str(repository))
-            head_commits = set(repo.git.rev_list("HEAD").splitlines())
+            exposure_by_location = build_exposure_lifecycle(
+                repo,
+                raw_findings,
+                normalized,
+                reachable_commit_shas=set(coverage.get("commits_reachable_shas", [])),
+                local_commit_shas=set(coverage.get("local_commit_shas", [])),
+                public_repo=request.public_repo,
+            )
             parsed_items: list[dict[str, object]] = []
-            try:
-                head_files = {blob.path for blob in repo.head.commit.tree.traverse() if isinstance(blob, git.Blob)}
-            except (ValueError, git.BadName):
-                head_files = set()
             for index, finding in enumerate(normalized):
                 commit_sha = finding.commit_sha
                 file_path = finding.file
-                still_in_head = file_path in head_files and commit_sha in head_commits
+                exposure = exposure_by_location.get((file_path, finding.line, commit_sha), {})
+                lifecycle_status = str(exposure.get("lifecycle_status", ""))
+                still_in_head = lifecycle_status == "ACTIVE_IN_HEAD"
+                git_lifecycle_state = {
+                    "ACTIVE_IN_HEAD": "ACTIVE_HEAD",
+                    "DELETED_BUT_RECOVERABLE": "DELETED_HISTORY",
+                    "UNREACHABLE_LOCAL_ONLY": "REWRITTEN",
+                }.get(lifecycle_status, "ACTIVE_HEAD" if still_in_head else "DELETED_HISTORY")
                 raw_item = raw_findings[index] if index < len(raw_findings) else {}
                 added_line = str(raw_item.get("Match") or raw_item.get("match") or finding.masked_preview)
                 parsed_items.append({
@@ -672,7 +692,8 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
                     "risk_score": 75,
                     "is_false_positive": False,
                     "still_in_head": still_in_head,
-                    "git_lifecycle_state": "ACTIVE_HEAD" if still_in_head else "DELETED_HISTORY",
+                    "git_lifecycle_state": git_lifecycle_state,
+                    "exposure_lifecycle": exposure,
                     "is_base64_encoded": False,
                 })
             repo.close()
@@ -716,8 +737,40 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             (str(item["file_path"]), int(item.get("line_number", 0))): item
             for item in shap_report.get("findings", [])
         }
+        lifecycle_by_location = {
+            (str(item["file_path"]), int(item["line_number"]), str(item["commit_sha"])): item["exposure_lifecycle"]
+            for item in parsed
+            if item.get("exposure_lifecycle")
+        }
         def dedupe() -> tuple[dict[tuple[str, str], dict[str, object]], list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
-            payload = [_cp1_finding_payload(item, shap_by_key) for item in candidates]
+            payload = []
+            for candidate in candidates:
+                item = _cp1_finding_payload(candidate, shap_by_key)
+                location = (
+                    str(item.get("file_path", "")),
+                    int(item.get("line_number", 0)),
+                    str(item.get("commit_sha", "")),
+                )
+                exposure = lifecycle_by_location.get(location)
+                if exposure:
+                    item.update(exposure)
+                    item["risk_score"], item["risk_breakdown"] = calculate_exposure_risk(item)
+                    file_path = str(item.get("file_path", "")).replace("'", "''")
+                    item["remediation_playbook"] = {
+                        "first_step": "Rotate or revoke the credential with its provider before rewriting Git history.",
+                        "rotation_status": (
+                            "VERIFIED_REVOKED_IN_LOCAL_SANDBOX"
+                            if item.get("status") == "VERIFIED_REVOKED"
+                            else "ROTATION_NOT_VERIFIED"
+                        ),
+                        "history_rewrite_commands": [
+                            f"git filter-repo --path '{file_path}' --invert-paths",
+                            "git push --force --all",
+                            "git push --force --tags",
+                        ],
+                        "warning": "History rewriting does not revoke a credential; coordinate the force-push with collaborators.",
+                    }
+                payload.append(item)
             if not request.use_ai_filter or repository == _cp1_fixture_path().resolve():
                 for item in payload:
                     item["is_false_positive"] = False
@@ -727,9 +780,9 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
                 previous = deduplicated.get(key)
                 if previous is None or float(item.get("risk_score", 0)) > float(previous.get("risk_score", 0)):
                     deduplicated[key] = item
-            resolved = sorted((item for item in deduplicated.values() if item.get("status") == "ROTATED_SAFE"), key=lambda item: str(item.get("file_path", "")))
+            resolved = sorted((item for item in deduplicated.values() if item.get("status") == "VERIFIED_REVOKED"), key=lambda item: str(item.get("file_path", "")))
             filtered = sorted((item for item in deduplicated.values() if item.get("is_false_positive")), key=lambda item: float(item.get("risk_score", 0)), reverse=True)
-            prioritized = sorted((item for item in deduplicated.values() if not item.get("is_false_positive") and item.get("status") != "ROTATED_SAFE"), key=lambda item: float(item.get("risk_score", 0)), reverse=True)
+            prioritized = sorted((item for item in deduplicated.values() if not item.get("is_false_positive") and item.get("status") != "VERIFIED_REVOKED"), key=lambda item: float(item.get("risk_score", 0)), reverse=True)
             return deduplicated, resolved, filtered, prioritized
         deduplicated, resolved, filtered, prioritized = _run_stage(job_id, "dedupe", dedupe)
         _set_stage_count(job_id, "dedupe", len(deduplicated))
@@ -752,8 +805,19 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             result = []
             for item in masked:
                 enriched = dict(item)
-                enriched["deleted_later"] = str(enriched.get("git_lifecycle_state")) == "DELETED_HISTORY"
-                enriched["lifecycle_status"] = enriched.get("lifecycle_badge") or enriched.get("git_lifecycle_state")
+                lifecycle_status = str(enriched.get("lifecycle_status") or "")
+                enriched["deleted_later"] = lifecycle_status in {
+                    "DELETED_BUT_RECOVERABLE",
+                    "UNREACHABLE_LOCAL_ONLY",
+                } or str(enriched.get("git_lifecycle_state")) == "DELETED_HISTORY"
+                if lifecycle_status:
+                    enriched["lifecycle_badge"] = {
+                        "ACTIVE_IN_HEAD": "Active in HEAD",
+                        "DELETED_BUT_RECOVERABLE": "Deleted but recoverable",
+                        "UNREACHABLE_LOCAL_ONLY": "Unreachable local objects only",
+                    }.get(lifecycle_status, lifecycle_status)
+                else:
+                    enriched["lifecycle_status"] = enriched.get("lifecycle_badge") or enriched.get("git_lifecycle_state")
                 enriched["recommended_action"] = (
                     "Rotate and revoke; verify the credential is no longer usable."
                     if enriched["deleted_later"] or enriched.get("still_in_head")
@@ -782,8 +846,10 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
                 "meaning": "This result indicates repository-pattern matches under the current rules. It does not prove every credential is valid or that all possible secret formats exist.",
                 "skipped_files": skipped_items,
                 "summary": {
-                    "active_head": sum(item["git_lifecycle_state"] == "ACTIVE_HEAD" and item.get("status") != "ROTATED_SAFE" for item in findings),
-                    "historical": sum(item["git_lifecycle_state"] == "DELETED_HISTORY" for item in findings),
+                    "active_head": sum(item.get("lifecycle_status") == "ACTIVE_IN_HEAD" and item.get("status") != "VERIFIED_REVOKED" for item in findings),
+                    "historical": sum(item.get("lifecycle_status") in {"DELETED_BUT_RECOVERABLE", "UNREACHABLE_LOCAL_ONLY"} for item in findings),
+                    "deleted_but_recoverable": sum(item.get("lifecycle_status") == "DELETED_BUT_RECOVERABLE" for item in findings),
+                    "local_only": sum(item.get("lifecycle_status") == "UNREACHABLE_LOCAL_ONLY" for item in findings),
                     "filtered": len(filtered),
                     "total": len(findings),
                 },
@@ -896,7 +962,7 @@ def cp1_benchmark_run() -> dict[str, object]:
 def cp1_rotate(finding_id: str, request: CP1RotateRequest | None = None) -> dict[str, object]:
     """Execute the offline-safe four-step rotation state machine."""
     result = rotate(finding_id, force_failure=bool(request and request.force_failure))
-    if result.get("state") == "VERIFIED_SAFE":
+    if result.get("state") == "VERIFIED_REVOKED":
         _rotated_findings.add(finding_id)
         ROTATED_FINDINGS_PATH.parent.mkdir(parents=True, exist_ok=True)
         ROTATED_FINDINGS_PATH.write_text(
@@ -909,7 +975,7 @@ def cp1_rotate(finding_id: str, request: CP1RotateRequest | None = None) -> dict
             ROTATED_FINDINGS_PATH,
         )
         result["finding_id"] = finding_id
-        result["status"] = "ROTATED_SAFE"
+        result["status"] = "VERIFIED_REVOKED"
     return result
 
 

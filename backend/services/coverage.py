@@ -120,11 +120,16 @@ def build_coverage(
     except git.GitCommandError:
         reachable = []
     try:
+        local_commits = set(repo.git.rev_list("--all", "--reflog").splitlines())
+    except git.GitCommandError:
+        local_commits = set(reachable)
+    try:
         shallow = repo.git.rev_parse("--is-shallow-repository").strip() == "true"
     except git.GitCommandError:
         shallow = True
 
     unreachable = 0
+    unreachable_commit_shas: set[str] = set()
     try:
         fsck = subprocess.run(
             ["git", "fsck", "--unreachable", "--no-reflogs"],
@@ -135,10 +140,16 @@ def build_coverage(
             check=False,
             shell=False,
         )
-        unreachable = sum(
-            1 for line in fsck.stdout.splitlines()
+        unreachable_lines = [
+            line for line in fsck.stdout.splitlines()
             if line.startswith("unreachable ")
-        )
+        ]
+        unreachable = len(unreachable_lines)
+        unreachable_commit_shas = {
+            line.split()[2]
+            for line in unreachable_lines
+            if len(line.split()) >= 3 and line.split()[1] == "commit"
+        }
     except (OSError, subprocess.TimeoutExpired):
         unreachable = -1
 
@@ -169,6 +180,8 @@ def build_coverage(
         "commits_reachable": len(reachable),
         "commits_actually_scanned": len(reachable) if commits_scanned is None else int(commits_scanned),
         "commits_reachable_shas": reachable,
+        "local_commit_shas": sorted(local_commits | unreachable_commit_shas),
+        "unreachable_commit_shas": sorted(unreachable_commit_shas),
         "shallow": shallow,
         "unreachable_object_count": unreachable,
         "skipped_items": [item["reason"] for item in disk_skips["items"]],
