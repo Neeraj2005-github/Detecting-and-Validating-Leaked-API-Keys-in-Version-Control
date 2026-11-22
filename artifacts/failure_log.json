@@ -4,5 +4,17 @@
     "test": "tests/test_cp1_complete.py::test_entropy_features_xgboost_and_shap_payload",
     "exception": "ValueError",
     "message": "Computing NDCG is only meaningful when there is more than 1 document. Got 1 instead."
+  },
+  {
+    "timestamp": "2026-11-22T09:27:41.965073+00:00",
+    "test": "tests/test_project_db_rules.py::test_db_project_rules_detect_and_allowlist",
+    "exception": "AssertionError",
+    "message": "assert False\n +  where False = any(<generator object test_db_project_rules_detect_and_allowlist.<locals>.<genexpr> at 0x0000027652FB4E10>)"
+  },
+  {
+    "timestamp": "2026-11-22T09:27:57.131490+00:00",
+    "test": "tests/test_phase_a_entrypoint.py::test_cli_local_repo_json_end_to_end",
+    "exception": "AssertionError",
+    "message": "assert 0 == 1\n +  where 0 = CompletedProcess(args=['C:\\\\Program Files\\\\Python312\\\\python.exe', '-m', 'src.shd.cli', 'scan', 'C:\\\\Users\\\\sakal\\\\App...cted skipped=0 lifecycle=VALIDITY_UNKNOWN exit-code=0 clean, 1 findings, 2 skipped, 3 runtime, 4 invalid\\n', stderr='').returncode"
   }
 ]
