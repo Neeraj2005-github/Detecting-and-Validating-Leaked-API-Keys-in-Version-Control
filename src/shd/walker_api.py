@@ -47,6 +47,8 @@ from backend.services.benchmark_engine import run_benchmark
 from backend.services.rotation_state_machine import rotate
 from backend.services.artifact_store import save_cp1_artifact
 from backend.services.fixture_generator import generate_fixture
+from backend.services.repository_ingestion import clone_https_repository, validate_https_url
+from backend.services.coverage import build_coverage
 from scripts.scan_public_repos_summary import build_summary
 
 logger = logging.getLogger(__name__)
@@ -125,10 +127,9 @@ def _cp1_repo_path(request: CP1ScanRequest) -> tuple[Path, tempfile.TemporaryDir
     if request.synthetic_fixture or not request.repo_url:
         return _cp1_fixture_path(), None
     value = _validate_repository_url(request.repo_url)
-    if value.startswith(("http://", "https://", "git://", "git@", "ssh://")):
-        temp_dir = tempfile.TemporaryDirectory(prefix="cp1-scan-")
-        git.Repo.clone_from(value, temp_dir.name)
-        return Path(temp_dir.name), temp_dir
+    if value.startswith("https://"):
+        _, temp_dir, destination = clone_https_repository(value)
+        return destination, temp_dir
     return Path(value).expanduser().resolve(), None
 
 
@@ -160,19 +161,18 @@ def _validate_repository_url(value: str) -> str:
     url = value.strip()
     if not url:
         raise HTTPException(status_code=400, detail="repository URL is required")
-    if url.startswith("git@"):
-        return url
-    parsed = urllib.parse.urlparse(url)
-    is_remote_url = parsed.scheme.lower() in {"http", "https", "git", "ssh"} and bool(parsed.netloc)
-    is_local_path = (
-        url.startswith((".", "/", "~"))
-        or "\\" in url
-        or "/" in url
-        or (len(url) >= 2 and url[1] == ":")
-    )
-    if not (is_remote_url or is_local_path):
-        raise HTTPException(status_code=400, detail="repository URL is malformed")
-    return url
+    if url.lower().startswith("https://"):
+        try:
+            return validate_https_url(url)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+    local = Path(url).expanduser()
+    if local.exists():
+        try:
+            return str(local.resolve())
+        except OSError as exc:
+            raise HTTPException(status_code=400, detail="local repository path is invalid") from exc
+    raise HTTPException(status_code=400, detail="Only local paths and https:// repository URLs are accepted")
 
 
 class ScanResponse(BaseModel):
@@ -468,6 +468,7 @@ def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
             raise HTTPException(status_code=400, detail=f"repository does not exist: {repository}")
         history = list(walk_history(repository))
         findings = detect_lines(history)
+        coverage = build_coverage(repository)
         shap_report = score_findings(findings) if findings else {"findings": [], "ndcg_at_5": 0.0, "ndcg_at_10": 0.0}
         shap_by_key = {
             (str(item["file_path"]), int(item.get("line_number", 0))): item
@@ -506,6 +507,8 @@ def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
         response = {
             "repository": str(repository),
             "fixture": repository == _cp1_fixture_path().resolve(),
+            "coverage": coverage,
+            "lifecycle_status": "DETECTED" if prioritized else "VALIDITY_UNKNOWN",
             "findings": prioritized,
             "suppressed_findings": filtered,
             "resolved_findings": resolved,
