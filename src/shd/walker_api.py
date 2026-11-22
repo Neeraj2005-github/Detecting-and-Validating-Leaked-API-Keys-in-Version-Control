@@ -536,6 +536,8 @@ def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
 def _set_stage_substep(job_id: str, stage_name: str, sub_step: str, status: str, duration_ms: int = 0) -> None:
     index = STAGE_NAMES.index(stage_name)
     with _scan_jobs_lock:
+        if status == "running":
+            _scan_jobs[job_id]["stage_sub_step"] = sub_step
         sub_steps = _scan_jobs[job_id]["stages"][index]["sub_steps"]
         existing = next((item for item in sub_steps if item["name"] == sub_step), None)
         if existing is None:
@@ -607,9 +609,14 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
 
         def scan_parallel() -> tuple[list[dict[str, object]], dict[str, object]]:
             scan_started = time.monotonic()
-            gitleaks_future = _scan_stage_executor.submit(run_gitleaks, str(repository))
-            coverage_future = _scan_stage_executor.submit(build_coverage, repository)
+            _set_stage_substep(job_id, "scan", "gitleaks_subprocess", "running")
+            _set_stage_substep(job_id, "scan", "coverage_walk", "running")
             gitleaks_started = time.monotonic()
+            gitleaks_future = _scan_stage_executor.submit(run_gitleaks, str(repository))
+            _set_stage_substep(job_id, "scan", "coverage_walk", "running")
+            coverage_started = time.monotonic()
+            coverage_future = _scan_stage_executor.submit(build_coverage, repository)
+            _set_stage_substep(job_id, "scan", "gitleaks_subprocess", "running")
             raw_findings = gitleaks_future.result(timeout=STAGE_TIMEOUTS["scan"])
             gitleaks_ms = int((time.monotonic() - gitleaks_started) * 1000)
             _set_stage_substep(job_id, "scan", "gitleaks_subprocess", "done", gitleaks_ms)
@@ -624,14 +631,14 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             ]
             with _scan_jobs_lock:
                 _scan_jobs[job_id]["partial_findings"] = partial_findings
-            coverage_started = time.monotonic()
+            _set_stage_substep(job_id, "scan", "coverage_walk", "running")
             coverage = coverage_future.result(timeout=STAGE_TIMEOUTS["scan"])
             coverage_ms = int((time.monotonic() - coverage_started) * 1000)
             _set_stage_substep(job_id, "scan", "coverage_walk", "done", coverage_ms)
             _set_stage_substep(job_id, "scan", "scan_parallel_total", "done", int((time.monotonic() - scan_started) * 1000))
             return raw_findings, coverage
 
-        raw_findings, coverage = _run_stage(job_id, "scan", scan_parallel, "gitleaks_subprocess")
+        raw_findings, coverage = _run_stage(job_id, "scan", scan_parallel)
         _set_stage_count(job_id, "scan", len(raw_findings))
         _set_stage_count(job_id, "preflight", len(coverage["refs"]["branches"]) + len(coverage["refs"]["tags"]))
 
@@ -677,28 +684,27 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             candidates = parsed
         else:
             def filter_candidates() -> list[DetectionCandidate]:
+                if not parsed:
+                    return []
                 model = ensure_model()
                 _set_stage_substep(job_id, "filter", "ml_model_load", "done", 0)
-                if parsed:
-                    mapped_lines = [
-                        {
-                            "commit_sha": item["commit_sha"],
-                            "file_path": item["file_path"],
-                            "line_number": item["line_number"],
-                            "added_line": item.get("added_line", item["masked_match"]),
-                            "still_in_head": item["still_in_head"],
-                            "git_lifecycle_state": item["git_lifecycle_state"],
-                        }
-                        for item in parsed
-                    ]
-                else:
-                    mapped_lines = list(walk_history(repository))
+                mapped_lines = [
+                    {
+                        "commit_sha": item["commit_sha"],
+                        "file_path": item["file_path"],
+                        "line_number": item["line_number"],
+                        "added_line": item.get("added_line", item["masked_match"]),
+                        "still_in_head": item["still_in_head"],
+                        "git_lifecycle_state": item["git_lifecycle_state"],
+                    }
+                    for item in parsed
+                ]
                 started = time.monotonic()
                 result = detect_lines(mapped_lines, model=model)
                 inference_ms = int((time.monotonic() - started) * 1000)
                 _set_stage_substep(job_id, "filter", "ml_inference", "done", inference_ms)
                 return result
-            candidates = _run_stage(job_id, "filter", filter_candidates, "ml_model_load")
+            candidates = _run_stage(job_id, "filter", filter_candidates)
         _set_stage_count(job_id, "filter", len(candidates))
 
         shap_report = (
@@ -857,7 +863,7 @@ def cp1_scan_status(job_id: str) -> dict[str, object]:
             "stage": job["stage"],
             "stages": [dict(stage) for stage in job["stages"]],
             "elapsed_ms": elapsed_ms,
-            "result": job["result"] if job["status"] == "done" else None,
+            "result": job["result"] if job["status"] in ("done", "timed_out") else None,
             "partial_findings": list(job.get("partial_findings") or []),
             "error": job["error"] if job["status"] in ("failed", "timed_out") else None,
         }
