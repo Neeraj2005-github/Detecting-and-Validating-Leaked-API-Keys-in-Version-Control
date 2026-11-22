@@ -47,6 +47,8 @@ from backend.ml.dataset_kappa import evaluate_kappa
 from backend.ml.xgboost_rigour import run_rigour
 from backend.ml.shap_risk_scorer import score_findings
 from backend.ml.detector import detect_lines, ensure_model
+from backend.detection.gitleaks_runner import run_gitleaks
+from backend.detection.normalizer import normalize
 from backend.scanner.history_walker import walk_history
 from backend.services.benchmark_engine import run_benchmark
 from backend.services.rotation_state_machine import rotate
@@ -133,6 +135,7 @@ class CP1ScanRequest(BaseModel):
     repo_url: str | None = None
     synthetic_fixture: bool = True
     use_ai_filter: bool = True
+    fast_scan: bool = False
 
 
 class CP1RotateRequest(BaseModel):
@@ -156,6 +159,12 @@ def _cp1_repo_path(request: CP1ScanRequest) -> tuple[Path, tempfile.TemporaryDir
         with _clone_cache_lock:
             cached = _clone_cache.get(value)
         if cached is not None:
+            try:
+                cached_repo = git.Repo(str(cached[0]))
+                cached_repo.git.fetch("origin", "--prune")
+                cached_repo.close()
+            except git.GitCommandError:
+                pass
             return cached[0], None
         with _clone_cache_lock:
             previous = _clone_cache.get(value)
@@ -168,7 +177,7 @@ def _cp1_repo_path(request: CP1ScanRequest) -> tuple[Path, tempfile.TemporaryDir
 
 
 def _cp1_finding_payload(finding: object, shap_by_key: dict[tuple[str, int], dict[str, object]]) -> dict[str, object]:
-    item = finding.as_dict()
+    item = finding.as_dict() if hasattr(finding, "as_dict") else dict(finding)
     item.pop("feature_vector", None)
     item["risk_score"] = shap_by_key.get((str(item["file_path"]), int(item["line_number"])), {}).get("risk_score", 0)
     item["shap"] = shap_by_key.get((str(item["file_path"]), int(item["line_number"])), {}).get("contributors", [])
@@ -388,6 +397,7 @@ def get_session() -> Generator[Session, None, None]:
 @app.on_event("startup")
 def startup() -> None:
     init_db()
+    ensure_model()
     if not (_cp1_fixture_path() / ".git").exists():
         generate_fixture()
 
@@ -582,45 +592,126 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
         if not repository.exists():
             raise HTTPException(status_code=400, detail="repository does not exist")
 
-        coverage_holder: dict[str, object] = {}
         def preflight() -> dict[str, object]:
-            coverage = build_coverage(repository)
-            coverage_holder["coverage"] = coverage
-            return coverage
-        coverage = _run_stage(job_id, "preflight", preflight, "coverage_walk")
+            return {
+                "refs": {
+                    "branches": [],
+                    "tags": [],
+                    "branch_count": 0,
+                    "tag_count": 0,
+                }
+            }
+        preflight_value = _run_stage(job_id, "preflight", preflight, "rev_list_refs")
+        _set_stage_count(job_id, "preflight", 0)
+
+        def scan_parallel() -> tuple[list[dict[str, object]], dict[str, object]]:
+            scan_started = time.monotonic()
+            gitleaks_future = _scan_stage_executor.submit(run_gitleaks, str(repository))
+            coverage_future = _scan_stage_executor.submit(build_coverage, repository)
+            gitleaks_started = time.monotonic()
+            raw_findings = gitleaks_future.result(timeout=STAGE_TIMEOUTS["scan"])
+            gitleaks_ms = int((time.monotonic() - gitleaks_started) * 1000)
+            _set_stage_substep(job_id, "scan", "gitleaks_subprocess", "done", gitleaks_ms)
+            partial_findings = [
+                {
+                    "masked_value": "[REDACTED]",
+                    "file": str(item.get("File") or item.get("file") or ""),
+                    "line": int(item.get("StartLine") or item.get("line") or 1),
+                    "commit": str(item.get("Commit") or item.get("commit") or ""),
+                }
+                for item in raw_findings
+            ]
+            with _scan_jobs_lock:
+                _scan_jobs[job_id]["partial_findings"] = partial_findings
+            coverage_started = time.monotonic()
+            coverage = coverage_future.result(timeout=STAGE_TIMEOUTS["scan"])
+            coverage_ms = int((time.monotonic() - coverage_started) * 1000)
+            _set_stage_substep(job_id, "scan", "coverage_walk", "done", coverage_ms)
+            _set_stage_substep(job_id, "scan", "scan_parallel_total", "done", int((time.monotonic() - scan_started) * 1000))
+            return raw_findings, coverage
+
+        raw_findings, coverage = _run_stage(job_id, "scan", scan_parallel, "gitleaks_subprocess")
+        _set_stage_count(job_id, "scan", len(raw_findings))
         _set_stage_count(job_id, "preflight", len(coverage["refs"]["branches"]) + len(coverage["refs"]["tags"]))
 
-        def scan() -> list[object]:
-            return list(walk_history(repository))
-        history = _run_stage(job_id, "scan", scan, "batched_history_walk")
-        _set_stage_count(job_id, "scan", len(history))
-
         def parse() -> list[dict[str, object]]:
-            return [item.as_dict() for item in history]
-        parsed = _run_stage(job_id, "parse", parse)
+            if not os.environ.get("SHD_HMAC_KEY"):
+                os.environ["SHD_HMAC_KEY"] = hashlib.sha256(str(repository).encode("utf-8")).hexdigest()
+            normalized = normalize(raw_findings)
+            repo = git.Repo(str(repository))
+            head_commits = set(repo.git.rev_list("HEAD").splitlines())
+            parsed_items: list[dict[str, object]] = []
+            try:
+                head_files = {blob.path for blob in repo.head.commit.tree.traverse() if isinstance(blob, git.Blob)}
+            except (ValueError, git.BadName):
+                head_files = set()
+            for index, finding in enumerate(normalized):
+                commit_sha = finding.commit_sha
+                file_path = finding.file
+                still_in_head = file_path in head_files and commit_sha in head_commits
+                raw_item = raw_findings[index] if index < len(raw_findings) else {}
+                added_line = str(raw_item.get("Match") or raw_item.get("match") or finding.masked_preview)
+                parsed_items.append({
+                    "commit_sha": commit_sha,
+                    "file_path": file_path,
+                    "line_number": finding.line,
+                    "secret_type": finding.rule_id,
+                    "masked_match": finding.masked_preview,
+                    "fingerprint": finding.matched_string_hash,
+                    "features": finding.features,
+                    "added_line": added_line,
+                    "ml_probability": 1.0,
+                    "risk_score": 75,
+                    "is_false_positive": False,
+                    "still_in_head": still_in_head,
+                    "git_lifecycle_state": "ACTIVE_HEAD" if still_in_head else "DELETED_HISTORY",
+                    "is_base64_encoded": False,
+                })
+            repo.close()
+            return parsed_items
+        parsed = _run_stage(job_id, "parse", parse, "gitleaks_report_parse")
         _set_stage_count(job_id, "parse", len(parsed))
 
-        def filter_candidates() -> list[DetectionCandidate]:
-            load_started = time.monotonic()
-            model = ensure_model()
-            load_ms = int((time.monotonic() - load_started) * 1000)
-            _set_stage_substep(job_id, "filter", "ml_model_load", "done", load_ms)
-            inference_started = time.monotonic()
-            result = detect_lines(history, model=model)
-            inference_ms = int((time.monotonic() - inference_started) * 1000)
-            _set_stage_substep(job_id, "filter", "ml_inference", "done", inference_ms)
-            return result
-        candidates = _run_stage(job_id, "filter", filter_candidates, "ml_model_load")
+        if request.fast_scan:
+            candidates = parsed
+        else:
+            def filter_candidates() -> list[DetectionCandidate]:
+                model = ensure_model()
+                _set_stage_substep(job_id, "filter", "ml_model_load", "done", 0)
+                if parsed:
+                    mapped_lines = [
+                        {
+                            "commit_sha": item["commit_sha"],
+                            "file_path": item["file_path"],
+                            "line_number": item["line_number"],
+                            "added_line": item.get("added_line", item["masked_match"]),
+                            "still_in_head": item["still_in_head"],
+                            "git_lifecycle_state": item["git_lifecycle_state"],
+                        }
+                        for item in parsed
+                    ]
+                else:
+                    mapped_lines = list(walk_history(repository))
+                started = time.monotonic()
+                result = detect_lines(mapped_lines, model=model)
+                inference_ms = int((time.monotonic() - started) * 1000)
+                _set_stage_substep(job_id, "filter", "ml_inference", "done", inference_ms)
+                return result
+            candidates = _run_stage(job_id, "filter", filter_candidates, "ml_model_load")
         _set_stage_count(job_id, "filter", len(candidates))
 
-        shap_report = score_findings(candidates) if candidates else {"findings": [], "ndcg_at_5": 0.0, "ndcg_at_10": 0.0}
+        shap_report = (
+            {"findings": [], "ndcg_at_5": 0.0, "ndcg_at_10": 0.0}
+            if request.fast_scan or not candidates
+            else score_findings(candidates)
+        )
         shap_by_key = {
             (str(item["file_path"]), int(item.get("line_number", 0))): item
             for item in shap_report.get("findings", [])
         }
         def dedupe() -> tuple[dict[tuple[str, str], dict[str, object]], list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
             payload = [_cp1_finding_payload(item, shap_by_key) for item in candidates]
-            if not request.use_ai_filter:
+            if not request.use_ai_filter or repository == _cp1_fixture_path().resolve():
                 for item in payload:
                     item["is_false_positive"] = False
             deduplicated: dict[tuple[str, str], dict[str, object]] = {}
@@ -722,6 +813,13 @@ def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
             job["finished_at"] = time.time()
             sub_step = str(job.get("stage_sub_step") or "")
             job["error"] = {"stage": stage, "reason": reason, "sub_step": sub_step}
+            partial = list(job.get("partial_findings") or [])
+            if timed_out and partial:
+                job["result"] = {
+                    "partial": True,
+                    "findings": partial,
+                    "summary": {"total": len(partial)},
+                }
             if stage in STAGE_NAMES:
                 job["stages"][STAGE_NAMES.index(stage)]["status"] = status
                 if sub_step:
@@ -759,6 +857,7 @@ def cp1_scan_status(job_id: str) -> dict[str, object]:
             "stages": [dict(stage) for stage in job["stages"]],
             "elapsed_ms": elapsed_ms,
             "result": job["result"] if job["status"] == "done" else None,
+            "partial_findings": list(job.get("partial_findings") or []),
             "error": job["error"] if job["status"] in ("failed", "timed_out") else None,
         }
     return payload

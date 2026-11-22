@@ -2,11 +2,11 @@ import api from './client';
 import { shouldStopScanning } from '../utils/scanState';
 
 export const fetchCp1Overview = async () => (await api.get('/api/cp1/overview', { timeout: 30000 })).data;
-export const startCp1Scan = async (payload: { repo_url?: string; synthetic_fixture: boolean; use_ai_filter: boolean }) =>
+export const startCp1Scan = async (payload: { repo_url?: string; synthetic_fixture: boolean; use_ai_filter: boolean; fast_scan?: boolean }) =>
   (await api.post('/api/cp1/scan', payload, { timeout: 30000 })).data;
 export const fetchCp1ScanJob = async (jobId: string) =>
   (await api.get(`/api/cp1/jobs/${encodeURIComponent(jobId)}`, { timeout: 30000 })).data;
-export const scanCp1 = async (payload: { repo_url?: string; synthetic_fixture: boolean; use_ai_filter: boolean }, onProgress?: (job: any) => void) => {
+export const scanCp1 = async (payload: { repo_url?: string; synthetic_fixture: boolean; use_ai_filter: boolean; fast_scan?: boolean }, onProgress?: (job: any) => void) => {
   const started = await startCp1Scan(payload);
   const jobId = started.job_id;
   onProgress?.(started);
@@ -16,6 +16,7 @@ export const scanCp1 = async (payload: { repo_url?: string; synthetic_fixture: b
     const job = await fetchCp1ScanJob(jobId);
     onProgress?.(job);
     if (job.status === 'done') return job.result;
+    if (job.status === 'timed_out' && job.result) return job.result;
     if (shouldStopScanning(job.status)) {
       throw new Error(`${job.error?.stage ?? 'Scan'}: ${job.error?.reason ?? 'The scan did not complete.'}`);
     }

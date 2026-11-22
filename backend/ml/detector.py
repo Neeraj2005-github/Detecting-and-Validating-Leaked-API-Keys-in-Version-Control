@@ -256,13 +256,23 @@ def detect_lines(lines: Iterable[object], model: object | None = None) -> list[D
     """Detect candidates from ``HistoryLine`` objects or compatible mappings."""
     model = ensure_model() if model is None else model
     findings: list[DetectionCandidate] = []
+    pending: list[tuple[object, str, str, bool, dict[str, float], dict[str, object], str, tuple[float, ...]]] = []
     for item in lines:
         value = item if isinstance(item, Mapping) else asdict(item)
         line = str(value.get("added_line", ""))
         for secret_type, token, encoded in _candidates(line):
             features = extract_14_features(token, str(value.get("file_path", "")), line, is_base64_encoded=encoded)
             vector = tuple(features[name] for name in FEATURE_NAMES)
-            probability = float(model.predict_proba([list(vector)])[0][1])
+            pending.append((item, secret_type, token, encoded, features, value, line, vector))
+
+    if pending:
+        vectors = [
+            [features[name] for name in FEATURE_NAMES]
+            for _, _, _, _, features, _, _, _ in pending
+        ]
+        probabilities = model.predict_proba(vectors)
+        for index, (item, secret_type, token, encoded, features, value, line, vector) in enumerate(pending):
+            probability = float(probabilities[index][1] if len(probabilities[index]) > 1 else probabilities[index][0])
             heuristic_fp = _heuristic_false_positive(token, str(value.get("file_path", "")), line)
             model_fp = probability < 0.5
             findings.append(

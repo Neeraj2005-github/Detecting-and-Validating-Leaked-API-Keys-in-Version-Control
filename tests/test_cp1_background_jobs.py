@@ -39,7 +39,7 @@ def test_cp1_scan_job_returns_done_result_and_stages() -> None:
             "mask", "lifecycle", "report",
         }
         scan_stage = next(stage for stage in terminal["stages"] if stage["name"] == "scan")
-        assert "batched_history_walk" in {sub["name"] for sub in scan_stage["sub_steps"]}
+        assert "gitleaks_subprocess" in {sub["name"] for sub in scan_stage["sub_steps"]}
 
 
 def test_cp1_filter_exception_is_sanitized_in_failed_job(monkeypatch) -> None:
@@ -82,4 +82,4 @@ def test_cp1_scan_stage_timeout_reports_sub_step(monkeypatch) -> None:
     assert terminal["status"] == "timed_out"
     assert terminal["error"]["stage"] == "scan"
     assert terminal["error"]["reason"] == "timeout"
-    assert terminal["error"]["sub_step"] == "batched_history_walk"
+    assert terminal["error"]["sub_step"] == "gitleaks_subprocess"
