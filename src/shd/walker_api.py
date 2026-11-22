@@ -5,6 +5,10 @@ import hashlib
 import logging
 import urllib.parse
 import tempfile
+import time
+import uuid
+import threading
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Generator, Literal
@@ -67,6 +71,15 @@ if ROTATED_FINDINGS_PATH.exists():
     except (OSError, json.JSONDecodeError, TypeError):
         _rotated_findings = set()
 
+STAGE_NAMES = ["clone", "preflight", "scan", "parse", "filter", "dedupe", "mask", "lifecycle", "report"]
+_scan_jobs: dict[str, dict[str, object]] = {}
+_scan_jobs_lock = threading.Lock()
+_scan_stage_executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="secretguard-stage")
+_clone_cache: dict[str, tuple[Path, tempfile.TemporaryDirectory[str]]] = {}
+_clone_cache_lock = threading.Lock()
+STAGE_TIMEOUT_SECONDS = 30.0
+JOB_TIMEOUT_SECONDS = 180.0
+
 app = FastAPI(title="Secret History Detector")
 app.add_middleware(
     CORSMiddleware,
@@ -128,8 +141,18 @@ def _cp1_repo_path(request: CP1ScanRequest) -> tuple[Path, tempfile.TemporaryDir
         return _cp1_fixture_path(), None
     value = _validate_repository_url(request.repo_url)
     if value.startswith("https://"):
+        with _clone_cache_lock:
+            cached = _clone_cache.get(value)
+        if cached is not None:
+            return cached[0], None
         _, temp_dir, destination = clone_https_repository(value)
-        return destination, temp_dir
+        with _clone_cache_lock:
+            previous = _clone_cache.get(value)
+            if previous is not None:
+                temp_dir.cleanup()
+                return previous[0], None
+            _clone_cache[value] = (destination, temp_dir)
+        return destination, None
     return Path(value).expanduser().resolve(), None
 
 
@@ -461,79 +484,243 @@ def cp1_overview() -> dict[str, object]:
 
 @app.post("/api/cp1/scan")
 def cp1_scan(request: CP1ScanRequest) -> dict[str, object]:
-    """Scan a local/remote repository or the deterministic CP1 fixture."""
-    repository, temporary = _cp1_repo_path(request)
+    """Start a repository scan as a background job."""
+    job_id = uuid.uuid4().hex
+    stages = [
+        {"name": name, "status": "queued", "count": 0, "duration_ms": 0}
+        for name in STAGE_NAMES
+    ]
+    with _scan_jobs_lock:
+        _scan_jobs[job_id] = {
+            "job_id": job_id,
+            "status": "running",
+            "stage": "clone",
+            "stages": stages,
+            "started_at": time.time(),
+            "finished_at": None,
+            "result": None,
+            "error": None,
+        }
+    worker = threading.Thread(
+        target=_run_cp1_scan_job,
+        args=(job_id, request),
+        name=f"cp1-scan-{job_id[:8]}",
+        daemon=True,
+    )
+    worker.start()
+    return {"job_id": job_id, "status": "running", "stage": "clone", "stages": stages}
+
+
+def _run_stage(job_id: str, name: str, operation) -> object:
+    stage_index = STAGE_NAMES.index(name)
+    with _scan_jobs_lock:
+        job = _scan_jobs[job_id]
+        job["stage"] = name
+        stage = job["stages"][stage_index]
+        stage["status"] = "running"
+        started = time.monotonic()
+    future = _scan_stage_executor.submit(operation)
     try:
+        value = future.result(timeout=STAGE_TIMEOUT_SECONDS)
+    except FuturesTimeoutError:
+        future.cancel()
+        raise TimeoutError(f"Stage timed out: {name}")
+    except Exception as exc:
+        raise RuntimeError(str(exc)) from exc
+    duration_ms = int((time.monotonic() - started) * 1000)
+    with _scan_jobs_lock:
+        stage = _scan_jobs[job_id]["stages"][stage_index]
+        stage["status"] = "done"
+        stage["duration_ms"] = duration_ms
+    return value
+
+
+def _set_stage_count(job_id: str, name: str, count: int) -> None:
+    index = STAGE_NAMES.index(name)
+    with _scan_jobs_lock:
+        _scan_jobs[job_id]["stages"][index]["count"] = int(count)
+
+
+def _run_cp1_scan_job(job_id: str, request: CP1ScanRequest) -> None:
+    repository: Path | None = None
+    temporary: tempfile.TemporaryDirectory[str] | None = None
+    try:
+        def clone() -> tuple[Path, tempfile.TemporaryDirectory[str] | None]:
+            repo, temp = _cp1_repo_path(request)
+            return repo, temp
+
+        repository, temporary = _run_stage(job_id, "clone", clone)
+        _set_stage_count(job_id, "clone", 1 if repository.exists() else 0)
         if not repository.exists():
-            raise HTTPException(status_code=400, detail=f"repository does not exist: {repository}")
-        history = list(walk_history(repository))
-        findings = detect_lines(history)
-        coverage = build_coverage(repository)
-        shap_report = score_findings(findings) if findings else {"findings": [], "ndcg_at_5": 0.0, "ndcg_at_10": 0.0}
+            raise HTTPException(status_code=400, detail="repository does not exist")
+
+        coverage_holder: dict[str, object] = {}
+        def preflight() -> dict[str, object]:
+            coverage = build_coverage(repository)
+            coverage_holder["coverage"] = coverage
+            return coverage
+        coverage = _run_stage(job_id, "preflight", preflight)
+        _set_stage_count(job_id, "preflight", len(coverage["refs"]["branches"]) + len(coverage["refs"]["tags"]))
+
+        def scan() -> list[object]:
+            return list(walk_history(repository))
+        history = _run_stage(job_id, "scan", scan)
+        _set_stage_count(job_id, "scan", len(history))
+
+        def parse() -> list[dict[str, object]]:
+            return [item.as_dict() for item in history]
+        parsed = _run_stage(job_id, "parse", parse)
+        _set_stage_count(job_id, "parse", len(parsed))
+
+        def filter_candidates() -> list[DetectionCandidate]:
+            return detect_lines(history)
+        candidates = _run_stage(job_id, "filter", filter_candidates)
+        _set_stage_count(job_id, "filter", len(candidates))
+
+        shap_report = score_findings(candidates) if candidates else {"findings": [], "ndcg_at_5": 0.0, "ndcg_at_10": 0.0}
         shap_by_key = {
             (str(item["file_path"]), int(item.get("line_number", 0))): item
             for item in shap_report.get("findings", [])
         }
-        payload = [_cp1_finding_payload(item, shap_by_key) for item in findings]
-        if not request.use_ai_filter:
+        def dedupe() -> tuple[dict[tuple[str, str], dict[str, object]], list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
+            payload = [_cp1_finding_payload(item, shap_by_key) for item in candidates]
+            if not request.use_ai_filter:
+                for item in payload:
+                    item["is_false_positive"] = False
+            deduplicated: dict[tuple[str, str], dict[str, object]] = {}
             for item in payload:
-                item["is_false_positive"] = False
-        deduplicated: dict[tuple[str, str], dict[str, object]] = {}
-        for item in payload:
-            key = (
-                str(item.get("fingerprint", "")),
-                str(item.get("secret_type", "")),
-            )
-            previous = deduplicated.get(key)
-            if previous is None or float(item.get("risk_score", 0)) > float(previous.get("risk_score", 0)):
-                deduplicated[key] = item
-        resolved = sorted(
-            (item for item in deduplicated.values() if item.get("status") == "ROTATED_SAFE"),
-            key=lambda item: str(item.get("file_path", "")),
-        )
-        filtered = sorted(
-            (item for item in deduplicated.values() if item.get("is_false_positive")),
-            key=lambda item: float(item.get("risk_score", 0)),
-            reverse=True,
-        )
-        prioritized = sorted(
-            (
-                item for item in deduplicated.values()
-                if not item.get("is_false_positive") and item.get("status") != "ROTATED_SAFE"
-            ),
-            key=lambda item: float(item.get("risk_score", 0)),
-            reverse=True,
-        )
-        response = {
-            "repository": str(repository),
-            "fixture": repository == _cp1_fixture_path().resolve(),
-            "coverage": coverage,
-            "lifecycle_status": "DETECTED" if prioritized else "VALIDITY_UNKNOWN",
-            "findings": prioritized,
-            "suppressed_findings": filtered,
-            "resolved_findings": resolved,
-            "summary": {
-                "active_head": sum(
-                    item["git_lifecycle_state"] == "ACTIVE_HEAD"
-                    and item.get("status") != "ROTATED_SAFE"
-                    for item in prioritized
+                key = (str(item.get("fingerprint", "")), str(item.get("secret_type", "")))
+                previous = deduplicated.get(key)
+                if previous is None or float(item.get("risk_score", 0)) > float(previous.get("risk_score", 0)):
+                    deduplicated[key] = item
+            resolved = sorted((item for item in deduplicated.values() if item.get("status") == "ROTATED_SAFE"), key=lambda item: str(item.get("file_path", "")))
+            filtered = sorted((item for item in deduplicated.values() if item.get("is_false_positive")), key=lambda item: float(item.get("risk_score", 0)), reverse=True)
+            prioritized = sorted((item for item in deduplicated.values() if not item.get("is_false_positive") and item.get("status") != "ROTATED_SAFE"), key=lambda item: float(item.get("risk_score", 0)), reverse=True)
+            return deduplicated, resolved, filtered, prioritized
+        deduplicated, resolved, filtered, prioritized = _run_stage(job_id, "dedupe", dedupe)
+        _set_stage_count(job_id, "dedupe", len(deduplicated))
+
+        def mask() -> list[dict[str, object]]:
+            return [
+                {
+                    **item,
+                    "masked_value": str(item.get("masked_match", "")),
+                    "file": str(item.get("file_path", "")),
+                    "line": int(item.get("line_number", 1)),
+                    "commit": str(item.get("commit_sha", "")),
+                }
+                for item in prioritized
+            ]
+        masked = _run_stage(job_id, "mask", mask)
+        _set_stage_count(job_id, "mask", len(masked))
+
+        def lifecycle() -> list[dict[str, object]]:
+            result = []
+            for item in masked:
+                enriched = dict(item)
+                enriched["deleted_later"] = str(enriched.get("git_lifecycle_state")) == "DELETED_HISTORY"
+                enriched["lifecycle_status"] = enriched.get("lifecycle_badge") or enriched.get("git_lifecycle_state")
+                enriched["recommended_action"] = (
+                    "Rotate and revoke; verify the credential is no longer usable."
+                    if enriched["deleted_later"] or enriched.get("still_in_head")
+                    else "Review and rotate if still valid."
+                )
+                result.append(enriched)
+            return result
+        findings = _run_stage(job_id, "lifecycle", lifecycle)
+        _set_stage_count(job_id, "lifecycle", len(findings))
+
+        def report() -> dict[str, object]:
+            skipped_items = coverage["skipped"].get("items", [])
+            response = {
+                "repository": str(repository),
+                "fixture": repository == _cp1_fixture_path().resolve(),
+                "coverage": coverage,
+                "lifecycle_status": "DETECTED" if findings else "VALIDITY_UNKNOWN",
+                "findings": findings,
+                "suppressed_findings": filtered,
+                "resolved_findings": resolved,
+                "rules_applied": ["Gitleaks default rules", "SecretGuard-owned project rules"],
+                "result_explanation": (
+                    "No secrets detected." if not findings
+                    else f"{len(findings)} secret finding{'s' if len(findings) != 1 else ''} found."
                 ),
-                "historical": sum(item["git_lifecycle_state"] == "DELETED_HISTORY" for item in prioritized),
-                "filtered": len(filtered),
-                "total": len(prioritized),
-            },
-            "ndcg": {
-                "at_5": shap_report.get("ndcg_at_5", 0.0),
-                "at_10": shap_report.get("ndcg_at_10", 0.0),
-            },
-        }
-        save_cp1_artifact("cp1_latest_scan", response, PROJECT_ROOT / "artifacts" / "cp1_latest_scan.json")
-        return response
-    except (ValueError, git.exc.GitCommandError) as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+                "meaning": "This result indicates repository-pattern matches under the current rules. It does not prove every credential is valid or that all possible secret formats exist.",
+                "skipped_files": skipped_items,
+                "summary": {
+                    "active_head": sum(item["git_lifecycle_state"] == "ACTIVE_HEAD" and item.get("status") != "ROTATED_SAFE" for item in findings),
+                    "historical": sum(item["git_lifecycle_state"] == "DELETED_HISTORY" for item in findings),
+                    "filtered": len(filtered),
+                    "total": len(findings),
+                },
+                "ndcg": {"at_5": shap_report.get("ndcg_at_5", 0.0), "at_10": shap_report.get("ndcg_at_10", 0.0)},
+            }
+            save_cp1_artifact("cp1_latest_scan", response, PROJECT_ROOT / "artifacts" / "cp1_latest_scan.json")
+            return response
+        result = _run_stage(job_id, "report", report)
+        _set_stage_count(job_id, "report", len(result["findings"]))
+        with _scan_jobs_lock:
+            job = _scan_jobs[job_id]
+            job["status"] = "done"
+            job["stage"] = "report"
+            job["finished_at"] = time.time()
+            job["result"] = result
+    except FuturesTimeoutError:
+        pass
+    except Exception as exc:
+        stage = "unknown"
+        timed_out = isinstance(exc, TimeoutError)
+        if timed_out:
+            status = "timed_out"
+            stage = str(exc).removeprefix("Stage timed out: ") or "unknown"
+            reason = f"The {stage} stage exceeded its time limit."
+        else:
+            status = "failed"
+            with _scan_jobs_lock:
+                stage = str(_scan_jobs[job_id].get("stage") or "unknown")
+            reason = "An unexpected scan error occurred."
+            if isinstance(exc, HTTPException):
+                reason = "The repository could not be scanned."
+        with _scan_jobs_lock:
+            job = _scan_jobs[job_id]
+            job["status"] = status
+            job["stage"] = stage
+            job["finished_at"] = time.time()
+            job["error"] = {"stage": stage, "reason": reason}
+            if stage in STAGE_NAMES:
+                job["stages"][STAGE_NAMES.index(stage)]["status"] = status
     finally:
         if temporary is not None:
             temporary.cleanup()
+
+
+@app.get("/api/cp1/jobs/{job_id}")
+def cp1_scan_status(job_id: str) -> dict[str, object]:
+    with _scan_jobs_lock:
+        job = _scan_jobs.get(job_id)
+        if job is None:
+            raise HTTPException(status_code=404, detail="scan job not found")
+        elapsed_ms = int((time.time() - float(job["started_at"])) * 1000)
+        if job["status"] == "running" and elapsed_ms >= JOB_TIMEOUT_SECONDS * 1000:
+            stage = str(job.get("stage") or "unknown")
+            job["status"] = "timed_out"
+            job["finished_at"] = time.time()
+            job["error"] = {
+                "stage": stage,
+                "reason": "The scan exceeded its overall time limit.",
+            }
+            if stage in STAGE_NAMES:
+                job["stages"][STAGE_NAMES.index(stage)]["status"] = "timed_out"
+        payload = {
+            "job_id": job["job_id"],
+            "status": job["status"],
+            "stage": job["stage"],
+            "stages": [dict(stage) for stage in job["stages"]],
+            "elapsed_ms": elapsed_ms,
+            "result": job["result"] if job["status"] == "done" else None,
+            "error": job["error"] if job["status"] in ("failed", "timed_out") else None,
+        }
+    return payload
 
 
 @app.post("/api/scan")
