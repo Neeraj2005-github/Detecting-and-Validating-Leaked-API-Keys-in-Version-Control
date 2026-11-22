@@ -37,14 +37,14 @@ FEATURE_NAMES = [
 PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("aws_access_key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
     ("github_pat", re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b")),
-    ("mysql_uri", re.compile(r"\b(?:mysql|postgres(?:ql)?|jdbc:mysql|jdbc:postgresql|redis)://[^\s'\"<>]+", re.I)),
-    ("mongodb_uri", re.compile(r"\b(?:mongodb(?:\+srv)?|mongo)://[^\s'\"<>]+:[^\s'\"<>]+@[^\s'\"<>]+", re.I)),
-    ("db_password_assignment", re.compile(r"(?i)[\"']?(?:DB_PASSWORD|MYSQL_PWD|POSTGRES_PASSWORD)[\"']?\s*(?:=|:)\s*[\"']?([A-Za-z0-9_+/=.$:@!#%\-<>{}]{8,})")),
+    ("mysql_uri", re.compile(r"\b(?:mysql|postgres(?:ql)?|redis):\/\/[^\/\s:@]+:[^@\s\/]+@[^\s\/]+", re.I)),
+    ("mongodb_uri", re.compile(r"\b(?:mongodb(?:\+srv)?|mongo):\/\/[^\/\s:@]+:[^@\s\/]+@[^\s\/]+", re.I)),
+    ("db_password_assignment", re.compile(r"(?i)[\"']?(?:DB_PASSWORD|MYSQL_PWD|POSTGRES_PASSWORD|spring\.datasource\.password)[\"']?\s*(?:=|:)\s*[\"']?([A-Za-z0-9_+/=.$:@!#%\-]{8,})")),
     ("private_key", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
     ("jwt", re.compile(r"\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b")),
     ("slack_token", re.compile(r"\bxox[baprs]-[0-9A-Za-z-]{10,}\b")),
     ("stripe_token", re.compile(r"\bsk_(?:live|test)_[0-9A-Za-z]{12,}\b")),
-    ("generic_assignment", re.compile(r"(?i)(?:password|passwd|secret|token|api[_-]?key|access[_-]?key|db_pass)\s*(?:=|:=|:)\s*['\"]?([A-Za-z0-9_+/=.$:@!#%\-]{12,})")),
+    ("generic_assignment", re.compile(r"(?i)(?:password|passwd|pwd|secret|api[_-]?key|apikey|access[_-]?key|auth[_-]?token|private[_-]?key)\s*(?:=|:=|:)\s*(.+?)\s*$")),
 )
 BASE64_RE = re.compile(r"(?<![A-Za-z0-9+/])[A-Za-z0-9+/]{20,}={0,2}(?![A-Za-z0-9+/])")
 POSITIVE_KEYWORDS = ("password", "secret", "key", "token", "auth", "prod", "db_pass")
@@ -103,6 +103,7 @@ class DetectionCandidate:
     still_in_head: bool
     git_lifecycle_state: str
     is_base64_encoded: bool
+    suppression_reason: str = ""
 
     def as_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -227,6 +228,46 @@ def ensure_model() -> object:
     return model
 
 
+DEPENDENCY_PATH_PARTS = ("node_modules/", "vendor/", "target/", "build/", "dist/", ".vite/", ".mvn/")
+
+
+def _is_excluded_path(file_path: str) -> bool:
+    value = file_path.lower().replace("\\", "/")
+    if any(part in f"/{value.strip('/')}/" for part in ("/node_modules/", "/vendor/", "/target/", "/build/", "/dist/", "/.vite/", "/.mvn/")):
+        return True
+    if value.endswith((".min.js", ".class", ".jar", ".md", ".lock", ".lock.json")):
+        return True
+    if value.rsplit("/", 1)[-1] in {"package-lock.json", "yarn.lock", "pnpm-lock.yaml"}:
+        return True
+    return False
+
+
+def _literal_suppression_reason(token: str, file_path: str, line: str) -> str:
+    value = token.strip().strip("'\"`,;")
+    lower = value.lower()
+    if _is_excluded_path(file_path):
+        return "dependency path"
+    if re.search(r"\$[A-Z_a-z][A-Z_a-z0-9]*|\$\{[^}]+\}|%[^%]+%|process\.env\.|system\.getenv\(|os\.environ\[", value, re.I):
+        return "variable reference"
+    if "(" in value or ".get" in lower or re.search(r"\b(?:this|self|obj)\.[A-Z_a-z][A-Z_a-z0-9]*\b", value):
+        return "variable reference"
+    if re.fullmatch(r"[A-Za-z][A-Za-z0-9]*(?:_[A-Z_a-z][A-Z_a-z0-9]*)+", value) and not any(char.isdigit() or char in "$@!#%_-+=" for char in value):
+        return "variable reference"
+    if re.fullmatch(r"[A-Z_a-z][A-Z_a-z0-9]*_[A-Z_a-z0-9_]*", value) and not any(char.isdigit() or char in "$@!#%_-+=" for char in value):
+        return "variable reference"
+    placeholders = (
+        "changeme", "<password>", "your_", "example", "xxx",
+        "****", "placeholder", "replace_me",
+    )
+    if lower in placeholders or lower.startswith(placeholders) or "***" in value or "****" in value:
+        return "placeholder"
+    if any(marker in f"/{file_path.lower()}/" for marker in ("/test/", "/tests/", "/mock/", "/fixtures/", "/docs/", "/examples/", "/sample/")):
+        return "test/doc value"
+    if len(value) < 8 or shannon_entropy(value) < 3.5:
+        return "placeholder"
+    return ""
+
+
 def _candidates(line: str) -> list[tuple[str, str, bool]]:
     found: list[tuple[str, str, bool]] = []
     for secret_type, pattern in PATTERNS:
@@ -236,6 +277,9 @@ def _candidates(line: str) -> list[tuple[str, str, bool]]:
                 prefix = line[:match.start()].rstrip()
                 if prefix.endswith((".", "(", "[", "{")) or "." in prefix[-24:]:
                     continue
+                raw_value = str(match.group(1)).strip().strip("'\"`,;")
+                if raw_value:
+                    value = raw_value
             found.append((secret_type, value, False))
     for encoded in BASE64_RE.findall(line):
         try:
@@ -274,6 +318,15 @@ def detect_lines(lines: Iterable[object], model: object | None = None) -> list[D
         for index, (item, secret_type, token, encoded, features, value, line, vector) in enumerate(pending):
             probability = float(probabilities[index][1] if len(probabilities[index]) > 1 else probabilities[index][0])
             heuristic_fp = _heuristic_false_positive(token, str(value.get("file_path", "")), line)
+            suppression_reason = _literal_suppression_reason(token, str(value.get("file_path", "")), line)
+            if not suppression_reason and heuristic_fp:
+                normalized_path = str(value.get("file_path", "")).lower()
+                if _is_excluded_path(str(value.get("file_path", ""))):
+                    suppression_reason = "dependency path"
+                elif any(marker in normalized_path for marker in ("/test", "/tests/", "/mock/", "/docs/", "/example/", "/sample/")):
+                    suppression_reason = "test/doc value"
+                else:
+                    suppression_reason = "placeholder"
             model_fp = probability < 0.5
             findings.append(
                 DetectionCandidate(
@@ -288,10 +341,11 @@ def detect_lines(lines: Iterable[object], model: object | None = None) -> list[D
                     ml_probability=max(0.0, min(1.0, probability)),
                     is_false_positive=heuristic_fp or (
                         secret_type == "generic_assignment" and model_fp
-                    ),
+                    ) or bool(suppression_reason),
                     still_in_head=bool(value.get("still_in_head", False)),
                     git_lifecycle_state=str(value.get("git_lifecycle_state", "UNKNOWN")),
                     is_base64_encoded=encoded,
+                    suppression_reason=suppression_reason,
                 )
             )
     return findings

@@ -12,6 +12,8 @@ import git
 KNOWN_ARCHIVE_SUFFIXES = {".zip", ".tar", ".gz", ".tgz", ".bz2", ".xz", ".7z"}
 MAX_FILE_BYTES = 10 * 1024 * 1024
 MAX_LINE_LENGTH = 1024 * 1024
+EXCLUDED_DIRECTORY_NAMES = {"node_modules", "vendor", "target", "build", "dist", ".vite", ".mvn"}
+EXCLUDED_FILE_NAMES = {"package-lock.json", "yarn.lock", "pnpm-lock.yaml"}
 
 
 def _skipped_summary(path: Path) -> dict[str, Any]:
@@ -29,12 +31,28 @@ def _skipped_summary(path: Path) -> dict[str, Any]:
         })
 
     for current_root, directories, filenames in os.walk(path):
-        directories[:] = sorted(
-            name for name in directories
-            if name not in {".git", ".venv", "__pycache__", "node_modules", "build", "dist"}
-        )
+        kept_directories = []
+        for name in sorted(directories):
+            directory = Path(current_root) / name
+            if name in EXCLUDED_DIRECTORY_NAMES:
+                add(directory, "dependency_path")
+                continue
+            if name not in {".git", ".venv", "__pycache__"}:
+                kept_directories.append(name)
+        directories[:] = kept_directories
         for filename in sorted(filenames):
             file_path = Path(current_root) / filename
+            lower_name = filename.lower()
+            if (
+                filename in EXCLUDED_FILE_NAMES
+                or lower_name.endswith(".min.js")
+                or lower_name.endswith(".lock")
+                or lower_name.endswith(".md")
+                or lower_name.endswith(".class")
+                or lower_name.endswith(".jar")
+            ):
+                add(file_path, "generated_or_dependency_file")
+                continue
             if file_path.is_symlink():
                 add(file_path, "symlink")
                 continue

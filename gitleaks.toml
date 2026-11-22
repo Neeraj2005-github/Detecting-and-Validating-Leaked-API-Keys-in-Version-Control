@@ -23,6 +23,11 @@ tags = ["database", "credential", "uri"]
 
 [allowlist]
 description = "Repository-local allowlists are never trusted"
+paths = [
+  '''(?i)(^|/)(node_modules|vendor|target|build|dist|\.vite|\.mvn)(/|$)''',
+  '''(?i)(^|/)(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|[^/]+\.lock)$''',
+  '''(?i)\.(min\.js|md|class|jar)$''',
+]
 regexTarget = "secret"
 regexes = [
   '''(?i)(?:your[_-]?(?:db[_-]?)?(?:password|secret)|replace[_-]?me|change[_-]?me|changeme|placeholder|dummy[_-]?(?:password|secret))''',

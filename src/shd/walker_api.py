@@ -197,6 +197,7 @@ def _cp1_finding_payload(finding: object, shap_by_key: dict[tuple[str, int], dic
         item["status"] = "SUPPRESSED_DECOY"
         item["lifecycle_badge"] = "Suppressed Decoy"
         item["risk_score"] = 0.0
+        item["suppression_reason"] = item.get("suppression_reason") or "placeholder"
     return item
 
 
