@@ -13,7 +13,7 @@ scan:
 	gitleaks detect --source . --config gitleaks.toml --report-format json --report-path /tmp/secretguard-gitleaks.json --no-banner
 
 baseline:
-	python scripts/reproduce_o2.py
+	python scripts/baseline.py
 
 clean:
 	rm -rf .pytest_cache artifacts/_archive/runtime-test

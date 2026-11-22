@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 
+# The scan command is designed to run with --read-only --network none
+# --memory 1g --pids-limit 256 and a repository bind mount with :ro.
+
 RUN useradd --create-home --uid 10001 secretguard && apt-get update \
     && apt-get install -y --no-install-recommends git ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*

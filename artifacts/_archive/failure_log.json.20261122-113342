@@ -1,0 +1,44 @@
+[
+  {
+    "timestamp": "2026-10-29T05:24:46.250123+00:00",
+    "test": "tests/test_cp1_complete.py::test_entropy_features_xgboost_and_shap_payload",
+    "exception": "ValueError",
+    "message": "Computing NDCG is only meaningful when there is more than 1 document. Got 1 instead."
+  },
+  {
+    "timestamp": "2026-11-22T05:51:30.492221+00:00",
+    "test": "tests/test_cp1_complete.py::test_rotation_transitions_and_positive_mttr",
+    "exception": "ValueError",
+    "message": "FORBIDDEN_TRANSITION:DETECTED->DETECTED"
+  },
+  {
+    "timestamp": "2026-11-22T05:51:57.978892+00:00",
+    "test": "tests/test_cp1_extras.py::test_rotation_success_and_rollback_are_terminal",
+    "exception": "ValueError",
+    "message": "FORBIDDEN_TRANSITION:DETECTED->DETECTED"
+  },
+  {
+    "timestamp": "2026-11-22T05:52:15.092749+00:00",
+    "test": "tests/test_negative_tests.py::test_nt3_rotation_requires_verification",
+    "exception": "ValueError",
+    "message": "FORBIDDEN_TRANSITION:DETECTED->DETECTED"
+  },
+  {
+    "timestamp": "2026-11-22T05:52:43.412868+00:00",
+    "test": "tests/test_phase_e_lifecycle.py::test_rotation_force_failure_stays_unverified",
+    "exception": "ValueError",
+    "message": "FORBIDDEN_TRANSITION:DETECTED->DETECTED"
+  },
+  {
+    "timestamp": "2026-11-22T05:54:30.633273+00:00",
+    "test": "tests/test_cp1_complete.py::test_rotation_transitions_and_positive_mttr",
+    "exception": "AssertionError",
+    "message": "assert 'ROTATED_UNVERIFIED' == 'VALIDITY_UNKNOWN'\n  \n  - VALIDITY_UNKNOWN\n  + ROTATED_UNVERIFIED"
+  },
+  {
+    "timestamp": "2026-11-22T05:55:02.361476+00:00",
+    "test": "tests/test_cp1_extras.py::test_rotation_success_and_rollback_are_terminal",
+    "exception": "AssertionError",
+    "message": "assert 'ROTATED_UNVERIFIED' == 'VALIDITY_UNKNOWN'\n  \n  - VALIDITY_UNKNOWN\n  + ROTATED_UNVERIFIED"
+  }
+]
