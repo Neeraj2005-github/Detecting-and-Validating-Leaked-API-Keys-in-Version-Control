@@ -110,7 +110,7 @@ frontend commands from `frontend/`.
 ```text
 backend/      CP1/O2 services, detection, ML, evaluation, and rotation
 data/         Evaluation inputs and frozen split data
-docs/         Architecture, setup, evaluation, audit, and contract documents
+docs/         API reference/snapshot, setup, architecture, evaluation, audit, and contracts
 fixtures/     Ground-truth oracle specification
 frontend/     React/Vite review workbench
 reports/      Generated baseline metrics and split reports
@@ -123,7 +123,9 @@ artifacts/    Generated evidence, plots, models, benchmark results, and fixture
 ```
 
 See [`docs/project-structure.md`](docs/project-structure.md) for the detailed
-responsibility of every root-level folder.
+responsibility of every root-level folder. GitHub-recognized files and
+tool-required configuration stay at the root; detailed documentation and the
+historical OpenAPI snapshot are grouped under `docs/`.
 
 ## Installation
 
@@ -319,11 +321,12 @@ lightweight model; a corrupt model is logged and rebuilt.
 
 The checked-in O2 benchmark artifact
 [`artifacts/o2_benchmark_kpis.json`](artifacts/o2_benchmark_kpis.json) reports
-for the recorded **Our O2 Engine** run: precision `1.0`, recall `1.0`, F1
-`1.0`, six true positives, zero false positives, and zero false negatives.
-These are synthetic-fixture results. The separate held-out 14-feature
-XGBoost artifact reports precision `0.75`, recall `1.0`, and F1
-`0.8571428571428571`. Do not conflate these evaluation scopes.
+for the recorded synthetic **Our O2 Engine** run: precision `1.0`, recall
+`0.667`, F1 `0.8`, four true positives, zero false positives, and two false
+negatives. The separate held-out 14-feature XGBoost result in
+[`artifacts/rq1_table_metrics.json`](artifacts/rq1_table_metrics.json) reports
+precision `0.75`, recall `1.0`, and F1 `0.8571`. These are different evaluation
+scopes; see [`docs/evaluation-methodology.md`](docs/evaluation-methodology.md).
 
 - **Precision:** `TP / (TP + FP)`.
 - **Recall:** `TP / (TP + FN)`.
@@ -342,6 +345,7 @@ Detailed methodology is in
 - [Installation guide](docs/installation-guide.md)
 - [Usage guide](docs/usage-guide.md)
 - [API documentation](docs/api-documentation.md)
+- [Historical OpenAPI snapshot](docs/api-openapi.snapshot.json); live schema: `/openapi.json`
 - [Dataset documentation](docs/dataset-documentation.md)
 - [Evaluation methodology](docs/evaluation-methodology.md)
 - [Project structure](docs/project-structure.md)

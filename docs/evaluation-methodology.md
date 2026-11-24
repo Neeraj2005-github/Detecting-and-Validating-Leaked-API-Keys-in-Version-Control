@@ -14,10 +14,14 @@ recall    = TP / (TP + FN)
 F1        = 2 * precision * recall / (precision + recall)
 ```
 
-The recorded O2 artifact reports TP=6, FP=0, FN=0, precision=1.0, recall=1.0,
-and F1=1.0 for that synthetic run. The separate RQ1 held-out 14-feature
-XGBoost row reports precision 0.75, recall 1.0, and F1 0.8571428571428571.
-These are different evaluation scopes.
+The current checked-in O2 artifact
+[`artifacts/o2_benchmark_kpis.json`](../artifacts/o2_benchmark_kpis.json)
+reports TP=4, FP=0, FN=2, precision=1.0, recall approximately 0.667, and
+F1=0.8 for its recorded synthetic run. The separate RQ1 held-out 14-feature
+XGBoost row in
+[`artifacts/rq1_table_metrics.json`](../artifacts/rq1_table_metrics.json)
+reports precision 0.75, recall 1.0, and F1 approximately 0.8571. These are
+different evaluation scopes.
 
 ## Combined coverage
 
