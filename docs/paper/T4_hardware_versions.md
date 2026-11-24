@@ -1,0 +1,10 @@
+| Item | Measured value | Source |
+|---|---|---|
+| CPU | 12th Gen Intel(R) Core(TM) i5-1235U | artifacts/resource_profile.json |
+| RAM | 16,831,815,680 bytes (16 GB reported) | artifacts/resource_profile.json |
+| OS | Windows-11-10.0.26300-SP0 | artifacts/o2_benchmark_kpis.json |
+| Gitleaks | 8.18.4 | artifacts/resource_profile.json |
+| Python | 3.12.7 | runtime measurement |
+| Git | 2.50.1.windows.1 | runtime measurement |
+| Node.js | v24.8.0 | runtime measurement |
+| npm | 11.6.0 | runtime measurement |

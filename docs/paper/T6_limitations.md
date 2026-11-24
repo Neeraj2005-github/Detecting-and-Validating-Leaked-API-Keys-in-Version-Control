@@ -1,0 +1,10 @@
+| Limitation | Measured or documented consequence | Source |
+|---|---|---|
+| Archives | ZIP/TAR/compressed contents are skipped and may miss embedded secrets | docs/limitations.md |
+| Submodules | Submodule repositories are not recursively scanned | docs/limitations.md |
+| Git LFS | Pointer files are skipped; LFS objects are not downloaded | docs/limitations.md |
+| Encoded/split credentials | Known misses for Base64/URL-encoded/PEM/split values | docs/limitations.md |
+| Large distinct findings | 100 distinct-path findings exceeded 30-second parse-stage timeout | docs/limitations.md |
+| Provider validity | Scanner does not validate or revoke external credentials | docs/limitations.md |
+| Synthetic fixtures | Results do not establish production performance or recall | docs/comparison.md |
+| DEVOPS-LAB-EXAM | NOT MEASURED | docs/comparison.md |

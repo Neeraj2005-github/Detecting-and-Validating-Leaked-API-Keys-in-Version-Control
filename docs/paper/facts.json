@@ -1,0 +1,61 @@
+{
+  "gitleaks_version": "8.18.4",
+  "test_count_last_real_run": 146,
+  "test_status_last_real_run": "passed",
+  "coverage_percent": 77,
+  "nt_test_count": 5,
+  "ec_test_count": 5,
+  "fixture_count_oracle": 8,
+  "commits_by_author": {
+    "Neeraj": 54,
+    "Copilot": 1
+  },
+  "lines_of_code": {
+    "wrapper_src_shd": 2855,
+    "wrapper_backend": 3943,
+    "wrapper_total": 6798,
+    "unmodified_gitleaks": 0
+  },
+  "numeric_claims": {
+    "gitleaks_version": {
+      "value": "8.18.4",
+      "source": "artifacts/resource_profile.json"
+    },
+    "test_count_last_real_run": {
+      "value": 146,
+      "source": "docs/evaluation-methodology.md"
+    },
+    "coverage_percent": {
+      "value": 77,
+      "source": "docs/evaluation-methodology.md"
+    },
+    "nt_test_count": {
+      "value": 5,
+      "source": "tests/test_negative_tests.py"
+    },
+    "ec_test_count": {
+      "value": 5,
+      "source": "tests/test_cp1_complete.py"
+    },
+    "fixture_count_oracle": {
+      "value": 8,
+      "source": "fixtures/oracle_spec.yaml"
+    },
+    "commits_by_author": {
+      "value": {
+        "Neeraj": 54,
+        "Copilot": 1
+      },
+      "source": "git shortlog HEAD"
+    },
+    "lines_of_code": {
+      "value": {
+        "wrapper_src_shd": 2855,
+        "wrapper_backend": 3943,
+        "wrapper_total": 6798,
+        "unmodified_gitleaks": 0
+      },
+      "source": "repository line count"
+    }
+  }
+}

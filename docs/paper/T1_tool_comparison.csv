@@ -1,0 +1,7 @@
+Measure,Native Gitleaks,Wrapper
+Findings,6,6
+False positives,1,1
+Deleted-but-recoverable flagged,NOT MEASURED,2
+Coverage reporting,Not provided,"Complete; 6 commits, 3 skipped files"
+Dedupe: 100 commits to 1 finding,100,1
+Exit codes,Native binary contract: NOT MEASURED,0/1/2/3/4
