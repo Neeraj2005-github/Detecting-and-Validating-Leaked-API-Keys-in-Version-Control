@@ -28,5 +28,65 @@
     "test": "tests/test_phase_a_entrypoint.py::test_cli_local_repo_json_end_to_end",
     "exception": "AssertionError",
     "message": "assert 0 == 1\n +  where 0 = CompletedProcess(args=['C:\\\\Program Files\\\\Python312\\\\python.exe', '-m', 'src.shd.cli', 'scan', 'C:\\\\Users\\\\sakal\\\\App...cted skipped=0 lifecycle=VALIDITY_UNKNOWN exit-code=0 clean, 1 findings, 2 skipped, 3 runtime, 4 invalid\\n', stderr='').returncode"
+  },
+  {
+    "timestamp": "2026-11-22T10:15:34.633701+00:00",
+    "test": "tests/test_cp1_background_jobs.py::test_cp1_scan_stage_timeout_reports_sub_step",
+    "exception": "AssertionError",
+    "message": "scan job did not reach a terminal state"
+  },
+  {
+    "timestamp": "2026-11-22T10:40:24.252136+00:00",
+    "test": "tests/test_cp1_background_jobs.py::test_cp1_scan_job_returns_done_result_and_stages",
+    "exception": "AssertionError",
+    "message": "assert 0 >= 1"
+  },
+  {
+    "timestamp": "2026-11-22T10:40:27.433796+00:00",
+    "test": "tests/test_cp1_background_jobs.py::test_cp1_scan_stage_timeout_reports_sub_step",
+    "exception": "AssertionError",
+    "message": "assert 'gitleaks_subprocess' == 'batched_history_walk'\n  \n  - batched_history_walk\n  + gitleaks_subprocess"
+  },
+  {
+    "timestamp": "2026-11-22T10:41:43.138763+00:00",
+    "test": "tests/test_cp1_background_jobs.py::test_cp1_scan_job_returns_done_result_and_stages",
+    "exception": "AssertionError",
+    "message": "assert 0 >= 1"
+  },
+  {
+    "timestamp": "2026-11-22T10:45:21.648277+00:00",
+    "test": "tests/test_cp1_background_jobs.py::test_cp1_scan_job_returns_done_result_and_stages",
+    "exception": "AssertionError",
+    "message": "assert 'batched_history_walk' in {'coverage_walk', 'gitleaks_subprocess', 'scan_parallel_total'}"
+  },
+  {
+    "timestamp": "2026-11-22T15:54:01.861466+00:00",
+    "test": "tests/test_precision_rules.py::test_positive_secret_types_are_found_after_later_deletion",
+    "exception": "AssertionError",
+    "message": "assert {'aws_access_...'private_key'} <= {'aws_access_..., 'mysql_uri'}\n  \n  Extra items in the left set:\n  'private_key'"
+  },
+  {
+    "timestamp": "2026-11-22T15:55:52.093169+00:00",
+    "test": "tests/test_precision_rules.py::test_gitleaks_finds_positive_fixtures_in_deleted_history",
+    "exception": "AssertionError",
+    "message": "assert {('aws-access...vate-key', 2)} <= {('aws-access...vate-key', 2)}\n  \n  Extra items in the left set:\n  ('secretguard-generic-assignment', 4)"
+  },
+  {
+    "timestamp": "2026-11-22T16:02:06.270852+00:00",
+    "test": "tests/test_exposure_lifecycle.py::test_deleted_secret_reports_exposure_interval_and_recoverability",
+    "exception": "ValueError",
+    "message": "Unsupported date format or type: 2024-01-01T00:00:00+00:00, type=<class 'str'>"
+  },
+  {
+    "timestamp": "2026-11-22T16:02:06.529289+00:00",
+    "test": "tests/test_exposure_lifecycle.py::test_active_secret_and_local_only_recoverability_are_distinguished",
+    "exception": "ValueError",
+    "message": "Unsupported date format or type: 2024-01-01T00:00:00+00:00, type=<class 'str'>"
+  },
+  {
+    "timestamp": "2026-11-22T16:07:52.915037+00:00",
+    "test": "tests/test_cp1_background_jobs.py::test_cp1_scan_stage_timeout_reports_sub_step",
+    "exception": "AssertionError",
+    "message": "assert 'coverage_walk' == 'gitleaks_subprocess'\n  \n  - gitleaks_subprocess\n  + coverage_walk"
   }
 ]
