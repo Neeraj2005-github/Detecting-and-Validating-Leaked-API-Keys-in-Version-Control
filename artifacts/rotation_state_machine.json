@@ -1,38 +1,38 @@
 {
   "credential_id": "cp1-synthetic-credential",
-  "mttr_ms": 0.4044,
+  "mttr_ms": 0.3234,
   "sandbox": "sqlite-in-memory-offline",
   "state": "VERIFIED_REVOKED",
   "transitions": [
     {
       "detail": "synthetic finding accepted",
       "state": "DETECTED",
-      "timestamp": "2026-11-24T13:07:45.599010+00:00"
+      "timestamp": "2026-11-24T13:25:09.595736+00:00"
     },
     {
       "detail": "source removal does not remove history",
       "state": "EXPOSED_IN_HISTORY",
-      "timestamp": "2026-11-24T13:07:45.599010+00:00"
+      "timestamp": "2026-11-24T13:25:09.595736+00:00"
     },
     {
       "detail": "provider validity is not checked",
       "state": "VALIDITY_UNKNOWN",
-      "timestamp": "2026-11-24T13:07:45.599010+00:00"
+      "timestamp": "2026-11-24T13:25:09.595736+00:00"
     },
     {
       "detail": "synthetic validation reports active",
       "state": "STILL_VALID",
-      "timestamp": "2026-11-24T13:07:45.600009+00:00"
+      "timestamp": "2026-11-24T13:25:09.596742+00:00"
     },
     {
       "detail": "synthetic credential replaced",
       "state": "ROTATED_UNVERIFIED",
-      "timestamp": "2026-11-24T13:07:45.600009+00:00"
+      "timestamp": "2026-11-24T13:25:09.596742+00:00"
     },
     {
       "detail": "verified sandbox revocation",
       "state": "VERIFIED_REVOKED",
-      "timestamp": "2026-11-24T13:07:45.600009+00:00"
+      "timestamp": "2026-11-24T13:25:09.596742+00:00"
     }
   ]
 }
