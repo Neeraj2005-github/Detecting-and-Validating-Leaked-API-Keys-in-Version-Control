@@ -11,7 +11,7 @@ and should not be merged casually.
 | `artifacts/` | Generated benchmark/evidence JSON, plots, model files, and the generated `synthetic_repo_v1` Git fixture. |
 | `backend/` | CP1/O2 application services. `scanner/history_walker.py` walks history; `ml/` owns detection, XGBoost, and SHAP; `services/` owns fixtures, benchmarks, artifacts, and rotation. |
 | `data/` | Evaluation inputs and frozen split metadata. |
-| `docs/` | Maintainer, architecture, setup, dataset, evaluation, contract, audit, and traceability documentation. |
+| `docs/` | Maintainer, architecture, setup, API, dataset, evaluation, contract, audit, and traceability documentation, including the historical OpenAPI snapshot. |
 | `fixtures/` | Versioned oracle specification used to generate deterministic test truth. |
 | `frontend/` | Vite/React application. `src/api/` contains Axios services; `src/pages/` contains workbench views. |
 | `reports/` | Generated baseline metrics and split reports. |
