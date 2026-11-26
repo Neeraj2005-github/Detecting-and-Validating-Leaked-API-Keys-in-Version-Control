@@ -1,37 +1,93 @@
-﻿{
-    "status":  "MEASURED",
-    "cpu_model":  "12th Gen Intel(R) Core(TM) i5-1235U",
-    "gitleaks_version":  "8.18.4",
-    "runs":  [
-                 {
-                     "commits":  10000,
-                     "repo_size_bytes":  2028963,
-                     "runs":  [
-                                  {
-                                      "returncode":  1,
-                                      "wall_time_seconds":  1.5436963000001924,
-                                      "cpu_time_seconds":  0.40625,
-                                      "peak_rss_mb":  28.29296875
-                                  }
-                              ],
-                     "status":  "MEASURED",
-                     "median_min_max":  {
-                                            "wall_time_seconds":  {
-                                                                      "median":  1.5436963000001924,
-                                                                      "min":  1.5436963000001924,
-                                                                      "max":  1.5436963000001924
-                                                                  },
-                                            "cpu_time_seconds":  {
-                                                                     "median":  0.40625,
-                                                                     "min":  0.40625,
-                                                                     "max":  0.40625
-                                                                 },
-                                            "peak_rss_mb":  {
-                                                                "median":  28.29296875,
-                                                                "min":  28.29296875,
-                                                                "max":  28.29296875
-                                                            }
-                                        }
-                 }
-             ]
+{
+  "status": "MEASURED",
+  "cpu_model": "12th Gen Intel(R) Core(TM) i5-1235U",
+  "gitleaks_version": "8.18.4",
+  "commit_objects": 10000,
+  "reachable_commits": 9998,
+  "new_repetitions": 5,
+  "samples": [
+    {
+      "run": 1,
+      "source": "preserved original one-run measurement",
+      "returncode": 1,
+      "wall_time_seconds": 1.5436963000001924,
+      "cpu_time_seconds": 0.40625,
+      "peak_rss_mb": 28.29296875,
+      "repo_size_bytes": 2028963,
+      "commit_objects": 10000
+    },
+    {
+      "returncode": 1,
+      "wall_time_seconds": 0.2887481999996453,
+      "cpu_time_seconds": 0.125,
+      "peak_rss_mb": 27.875,
+      "run": 2,
+      "source": "new fast-import repetition",
+      "repo_size_bytes": 1853654,
+      "commit_objects": 10000,
+      "reachable_commits": 9998
+    },
+    {
+      "returncode": 1,
+      "wall_time_seconds": 0.2867640999993455,
+      "cpu_time_seconds": 0.296875,
+      "peak_rss_mb": 25.5546875,
+      "run": 3,
+      "source": "new fast-import repetition",
+      "repo_size_bytes": 1853654,
+      "commit_objects": 10000,
+      "reachable_commits": 9998
+    },
+    {
+      "returncode": 1,
+      "wall_time_seconds": 0.2758600999995906,
+      "cpu_time_seconds": 0.25,
+      "peak_rss_mb": 25.109375,
+      "run": 4,
+      "source": "new fast-import repetition",
+      "repo_size_bytes": 1853654,
+      "commit_objects": 10000,
+      "reachable_commits": 9998
+    },
+    {
+      "returncode": 1,
+      "wall_time_seconds": 0.2863078000000314,
+      "cpu_time_seconds": 0.203125,
+      "peak_rss_mb": 25.2890625,
+      "run": 5,
+      "source": "new fast-import repetition",
+      "repo_size_bytes": 1853654,
+      "commit_objects": 10000,
+      "reachable_commits": 9998
+    },
+    {
+      "returncode": 1,
+      "wall_time_seconds": 0.2844458999998096,
+      "cpu_time_seconds": 0.15625,
+      "peak_rss_mb": 26.8203125,
+      "run": 6,
+      "source": "new fast-import repetition",
+      "repo_size_bytes": 1853654,
+      "commit_objects": 10000,
+      "reachable_commits": 9998
+    }
+  ],
+  "summary_new_repetitions": {
+    "wall_time_seconds": {
+      "median": 0.2863078000000314,
+      "min": 0.2758600999995906,
+      "max": 0.2887481999996453
+    },
+    "cpu_time_seconds": {
+      "median": 0.203125,
+      "min": 0.125,
+      "max": 0.296875
+    },
+    "peak_rss_mb": {
+      "median": 25.5546875,
+      "min": 25.109375,
+      "max": 27.875
+    }
+  },
+  "repo_size_bytes_new_fixture": 1853654
 }
