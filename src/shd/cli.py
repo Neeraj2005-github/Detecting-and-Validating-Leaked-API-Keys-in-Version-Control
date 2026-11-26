@@ -9,6 +9,7 @@ import os
 import shutil
 import subprocess
 import secrets
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -297,7 +298,15 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         except (ValueError, OSError, git.InvalidGitRepositoryError):
             return 4
-        except Exception:
+        except Exception as exc:
+            active_stage = next(
+                (stage["name"] for stage in stages if stage["status"] == "running"),
+                "initialization",
+            )
+            print(
+                f"scan runtime error during {active_stage} ({type(exc).__name__})",
+                file=sys.stderr,
+            )
             return 3
         finally:
             if repo is not None:

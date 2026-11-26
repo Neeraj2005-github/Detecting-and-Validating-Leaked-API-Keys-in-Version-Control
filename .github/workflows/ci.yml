@@ -18,14 +18,14 @@ jobs:
         run: pip install -r requirements.txt
       - name: Generate traceability
         run: python scripts/gen_traceability.py
+      - name: Self-scan repository
+        run: gitleaks detect --source . --config gitleaks-selfscan.toml --report-format json --report-path /tmp/secretguard-selfscan.json --no-banner
       - name: Seed test repository
         run: python testdata/seed_repo.py
       - name: Train test model
         run: python -m backend.ml_filter.train
       - name: Python suite and combined coverage gate
         run: pytest --cov=backend --cov=src/shd --cov-report=term-missing:skip-covered --cov-fail-under=75
-      - name: Self-scan repository
-        run: gitleaks detect --source . --config gitleaks-selfscan.toml --report-format json --report-path /tmp/secretguard-selfscan.json --no-banner
 
   baseline:
     runs-on: ubuntu-latest
@@ -41,7 +41,19 @@ jobs:
           curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz
           sudo mv gitleaks /usr/local/bin/
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
+        run: |
+          echo "Checkout status before installing requirements:"
+          git status --short --untracked-files=all --ignore-submodules=all
+          pip install -r requirements.txt
+          echo "Checkout status after installing requirements:"
+          git status --short --untracked-files=all --ignore-submodules=all
+          git diff --numstat -- README.md
+          git ls-files --eol README.md
+          if git diff --ignore-space-at-eol --quiet -- README.md; then
+            echo "README diff is end-of-line only or absent"
+          else
+            echo "README has non-line-ending changes"
+          fi
       - name: Run clean-checkout baseline
         run: python scripts/baseline.py
       - name: Upload non-sensitive benchmark reports

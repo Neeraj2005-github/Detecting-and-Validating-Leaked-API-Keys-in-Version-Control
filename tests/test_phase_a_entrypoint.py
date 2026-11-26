@@ -13,6 +13,7 @@ from pathlib import Path
 import git
 import pytest
 
+from src.shd import cli
 from backend.services.repository_ingestion import (
     _directory_size_bytes,
     validate_https_url,
@@ -73,6 +74,23 @@ def test_cli_local_repo_json_end_to_end(tmp_path: Path) -> None:
     assert "AKIAIOSFODNN7EXAMPLE" not in out.read_text(encoding="utf-8")
     assert "commits=" in completed.stdout
     assert "exit-codes=0 completed" in completed.stdout
+
+
+def test_cli_reports_sanitized_runtime_stage(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    repo = _local_repo(tmp_path)
+
+    def fail_preflight(*args: object, **kwargs: object) -> dict[str, object]:
+        raise RuntimeError("sensitive exception detail")
+
+    monkeypatch.setattr(cli, "build_coverage", fail_preflight)
+    assert cli.main(["scan", str(repo)]) == 3
+    captured = capsys.readouterr()
+    assert "scan runtime error during preflight (RuntimeError)" in captured.err
+    assert "sensitive exception detail" not in captured.err
 
 
 @pytest.mark.parametrize(
