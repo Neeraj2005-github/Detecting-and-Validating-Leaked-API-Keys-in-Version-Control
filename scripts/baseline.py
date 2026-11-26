@@ -32,12 +32,21 @@ def _run(command: list[str], cwd: Path, timeout: int) -> subprocess.CompletedPro
 
 def _require_clean_checkout() -> None:
     status = _run(
-        ["git", "status", "--porcelain", "--untracked-files=all"],
+        [
+            "git",
+            "status",
+            "--porcelain",
+            "--untracked-files=all",
+            "--ignore-submodules=all",
+        ],
         ROOT,
         timeout=20,
     )
     if status.stdout.strip():
-        raise RuntimeError("Baseline requires a clean checkout")
+        raise RuntimeError(
+            "Baseline requires a clean checkout; unexpected changes: "
+            f"{status.stdout.strip()}"
+        )
 
 
 def _baseline(sizes: list[int], runs: int) -> int:

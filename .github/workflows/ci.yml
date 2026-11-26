@@ -126,6 +126,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install fixture-generation dependencies
+        run: pip install "GitPython==3.2.1" "PyYAML==6.0.*"
+      - name: Seed test repository
+        run: python testdata/seed_repo.py
       - name: Build container
         run: docker build -t secretguard-cp1 .
       - name: Scan a read-only mount with a read-only root
