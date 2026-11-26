@@ -1,16 +1,14 @@
-# Local sample scan evidence
+# Planted sample scan evidence
 
-The requested `DEVOPS-LAB-EXAM` repository was not present in the workspace.
-Its scan time, finding count, precision, and recall are **NOT MEASURED**.
+Scanned `testdata/seeded_repo` with `backend.detection.gitleaks_runner.run_gitleaks` on the local Windows host. Finding values are not persisted or printed.
 
-The local planted sample `testdata/seeded_repo` produced 17 findings in 0.207
-seconds using `backend.detection.gitleaks_runner.run_gitleaks` on the local
-Windows host. The measurement records only the count and elapsed time; it does
-not persist or print finding values.
+- Scan time: **0.181583 s**
+- Raw Gitleaks findings: **17**
+- Unmatched findings outside the labeled fixture keys: **0**
+- Positive fixtures: **15/15 found**
+- Negative fixtures: **15/15 correctly clean**
+- Labeled-fixture confusion counts: TP=15, FP=0, TN=15, FN=0
+- Positive-class precision: **1.000**; recall: **1.000**
+- Negative-class precision: **1.000**; recall: **1.000**
 
-Per-category precision, recall, F1, false-positive rates, medians, min/max, and
-bootstrap 95% confidence intervals for the synthetic positive and negative
-fixtures are in [`../comparison.md`](../comparison.md) and
-[`../../artifacts/comparison.json`](../../artifacts/comparison.json). These
-results are controlled-fixture evidence, not estimates of production
-performance on `DEVOPS-LAB-EXAM`.
+Metrics use the 30 labeled records in `testdata/ground_truth.yaml` keyed by commit and file. Positive-class metrics treat the 15 `true_secret` records as positive; negative-class metrics treat the 15 `false_positive` records as negative. Unmatched raw findings are reported separately and are not silently assigned labels.
