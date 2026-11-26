@@ -103,7 +103,12 @@ def cpu_model_name() -> str:
     return platform.processor() or "NOT MEASURED"
 
 
-def profile_child_process(command: list[str], cwd: str | Path) -> dict[str, Any]:
+def profile_child_process(
+    command: list[str],
+    cwd: str | Path,
+    *,
+    timeout_seconds: int = 600,
+) -> dict[str, Any]:
     """Measure wall, CPU and peak working set for a direct child process."""
     started_wall = time.perf_counter()
     process = subprocess.Popen(
@@ -118,8 +123,13 @@ def profile_child_process(command: list[str], cwd: str | Path) -> dict[str, Any]
     peak_rss_mb: float | None = None
     started_cpu = child.cpu_times()
     max_child_cpu = started_cpu.user + started_cpu.system
+    deadline = started_wall + timeout_seconds
     try:
         while process.poll() is None:
+            if time.perf_counter() >= deadline:
+                process.kill()
+                process.communicate()
+                raise RuntimeError("PROFILED_PROCESS_TIMEOUT")
             try:
                 peak_rss_mb = max(
                     peak_rss_mb or 0.0,
@@ -133,7 +143,9 @@ def profile_child_process(command: list[str], cwd: str | Path) -> dict[str, Any]
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 break
             time.sleep(0.005)
-        stdout, stderr = process.communicate(timeout=30)
+        stdout, stderr = process.communicate(
+            timeout=max(0.1, deadline - time.perf_counter())
+        )
         try:
             cpu = child.cpu_times()
         except (psutil.NoSuchProcess, psutil.AccessDenied):
@@ -148,7 +160,7 @@ def profile_child_process(command: list[str], cwd: str | Path) -> dict[str, Any]
             pass
     except subprocess.TimeoutExpired:
         process.kill()
-        stdout, stderr = process.communicate()
+        process.communicate()
         raise RuntimeError("PROFILED_PROCESS_TIMEOUT")
     wall = time.perf_counter() - started_wall
     return {

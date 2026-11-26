@@ -1,0 +1,37 @@
+﻿{
+    "status":  "MEASURED",
+    "cpu_model":  "12th Gen Intel(R) Core(TM) i5-1235U",
+    "gitleaks_version":  "8.18.4",
+    "runs":  [
+                 {
+                     "commits":  10000,
+                     "repo_size_bytes":  2028963,
+                     "runs":  [
+                                  {
+                                      "returncode":  1,
+                                      "wall_time_seconds":  1.5436963000001924,
+                                      "cpu_time_seconds":  0.40625,
+                                      "peak_rss_mb":  28.29296875
+                                  }
+                              ],
+                     "status":  "MEASURED",
+                     "median_min_max":  {
+                                            "wall_time_seconds":  {
+                                                                      "median":  1.5436963000001924,
+                                                                      "min":  1.5436963000001924,
+                                                                      "max":  1.5436963000001924
+                                                                  },
+                                            "cpu_time_seconds":  {
+                                                                     "median":  0.40625,
+                                                                     "min":  0.40625,
+                                                                     "max":  0.40625
+                                                                 },
+                                            "peak_rss_mb":  {
+                                                                "median":  28.29296875,
+                                                                "min":  28.29296875,
+                                                                "max":  28.29296875
+                                                            }
+                                        }
+                 }
+             ]
+}
