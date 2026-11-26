@@ -41,6 +41,7 @@ def test_db_project_rules_detect_and_allowlist(tmp_path: Path) -> None:
 
 def test_config_lock_matches_gitleaks_toml() -> None:
     root = Path(__file__).resolve().parents[1]
-    actual = hashlib.sha256((root / "gitleaks.toml").read_bytes()).hexdigest()
+    config_bytes = (root / "gitleaks.toml").read_bytes().replace(b"\r\n", b"\n")
+    actual = hashlib.sha256(config_bytes).hexdigest()
     locked = (root / "config.lock").read_text(encoding="ascii").strip()
     assert actual == locked

@@ -183,7 +183,8 @@ def run_gitleaks(repo_path: str, config_path: str = "gitleaks.toml") -> list[dic
         raise RuntimeError("Gitleaks config refusal: SecretGuard-owned gitleaks.toml is required")
     if not CONFIG_LOCK.is_file():
         raise RuntimeError("Gitleaks config refusal: config.lock is missing")
-    actual = hashlib.sha256(OWNED_CONFIG.read_bytes()).hexdigest()
+    config_bytes = OWNED_CONFIG.read_bytes().replace(b"\r\n", b"\n")
+    actual = hashlib.sha256(config_bytes).hexdigest()
     locked = CONFIG_LOCK.read_text(encoding="ascii").strip().lower()
     if actual != locked:
         raise RuntimeError("Gitleaks config refusal: gitleaks.toml hash differs from config.lock")
