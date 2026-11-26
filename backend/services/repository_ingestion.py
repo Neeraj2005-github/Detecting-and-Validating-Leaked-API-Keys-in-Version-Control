@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import http.client
 import ipaddress
 import os
 import shutil
@@ -37,6 +38,19 @@ def validate_https_url(
     allow_loopback_test: bool = False,
     allow_http_test: bool = False,
 ) -> str:
+    return _validate_https_url(
+        value,
+        allow_loopback_test=allow_loopback_test,
+        allow_http_test=allow_http_test,
+    )[0]
+
+
+def _validate_https_url(
+    value: str,
+    *,
+    allow_loopback_test: bool,
+    allow_http_test: bool,
+) -> tuple[str, list[str]]:
     raw = value.strip()
     parsed = urllib.parse.urlparse(raw)
     scheme = parsed.scheme.lower()
@@ -56,11 +70,12 @@ def validate_https_url(
         if not (allow_loopback_test and literal.is_loopback):
             raise ValueError("Private, link-local, or local repository addresses are not accepted")
 
+    port = parsed.port or (80 if scheme == "http" else 443)
     try:
-        addresses = {
+        addresses = sorted({
             item[4][0]
-            for item in socket.getaddrinfo(hostname, parsed.port or 443, type=socket.SOCK_STREAM)
-        }
+            for item in socket.getaddrinfo(hostname, port, type=socket.SOCK_STREAM)
+        })
     except socket.gaierror as exc:
         raise ValueError("Repository hostname could not be resolved") from exc
     if not addresses or any(
@@ -68,7 +83,61 @@ def validate_https_url(
         for address in addresses
     ):
         raise ValueError("Repository hostname resolves to a forbidden address")
-    return parsed.geturl()
+    return parsed.geturl(), addresses
+
+
+class _PinnedHTTPConnection(http.client.HTTPConnection):
+    def __init__(self, host: str, *, address: str, **kwargs: object) -> None:
+        self._resolved_address = address
+        super().__init__(host, **kwargs)
+
+    def connect(self) -> None:
+        self.sock = socket.create_connection(
+            (self._resolved_address, self.port),
+            self.timeout,
+            self.source_address,
+        )
+
+
+class _PinnedHTTPSConnection(http.client.HTTPSConnection):
+    def __init__(self, host: str, *, address: str, **kwargs: object) -> None:
+        self._resolved_address = address
+        super().__init__(host, **kwargs)
+
+    def connect(self) -> None:
+        raw_socket = socket.create_connection(
+            (self._resolved_address, self.port),
+            self.timeout,
+            self.source_address,
+        )
+        self.sock = self._context.wrap_socket(raw_socket, server_hostname=self.host)
+
+
+class _PinnedHTTPHandler(urllib.request.HTTPHandler):
+    def __init__(self, address: str) -> None:
+        super().__init__()
+        self._address = address
+
+    def http_open(self, request):
+        return self.do_open(
+            _PinnedHTTPConnection,
+            request,
+            address=self._address,
+        )
+
+
+class _PinnedHTTPSHandler(urllib.request.HTTPSHandler):
+    def __init__(self, address: str) -> None:
+        super().__init__()
+        self._address = address
+
+    def https_open(self, request):
+        return self.do_open(
+            _PinnedHTTPSConnection,
+            request,
+            address=self._address,
+            context=self._context,
+        )
 
 
 class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
@@ -83,7 +152,22 @@ def validate_redirect_chain(
     allow_loopback_test: bool = False,
     allow_http_test: bool = False,
 ) -> str:
-    url = validate_https_url(
+    return _validate_redirect_chain(
+        value,
+        timeout_seconds,
+        allow_loopback_test=allow_loopback_test,
+        allow_http_test=allow_http_test,
+    )[0]
+
+
+def _validate_redirect_chain(
+    value: str,
+    timeout_seconds: int,
+    *,
+    allow_loopback_test: bool,
+    allow_http_test: bool,
+) -> tuple[str, list[str]]:
+    url, addresses = _validate_https_url(
         value,
         allow_loopback_test=allow_loopback_test,
         allow_http_test=allow_http_test,
@@ -94,19 +178,29 @@ def validate_redirect_chain(
         if current in seen:
             raise ValueError("Repository URL contains a redirect loop")
         seen.add(current)
+        parsed = urllib.parse.urlparse(current)
         request = urllib.request.Request(current, method="HEAD")
-        opener = urllib.request.build_opener(_NoRedirectHandler)
+        connection_handler = (
+            _PinnedHTTPHandler(addresses[0])
+            if parsed.scheme == "http"
+            else _PinnedHTTPSHandler(addresses[0])
+        )
+        opener = urllib.request.build_opener(
+            urllib.request.ProxyHandler({}),
+            _NoRedirectHandler,
+            connection_handler,
+        )
         try:
             response = opener.open(request, timeout=timeout_seconds)
             response.close()
-            return current
+            return current, addresses
         except urllib.error.HTTPError as exc:
             if exc.code not in {301, 302, 303, 307, 308}:
                 raise ValueError("Repository URL could not be reached safely") from exc
             location = exc.headers.get("Location")
             if not location:
                 raise ValueError("Repository redirect has no destination")
-            current = validate_https_url(
+            current, addresses = _validate_https_url(
                 urllib.parse.urljoin(current, location),
                 allow_loopback_test=allow_loopback_test,
                 allow_http_test=allow_http_test,
@@ -127,8 +221,14 @@ def _directory_size_bytes(path: Path) -> int:
     return total
 
 
-def build_clone_command(url: str, destination: Path, hooks_dir: Path) -> list[str]:
-    return [
+def build_clone_command(
+    url: str,
+    destination: Path,
+    hooks_dir: Path,
+    *,
+    resolved_addresses: list[str] | None = None,
+) -> list[str]:
+    command = [
         "git",
         "-c", f"core.hooksPath={hooks_dir.as_posix()}",
         "-c", "protocol.file.allow=never",
@@ -139,6 +239,16 @@ def build_clone_command(url: str, destination: Path, hooks_dir: Path) -> list[st
         url,
         str(destination),
     ]
+    parsed = urllib.parse.urlparse(url)
+    if resolved_addresses:
+        hostname = parsed.hostname or ""
+        port = parsed.port or (80 if parsed.scheme == "http" else 443)
+        if ":" in hostname:
+            hostname = f"[{hostname}]"
+        for address in resolved_addresses:
+            resolved = f"[{address}]" if ":" in address else address
+            command[1:1] = ["-c", f"http.curloptResolve={hostname}:{port}:{resolved}"]
+    return command
 
 
 def configure_askpass(parent: Path, env: dict[str, str], token: str) -> Path:
@@ -164,8 +274,9 @@ def clone_https_repository(
     # Import lazily so URL validation remains usable if GitPython is unavailable.
     import git
 
-    url = validate_redirect_chain(
+    url, resolved_addresses = _validate_redirect_chain(
         value,
+        10,
         allow_loopback_test=allow_loopback_test,
         allow_http_test=allow_http_test,
     )
@@ -189,7 +300,12 @@ def clone_https_repository(
     if token:
         configure_askpass(parent, env, token)
 
-    command = build_clone_command(url, destination, hooks_dir)
+    command = build_clone_command(
+        url,
+        destination,
+        hooks_dir,
+        resolved_addresses=resolved_addresses,
+    )
     try:
         completed = subprocess.run(
             command,

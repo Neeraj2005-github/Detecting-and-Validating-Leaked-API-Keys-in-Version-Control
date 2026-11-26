@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import json
+import http.server
 import os
+import socket
 import subprocess
 import sys
 import threading
-import http.server
-import subprocess
 import time
 from pathlib import Path
 
@@ -163,13 +163,73 @@ def test_local_http_redirect_to_private_ip_is_rejected() -> None:
         server.server_close()
 
 
+def test_redirect_probe_connects_to_the_address_it_validated(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class OkHandler(http.server.BaseHTTPRequestHandler):
+        def do_HEAD(self) -> None:
+            self.send_response(200)
+            self.end_headers()
+
+        def log_message(self, format: str, *args: object) -> None:
+            return
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), OkHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    original_getaddrinfo = socket.getaddrinfo
+    original_create_connection = socket.create_connection
+    resolutions = 0
+    connected: list[str] = []
+
+    def rebinding_getaddrinfo(host: str, port: int, *args: object, **kwargs: object):
+        nonlocal resolutions
+        if host == "rebind.example.test":
+            resolutions += 1
+            address = "127.0.0.1" if resolutions == 1 else "10.0.0.10"
+            return original_getaddrinfo(address, port, *args, **kwargs)
+        return original_getaddrinfo(host, port, *args, **kwargs)
+
+    def recording_connect(address: tuple[str, int], *args: object, **kwargs: object):
+        connected.append(address[0])
+        return original_create_connection(address, *args, **kwargs)
+
+    monkeypatch.setattr(socket, "getaddrinfo", rebinding_getaddrinfo)
+    monkeypatch.setattr(socket, "create_connection", recording_connect)
+    try:
+        url = f"http://rebind.example.test:{server.server_port}/repository.git"
+        result = validate_redirect_chain(
+            url,
+            timeout_seconds=2,
+            allow_loopback_test=True,
+            allow_http_test=True,
+        )
+        assert result == url
+        assert resolutions == 1
+        assert connected == ["127.0.0.1"]
+    finally:
+        server.shutdown()
+        thread.join(timeout=2)
+        server.server_close()
+
+
+def test_clone_command_pins_validated_addresses(tmp_path: Path) -> None:
+    command = build_clone_command(
+        "https://example.test/repository.git",
+        tmp_path / "repository",
+        tmp_path / "empty-hooks",
+        resolved_addresses=["93.184.216.34"],
+    )
+    assert "http.curloptResolve=example.test:443:93.184.216.34" in command
+
+
 def test_local_http_clone_timeout_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     import backend.services.repository_ingestion as ingestion
 
     monkeypatch.setattr(
         ingestion,
-        "validate_redirect_chain",
-        lambda *args, **kwargs: "http://127.0.0.1/repository.git",
+        "_validate_redirect_chain",
+        lambda *args, **kwargs: ("http://127.0.0.1/repository.git", ["127.0.0.1"]),
     )
 
     def timeout_run(*args: object, **kwargs: object) -> None:
@@ -190,8 +250,8 @@ def test_oversize_local_clone_is_rejected(monkeypatch: pytest.MonkeyPatch, tmp_p
 
     monkeypatch.setattr(
         ingestion,
-        "validate_redirect_chain",
-        lambda *args, **kwargs: "http://127.0.0.1/repository.git",
+        "_validate_redirect_chain",
+        lambda *args, **kwargs: ("http://127.0.0.1/repository.git", ["127.0.0.1"]),
     )
 
     def fake_clone(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
