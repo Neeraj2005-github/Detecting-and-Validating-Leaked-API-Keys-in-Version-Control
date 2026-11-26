@@ -23,7 +23,7 @@ jobs:
       - name: Train test model
         run: python -m backend.ml_filter.train
       - name: Python suite and combined coverage gate
-        run: pytest --cov=backend --cov=src.shd --cov-report=term-missing:skip-covered --cov-fail-under=75
+        run: pytest --cov=backend --cov=src/shd --cov-report=term-missing:skip-covered --cov-fail-under=75
       - name: Self-scan repository
         run: gitleaks detect --source . --config gitleaks-selfscan.toml --report-format json --report-path /tmp/secretguard-selfscan.json --no-banner
 
