@@ -9,44 +9,41 @@
         "detect-secrets": {
           "categories": {
             "added-then-deleted": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 5,
-                "tn": 5,
-                "tp": 0
-              },
+              "counts_across_runs": null,
               "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
               },
               "false_positive_rate": {
-                "ci95_high": 0.5,
-                "ci95_low": 0.5,
-                "max": 0.5,
-                "median": 0.5,
-                "min": 0.5,
-                "status": "MEASURED"
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
               },
               "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
               },
+              "reason": "detect-secrets scans checked-out files, not Git history; this case is not represented in the checkout.",
               "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             },
             "base64": {
               "counts_across_runs": {
@@ -86,7 +83,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "clean-negative": {
               "counts_across_runs": {
@@ -126,47 +124,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "deleted-branch": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 5,
-                "tn": 5,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.5,
-                "ci95_low": 0.5,
-                "max": 0.5,
-                "median": 0.5,
-                "min": 0.5,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "doc-example-false-positive": {
               "counts_across_runs": {
@@ -206,47 +165,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "force-push-dropped": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 5,
-                "tn": 5,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.5,
-                "ci95_low": 0.5,
-                "max": 0.5,
-                "median": 0.5,
-                "min": 0.5,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "merge": {
               "counts_across_runs": {
@@ -286,7 +206,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "pem": {
               "counts_across_runs": {
@@ -326,7 +247,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "rename": {
               "counts_across_runs": {
@@ -366,7 +288,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "split-secret": {
               "counts_across_runs": {
@@ -406,7 +329,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "tag": {
               "counts_across_runs": {
@@ -446,7 +370,82 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
+            },
+            "unreachable-object-deleted-branch": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
+            },
+            "unreachable-object-force-push-dropped": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             }
           },
           "runs": 5
@@ -491,7 +490,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "base64": {
               "counts_across_runs": {
@@ -531,7 +531,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "clean-negative": {
               "counts_across_runs": {
@@ -571,47 +572,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "deleted-branch": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "doc-example-false-positive": {
               "counts_across_runs": {
@@ -651,47 +613,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "force-push-dropped": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "merge": {
               "counts_across_runs": {
@@ -731,7 +654,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "pem": {
               "counts_across_runs": {
@@ -771,7 +695,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "rename": {
               "counts_across_runs": {
@@ -811,7 +736,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "split-secret": {
               "counts_across_runs": {
@@ -851,7 +777,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "tag": {
               "counts_across_runs": {
@@ -891,7 +818,82 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
+            },
+            "unreachable-object-deleted-branch": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
+            },
+            "unreachable-object-force-push-dropped": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             }
           },
           "runs": 5
@@ -936,7 +938,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "base64": {
               "counts_across_runs": {
@@ -976,7 +979,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "clean-negative": {
               "counts_across_runs": {
@@ -1016,47 +1020,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "deleted-branch": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "doc-example-false-positive": {
               "counts_across_runs": {
@@ -1096,47 +1061,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "force-push-dropped": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "merge": {
               "counts_across_runs": {
@@ -1176,7 +1102,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "pem": {
               "counts_across_runs": {
@@ -1216,7 +1143,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "rename": {
               "counts_across_runs": {
@@ -1256,7 +1184,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "split-secret": {
               "counts_across_runs": {
@@ -1296,7 +1225,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "tag": {
               "counts_across_runs": {
@@ -1336,7 +1266,82 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
+            },
+            "unreachable-object-deleted-branch": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
+            },
+            "unreachable-object-force-push-dropped": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             }
           },
           "runs": 5
@@ -1352,44 +1357,41 @@
         "detect-secrets": {
           "categories": {
             "added-then-deleted": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 5,
-                "tn": 5,
-                "tp": 0
-              },
+              "counts_across_runs": null,
               "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
               },
               "false_positive_rate": {
-                "ci95_high": 0.5,
-                "ci95_low": 0.5,
-                "max": 0.5,
-                "median": 0.5,
-                "min": 0.5,
-                "status": "MEASURED"
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
               },
               "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
               },
+              "reason": "detect-secrets scans checked-out files, not Git history; this case is not represented in the checkout.",
               "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             },
             "base64": {
               "counts_across_runs": {
@@ -1429,7 +1431,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "clean-negative": {
               "counts_across_runs": {
@@ -1469,47 +1472,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "deleted-branch": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 5,
-                "tn": 5,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.5,
-                "ci95_low": 0.5,
-                "max": 0.5,
-                "median": 0.5,
-                "min": 0.5,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "doc-example-false-positive": {
               "counts_across_runs": {
@@ -1549,47 +1513,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "force-push-dropped": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 5,
-                "tn": 5,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.5,
-                "ci95_low": 0.5,
-                "max": 0.5,
-                "median": 0.5,
-                "min": 0.5,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "merge": {
               "counts_across_runs": {
@@ -1629,7 +1554,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "pem": {
               "counts_across_runs": {
@@ -1669,7 +1595,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "rename": {
               "counts_across_runs": {
@@ -1709,7 +1636,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "split-secret": {
               "counts_across_runs": {
@@ -1749,7 +1677,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "tag": {
               "counts_across_runs": {
@@ -1789,7 +1718,82 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
+            },
+            "unreachable-object-deleted-branch": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
+            },
+            "unreachable-object-force-push-dropped": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             }
           },
           "runs": 5
@@ -1834,7 +1838,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "base64": {
               "counts_across_runs": {
@@ -1874,7 +1879,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "clean-negative": {
               "counts_across_runs": {
@@ -1914,47 +1920,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "deleted-branch": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "doc-example-false-positive": {
               "counts_across_runs": {
@@ -1994,47 +1961,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "force-push-dropped": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "merge": {
               "counts_across_runs": {
@@ -2074,7 +2002,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "pem": {
               "counts_across_runs": {
@@ -2114,7 +2043,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "rename": {
               "counts_across_runs": {
@@ -2154,7 +2084,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "split-secret": {
               "counts_across_runs": {
@@ -2194,7 +2125,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "tag": {
               "counts_across_runs": {
@@ -2234,7 +2166,82 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
+            },
+            "unreachable-object-deleted-branch": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
+            },
+            "unreachable-object-force-push-dropped": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             }
           },
           "runs": 5
@@ -2279,7 +2286,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "base64": {
               "counts_across_runs": {
@@ -2319,7 +2327,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "clean-negative": {
               "counts_across_runs": {
@@ -2359,47 +2368,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "deleted-branch": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "doc-example-false-positive": {
               "counts_across_runs": {
@@ -2439,47 +2409,8 @@
                 "median": null,
                 "min": null,
                 "status": "NOT APPLICABLE"
-              }
-            },
-            "force-push-dropped": {
-              "counts_across_runs": {
-                "fn": 5,
-                "fp": 0,
-                "tn": 10,
-                "tp": 0
               },
-              "f1": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "false_positive_rate": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "precision": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              },
-              "recall": {
-                "ci95_high": 0.0,
-                "ci95_low": 0.0,
-                "max": 0.0,
-                "median": 0.0,
-                "min": 0.0,
-                "status": "MEASURED"
-              }
+              "status": "MEASURED"
             },
             "merge": {
               "counts_across_runs": {
@@ -2519,7 +2450,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "pem": {
               "counts_across_runs": {
@@ -2559,7 +2491,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "rename": {
               "counts_across_runs": {
@@ -2599,7 +2532,8 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "split-secret": {
               "counts_across_runs": {
@@ -2639,7 +2573,8 @@
                 "median": 0.0,
                 "min": 0.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
             },
             "tag": {
               "counts_across_runs": {
@@ -2679,7 +2614,82 @@
                 "median": 1.0,
                 "min": 1.0,
                 "status": "MEASURED"
-              }
+              },
+              "status": "MEASURED"
+            },
+            "unreachable-object-deleted-branch": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
+            },
+            "unreachable-object-force-push-dropped": {
+              "counts_across_runs": null,
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "reason": "The commit object is unreachable from every ref and is outside this scanner's input.",
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "status": "NOT APPLICABLE"
             }
           },
           "runs": 5
@@ -2688,9 +2698,33 @@
       "unreachable_scenario_commits": 2
     }
   },
-  "generated": "2026-11-26T09:56:30Z",
+  "generated": "2026-11-26T10:19:26Z",
+  "lifecycle_comparison": {
+    "coverage_manifest": {
+      "commits_actually_scanned": 98,
+      "commits_reachable": 98,
+      "completeness": "complete",
+      "unreachable_object_count": 6
+    },
+    "dedupe_100_commits": {
+      "fixture_commits": 100,
+      "gitleaks_wrapper_raw_findings": 1,
+      "native_gitleaks_raw_findings": 1,
+      "pipeline_deduplicated_findings": 1,
+      "pipeline_raw_findings": 100
+    },
+    "deleted_but_recoverable": {
+      "gitleaks_wrapper": "flagged",
+      "native_gitleaks": "flagged"
+    },
+    "fail_closed": {
+      "gitleaks_wrapper": "yes (rejects non-owned config)",
+      "native_gitleaks": "yes (exit 1; invalid config rejected: true)",
+      "pipeline": "yes (uses the same owned-config wrapper)"
+    }
+  },
   "runs_per_scanner": 5,
-  "schema_version": 1,
+  "schema_version": 2,
   "versions": {
     "detect-secrets": "1.5.0",
     "native-gitleaks": "8.18.4",
