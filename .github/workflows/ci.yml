@@ -1,34 +1,91 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.11" }
-      - name: Install gitleaks
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install Gitleaks
         run: |
           curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz
           sudo mv gitleaks /usr/local/bin/
-      - run: pip install -r requirements.txt
-      - run: python scripts/gen_traceability.py
-      - run: python testdata/seed_repo.py
-      - run: python -m backend.ml_filter.train
-      - run: pytest --cov=backend --cov-report=term-missing --cov-fail-under=75
-      - name: Schema contract tests
-        run: pytest -q tests/test_phase_a_entrypoint.py tests/test_stubs.py tests/test_audit_and_parser.py
-      - name: Network-denial Docker probe
-        run: |
-          if command -v docker >/dev/null 2>&1; then
-            docker build -t secretguard-cp1 .
-          else
-            echo "Docker unavailable; static network-denial control documented"
-          fi
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      - name: Generate traceability
+        run: python scripts/gen_traceability.py
+      - name: Seed test repository
+        run: python testdata/seed_repo.py
+      - name: Train test model
+        run: python -m backend.ml_filter.train
+      - name: Python suite and combined coverage gate
+        run: pytest --cov=backend --cov=src.shd --cov-report=term-missing:skip-covered --cov-fail-under=75
       - name: Self-scan repository
         run: gitleaks detect --source . --config gitleaks-selfscan.toml --report-format json --report-path /tmp/secretguard-selfscan.json --no-banner
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install Gitleaks
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz | tar xz
+          sudo mv gitleaks /usr/local/bin/
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      - name: Run clean-checkout baseline
+        run: python scripts/baseline.py
+      - name: Upload non-sensitive benchmark reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: comparison-reports
+          path: |
+            artifacts/comparison.json
+            docs/comparison.md
+          if-no-files-found: error
+
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pip-audit
+        run: python -m pip install pip-audit
+      - name: Audit Python dependencies
+        run: pip-audit -r requirements.txt
+
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Audit frontend dependencies
+        working-directory: frontend
+        run: npm audit --audit-level=low
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
@@ -38,3 +95,58 @@ jobs:
         run: |
           npm ci
           npm run build
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container
+        run: docker build -t secretguard-cp1 .
+
+  container-network-denial:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container
+        run: docker build -t secretguard-cp1 .
+      - name: Verify container has no network
+        run: |
+          docker run --rm --network none --entrypoint python secretguard-cp1 -c '
+          import socket
+          if any(name != "lo" for _, name in socket.if_nameindex()):
+              raise SystemExit("network interface present outside loopback")
+          try:
+              socket.create_connection(("1.1.1.1", 443), timeout=2)
+          except OSError:
+              raise SystemExit(0)
+          raise SystemExit("container unexpectedly reached a network")
+          '
+
+  readonly-root-filesystem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container
+        run: docker build -t secretguard-cp1 .
+      - name: Scan a read-only mount with a read-only root
+        run: |
+          docker run --rm --network none --read-only \
+            --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+            --mount "type=bind,source=${{ github.workspace }}/testdata/seeded_repo,target=/repo,readonly" \
+            --entrypoint python secretguard-cp1 -c '
+          from pathlib import Path
+          import subprocess
+          import sys
+          try:
+              (Path("/app") / "write-check").write_text("no")
+          except OSError:
+              pass
+          else:
+              raise SystemExit("container root filesystem is writable")
+          result = subprocess.run([
+              sys.executable, "-m", "src.shd.cli", "scan", "/repo",
+              "--format", "json", "--out", "/tmp/scan.json"
+          ], check=False)
+          if result.returncode not in (0, 1):
+              raise SystemExit(result.returncode)
+          '

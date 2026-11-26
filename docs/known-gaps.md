@@ -12,13 +12,24 @@ requires an external environment, approvals, or repository-owner action.
   parse-stage timeout. High-cardinality production performance needs a fix and
   a repeatable benchmark.
 - Docker build/run and `make` targets: **NOT RUN** in this wrap-up.
-- `pip-audit` and `npm audit`: **NOT RUN**. The checked-in evidence files record
-  that the commands were unavailable or required network access.
+- The child-process network-isolation check was **NOT MEASURED locally**. CI
+  now has an Ubuntu container `--network none` probe; verification is pending
+  that job passing.
 - Native-vs-wrapper comparison with the AI filter enabled on a non-demo,
   labeled fixture: **NOT MEASURED**. The reported parity comparison disabled
   the filter; the separate demo fixture follows the application's demo path.
 - Provider-side validity checks and credential revocation: **NOT IMPLEMENTED**.
   The local rotation mock is not evidence that an external credential is safe.
+
+## Local dependency audit
+
+The requested direct audits ran and their unfiltered command output is saved in
+[`docs/evidence/pip-audit.txt`](evidence/pip-audit.txt) and
+[`docs/evidence/npm-audit.txt`](evidence/npm-audit.txt). `pip-audit -r
+requirements.txt` exited 1 with 50 known vulnerabilities across 3 packages.
+`npm audit` exited 1 with 9 vulnerabilities (4 moderate, 4 high, 1 critical).
+Review and remediate these findings before treating the dependency set as
+cleared; this task did not change dependency versions.
 
 ## Manual approval and repository work
 

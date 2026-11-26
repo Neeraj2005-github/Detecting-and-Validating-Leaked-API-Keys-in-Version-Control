@@ -1,4 +1,5 @@
 import hashlib
+import socket
 from pathlib import Path
 
 import pytest
@@ -24,14 +25,36 @@ def test_resolve_gitleaks_binary_rejects_missing_path(monkeypatch):
         runner._resolve_gitleaks_binary()
 
 
-def test_run_gitleaks_seeded_repo():
+def _tree_digest(root: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root).as_posix()
+        digest.update(relative.encode("utf-8"))
+        if path.is_symlink():
+            digest.update(path.readlink().as_posix().encode("utf-8"))
+        elif path.is_file():
+            digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def test_run_gitleaks_seeded_repo_is_read_only_and_offline(monkeypatch):
     repo_path = Path("testdata/seeded_repo")
     if not repo_path.exists():
         pytest.skip("seeded repo has not been generated yet")
 
+    before = _tree_digest(repo_path)
+    outbound_attempts: list[object] = []
+
+    def reject_connect(_socket, address: object) -> None:
+        outbound_attempts.append(address)
+        raise AssertionError("The wrapper attempted an outbound connection")
+
+    monkeypatch.setattr(socket.socket, "connect", reject_connect)
     result = run_gitleaks(str(repo_path))
+
     assert isinstance(result, list)
-    assert len(result) > 0
+    assert outbound_attempts == []
+    assert _tree_digest(repo_path) == before
 
 
 def test_normalizer_hashes_secrets_and_strips_plaintext():
