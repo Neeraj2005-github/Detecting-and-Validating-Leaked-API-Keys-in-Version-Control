@@ -1,57 +1,96 @@
-# Native Gitleaks and wrapper comparison
+# Comparative scanner benchmark
 
-These are real local runs against synthetic, controlled fixtures. No credential
-values are stored in this report or in the associated JSON artifact.
+Generated from identical synthetic Git fast-import repositories. All credential-shaped values are synthetic test data; no real secret values are included in this report.
 
-## Same-fixture detection comparison
+- Generated: `2026-11-26T09:56:30Z`
+- Native Gitleaks: `8.18.4`
+- Wrapper: Gitleaks `8.18.4` via `run_gitleaks`
+- detect-secrets: `1.5.0`
+- Repetitions: five per scanner and repository size; bootstrap 95% CIs use 2,000 resamples of the median.
+- Positive categories are evaluated one-vs-known-negative examples; the clean-negative and documentation-example rows are negative-only, so precision, recall, and F1 are not applicable for those rows.
 
-The native binary and the CP1 API scanned the same checked-in synthetic
-repository (`artifacts/synthetic_repo_v1`): six reachable commits, ten labeled
-oracle examples, and three skipped files. The wrapper was run with
-`use_ai_filter=false` to isolate the detector and wrapper lifecycle/coverage
-behavior. Artifact writes and SHAP presentation output were disabled by the
-measurement harness; Gitleaks, parsing, coverage, lifecycle analysis, and
-deduplication ran through their real code paths.
+## 100 commits
 
-| Measure | Native Gitleaks | Wrapper |
-|---|---:|---:|
-| Findings reported | 6 | 6 |
-| True positives | 4 | 4 |
-| False positives | 1 | 1 |
-| False negatives | 2 | 2 |
-| Precision | 0.8000 | 0.8000 |
-| Recall | 0.6667 | 0.6667 |
-| Deleted-but-recoverable findings flagged | Not reported | 2 |
-| Coverage manifest | Not provided | Complete; 6 commits scanned; 3 skipped files listed |
-| AI-suppressed findings | Not applicable | 0 (AI filter disabled for parity) |
+Verified commit objects: 100; reachable commits: 98.
 
-False positives include predictions matching labeled decoys and predictions
-outside the oracle's positive/decoy labels. A `complete` coverage status is
-subject to the configured skip threshold; it does not mean there were no
-skipped files. The wrapper reports the three paths separately.
+| Scanner | Category | Precision median [95% CI] | Recall median [95% CI] | F1 median [95% CI] | FP rate median [95% CI] |
+|---|---|---:|---:|---:|---:|
+| native-gitleaks | added-then-deleted | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | deleted-branch | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | tag | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | merge | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | rename | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | force-push-dropped | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | base64 | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | pem | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | split-secret | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | clean-negative | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | doc-example-false-positive | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | added-then-deleted | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | deleted-branch | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | tag | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | merge | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | rename | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | force-push-dropped | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | base64 | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | pem | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | split-secret | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | clean-negative | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | doc-example-false-positive | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| detect-secrets | added-then-deleted | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | deleted-branch | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | tag | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | merge | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | rename | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | force-push-dropped | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | base64 | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | pem | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | split-secret | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | clean-negative | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| detect-secrets | doc-example-false-positive | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 1.000 [1.000, 1.000] (min 1.000, max 1.000) |
 
-## 100-commit deduplication
+## 1000 commits
 
-A second real fixture contained the same synthetic AWS-shaped value in one
-tracked file, added on each of 100 commits. Native Gitleaks reported 100
-commit-level matches. The wrapper scanned all 100 commits and returned one
-deduplicated finding.
+Verified commit objects: 1000; reachable commits: 998.
 
-| Measure | Native Gitleaks | Wrapper |
-|---|---:|---:|
-| Commits | 100 | 100 |
-| Findings after detection/deduplication | 100 | 1 |
-| Coverage status | No manifest | Complete |
-| Wrapper elapsed time | Not applicable | 1,225 ms |
+| Scanner | Category | Precision median [95% CI] | Recall median [95% CI] | F1 median [95% CI] | FP rate median [95% CI] |
+|---|---|---:|---:|---:|---:|
+| native-gitleaks | added-then-deleted | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | deleted-branch | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | tag | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | merge | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | rename | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | force-push-dropped | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | base64 | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | pem | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | split-secret | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | clean-negative | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| native-gitleaks | doc-example-false-positive | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | added-then-deleted | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | deleted-branch | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | tag | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | merge | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | rename | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | force-push-dropped | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | base64 | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | pem | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | split-secret | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | clean-negative | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| wrapper | doc-example-false-positive | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| detect-secrets | added-then-deleted | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | deleted-branch | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | tag | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | merge | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | rename | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | force-push-dropped | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | base64 | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | pem | 0.500 [0.500, 0.500] (min 0.500, max 0.500) | 1.000 [1.000, 1.000] (min 1.000, max 1.000) | 0.667 [0.667, 0.667] (min 0.667, max 0.667) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | split-secret | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.000 [0.000, 0.000] (min 0.000, max 0.000) | 0.500 [0.500, 0.500] (min 0.500, max 0.500) |
+| detect-secrets | clean-negative | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 0.000 [0.000, 0.000] (min 0.000, max 0.000) |
+| detect-secrets | doc-example-false-positive | NOT APPLICABLE | NOT APPLICABLE | NOT APPLICABLE | 1.000 [1.000, 1.000] (min 1.000, max 1.000) |
 
-This case uses one path. A separate 100-commit fixture with findings across
-100 distinct paths exceeded the 30-second lifecycle/parse-stage timeout; see
-[`limitations.md`](limitations.md). The successful single-path case must not be
-generalized to high-cardinality repositories.
+## Method and limitations
 
-## Scope
+The fixtures include added-then-deleted content, an unreachable deleted branch, a tag, a merge, rename, force-push-dropped content, base64 and PEM-shaped examples, a split credential, clean text, and a documentation example. `detect-secrets` is invoked as its pinned CLI on each current checkout; it does not natively walk unreachable Git history, which is intentionally reflected in its results.
 
-`DEVOPS-LAB-EXAM` was not present in the workspace and was **NOT MEASURED**.
-These fixture results do not establish precision, recall, or speed on that
-repository or on production repositories. The 10- and 1,000-commit speed
-measurements used generated repositories without findings.
+Precision and recall are based on the single labeled credential path for each positive scenario and the two labeled negative paths plus any unrecognized reported paths. These synthetic outcomes are not estimates of production performance.

@@ -1,0 +1,2699 @@
+{
+  "bootstrap_resamples": 2000,
+  "fixtures": {
+    "100": {
+      "commit_objects": 100,
+      "deleted_branch_commit_mark": 4,
+      "reachable_commits": 98,
+      "scanners": {
+        "detect-secrets": {
+          "categories": {
+            "added-then-deleted": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "base64": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "clean-negative": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "deleted-branch": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "doc-example-false-positive": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 0,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "force-push-dropped": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "merge": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "pem": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "rename": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "split-secret": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "tag": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            }
+          },
+          "runs": 5
+        },
+        "native-gitleaks": {
+          "categories": {
+            "added-then-deleted": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "base64": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "clean-negative": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "deleted-branch": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "doc-example-false-positive": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "force-push-dropped": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "merge": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "pem": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "rename": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "split-secret": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "tag": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            }
+          },
+          "runs": 5
+        },
+        "wrapper": {
+          "categories": {
+            "added-then-deleted": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "base64": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "clean-negative": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "deleted-branch": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "doc-example-false-positive": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "force-push-dropped": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "merge": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "pem": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "rename": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "split-secret": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "tag": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            }
+          },
+          "runs": 5
+        }
+      },
+      "unreachable_scenario_commits": 2
+    },
+    "1000": {
+      "commit_objects": 1000,
+      "deleted_branch_commit_mark": 4,
+      "reachable_commits": 998,
+      "scanners": {
+        "detect-secrets": {
+          "categories": {
+            "added-then-deleted": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "base64": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "clean-negative": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "deleted-branch": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "doc-example-false-positive": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 0,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "force-push-dropped": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "merge": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "pem": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "rename": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "split-secret": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 5,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "tag": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 5,
+                "tn": 5,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 0.6666666666666666,
+                "ci95_low": 0.6666666666666666,
+                "max": 0.6666666666666666,
+                "median": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.5,
+                "ci95_low": 0.5,
+                "max": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            }
+          },
+          "runs": 5
+        },
+        "native-gitleaks": {
+          "categories": {
+            "added-then-deleted": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "base64": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "clean-negative": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "deleted-branch": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "doc-example-false-positive": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "force-push-dropped": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "merge": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "pem": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "rename": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "split-secret": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "tag": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            }
+          },
+          "runs": 5
+        },
+        "wrapper": {
+          "categories": {
+            "added-then-deleted": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "base64": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "clean-negative": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "deleted-branch": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "doc-example-false-positive": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 5,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              },
+              "recall": {
+                "ci95_high": null,
+                "ci95_low": null,
+                "max": null,
+                "median": null,
+                "min": null,
+                "status": "NOT APPLICABLE"
+              }
+            },
+            "force-push-dropped": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "merge": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "pem": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "rename": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            },
+            "split-secret": {
+              "counts_across_runs": {
+                "fn": 5,
+                "fp": 0,
+                "tn": 10,
+                "tp": 0
+              },
+              "f1": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              }
+            },
+            "tag": {
+              "counts_across_runs": {
+                "fn": 0,
+                "fp": 0,
+                "tn": 10,
+                "tp": 5
+              },
+              "f1": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "false_positive_rate": {
+                "ci95_high": 0.0,
+                "ci95_low": 0.0,
+                "max": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "status": "MEASURED"
+              },
+              "precision": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              },
+              "recall": {
+                "ci95_high": 1.0,
+                "ci95_low": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "status": "MEASURED"
+              }
+            }
+          },
+          "runs": 5
+        }
+      },
+      "unreachable_scenario_commits": 2
+    }
+  },
+  "generated": "2026-11-26T09:56:30Z",
+  "runs_per_scanner": 5,
+  "schema_version": 1,
+  "versions": {
+    "detect-secrets": "1.5.0",
+    "native-gitleaks": "8.18.4",
+    "wrapper": "8.18.4"
+  }
+}
